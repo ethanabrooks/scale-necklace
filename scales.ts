@@ -1,19 +1,19 @@
 import * as A from "fp-ts/lib/Array";
 import { flatten } from "fp-ts/lib/Array";
 
-export type Tone = { sharp: string; flat: string };
-export const toneStrings: Tone[] = [
+export type _Tone = { sharp: string; flat: string };
+export const toneStrings: _Tone[] = [
     { sharp: "c", flat: "c" },
-    { sharp: "c♯", flat: "d♭" },
+    { sharp: "c#", flat: "db" },
     { sharp: "d", flat: "d" },
-    { sharp: "d♯", flat: "e♭" },
+    { sharp: "d#", flat: "eb" },
     { sharp: "e", flat: "e" },
     { sharp: "f", flat: "f" },
-    { sharp: "f♯", flat: "g♭" },
+    { sharp: "f#", flat: "gb" },
     { sharp: "g", flat: "g" },
-    { sharp: "g♯", flat: "a♭" },
+    { sharp: "g#", flat: "ab" },
     { sharp: "a", flat: "a" },
-    { sharp: "a♯", flat: "b♭" },
+    { sharp: "a#", flat: "bb" },
     { sharp: "b", flat: "b" },
 ];
 

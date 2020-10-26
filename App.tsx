@@ -1,10 +1,10 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet  } from 'react-native';
-import { Button, Text, TouchableOpacity, View } from "react-native";
+import React, {useEffect, useRef, useState} from 'react';
+import {Button, Text, TouchableOpacity, View} from 'react-native';
 import "./scales";
-import { scales, NUM_TONES, toneStrings, Tone } from "./scales";
-import { styles } from "./styles";
+import {_Tone, NUM_TONES, scales, toneStrings} from "./scales";
+import {now, Synth} from "tone";
+import {styles} from "./styles";
+import {Seconds} from "tone/build/esm/core/type/Units";
 
 
 type Scale = number[];
@@ -13,9 +13,26 @@ function randomNumber(n: number): number {
     return Math.floor(Math.random() * n);
 }
 
+function mod(a: number, b:number): number {
+    return ((a % b) + b) % b
+}
+
+type State = {loaded: false} |{loaded: true, synth: Synth, now: Seconds}
+
 export default function App(): JSX.Element {
     const [scale, setScale] = React.useState<Scale>(scales[0]);
     const [root, setRoot] = React.useState<number>(0);
+    const [state, setState] = useState<State>({loaded: false});
+    const sampler = useRef<null | Synth>(null);
+
+    useEffect(() => {
+        const synth = new Synth().toMaster();
+        setState({loaded: true, synth: synth, now: now()})
+    }, []);
+
+    if (!state.loaded) {
+        return <Text>loading...</Text>
+    }
 
     const rootButton: JSX.Element = (
         <Button
@@ -30,45 +47,53 @@ export default function App(): JSX.Element {
         },
         [root]
     );
+    const n = now()
     const width = 250;
     const necklace = (
-        <View
-            style={{
-                flex: 1,
-                width: width,
-            }}
-        >
-            {toneStrings.map((t: Tone, i: number) => {
-                const theta = (2 * Math.PI * i) / NUM_TONES;
-                const diameter = width / 6;
-                const left = (width * (1 + Math.cos(theta)) - diameter) / 2;
-                const top = (width * (1 + Math.sin(theta))) / 2;
-                const color = scaleIndices.includes(i) ? "black" : "lightgrey";
-                return (
-                    <TouchableOpacity
-                        style={{
-                            width: diameter,
-                            height: diameter,
-                            position: "absolute",
-                            left: left,
-                            top: top,
-                            backgroundColor: color,
-                            borderRadius: 50,
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }}
-                        onPress={() => {
-                            setRoot(i);
-                            setScale(scales[randomNumber(scales.length)]);
-                        }}
-                        key={i}
-                    >
-                        <Text style={{ color: "white" }}>{t.sharp == t.flat ? t.sharp : `${t.sharp}/${t.flat}`}</Text>
-                    </TouchableOpacity>
-                );
-            })}
-        </View>
-    );
+            <View
+                style={{
+                    flex: 1,
+                    width: width,
+                }}
+            >
+                {toneStrings.map((_: _Tone, i: number) => {
+                    const theta = (2 * Math.PI * i) / NUM_TONES - Math.PI / 2;
+                    const diameter = width / 6;
+                    const left = (width * (1 + Math.cos(theta)) - diameter) / 2;
+                    const top = (width * (1 + Math.sin(theta))) / 2;
+                    let j = mod(i + root, NUM_TONES);
+                    const t = toneStrings[j]
+                    const color = scaleIndices.includes(j) ? "black" : "lightgrey";
+
+
+                    return (
+                        <TouchableOpacity
+                            style={{
+                                width: diameter,
+                                height: diameter,
+                                position: "absolute",
+                                left: left,
+                                top: top,
+                                backgroundColor: color,
+                                borderRadius: 50,
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                            onPress={() => {
+                                setRoot(j);
+                                setScale(scales[randomNumber(scales.length)]);
+                                state.synth.triggerAttack(`${t.sharp}3`, n );
+                                state.synth.triggerRelease(n + .5);
+                            }}
+                            key={i}
+                        >
+                            <Text style={{color: "white"}}>{t.sharp == t.flat ? t.sharp : `${t.sharp}/${t.flat}`}</Text>
+                        </TouchableOpacity>
+                    );
+                })}
+            </View>
+        )
+    ;
 
     return (
         <View style={styles.container}>
@@ -77,11 +102,3 @@ export default function App(): JSX.Element {
         </View>
     );
 }
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
