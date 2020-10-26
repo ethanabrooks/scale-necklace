@@ -63,7 +63,7 @@ export default function App(): JSX.Element {
                         }}
                         key={i}
                     >
-                        <Text style={{ color: "white" }}>{t.sharp}</Text>
+                        <Text style={{ color: "white" }}>{t.sharp == t.flat ? t.sharp : `${t.sharp}/${t.flat}`}</Text>
                     </TouchableOpacity>
                 );
             })}
@@ -77,16 +77,6 @@ export default function App(): JSX.Element {
         </View>
     );
 }
-
-// export default function App() {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Open up App.tsx to start working on your app!</Text>
-//       <StatusBar style="auto" />
-//     </View>
-//   );
-// }
-
 // const styles = StyleSheet.create({
 //   container: {
 //     flex: 1,

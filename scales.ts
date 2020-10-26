@@ -4,16 +4,16 @@ import { flatten } from "fp-ts/lib/Array";
 export type Tone = { sharp: string; flat: string };
 export const toneStrings: Tone[] = [
     { sharp: "c", flat: "c" },
-    { sharp: "c#", flat: "db" },
+    { sharp: "c♯", flat: "d♭" },
     { sharp: "d", flat: "d" },
-    { sharp: "d#", flat: "eb" },
+    { sharp: "d♯", flat: "e♭" },
     { sharp: "e", flat: "e" },
     { sharp: "f", flat: "f" },
-    { sharp: "f#", flat: "gb" },
+    { sharp: "f♯", flat: "g♭" },
     { sharp: "g", flat: "g" },
-    { sharp: "g#", flat: "ab" },
+    { sharp: "g♯", flat: "a♭" },
     { sharp: "a", flat: "a" },
-    { sharp: "a#", flat: "bb" },
+    { sharp: "a♯", flat: "b♭" },
     { sharp: "b", flat: "b" },
 ];
 
