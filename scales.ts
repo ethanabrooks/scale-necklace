@@ -1,8 +1,8 @@
 import * as A from "fp-ts/lib/Array";
 import { flatten } from "fp-ts/lib/Array";
 
-export type _Tone = { sharp: string; flat: string };
-export const toneStrings: _Tone[] = [
+export type Note = { sharp: string; flat: string };
+export const notes: Note[] = [
     { sharp: "c", flat: "c" },
     { sharp: "c#", flat: "db" },
     { sharp: "d", flat: "d" },
@@ -17,7 +17,7 @@ export const toneStrings: _Tone[] = [
     { sharp: "b", flat: "b" },
 ];
 
-export const NUM_TONES = toneStrings.length;
+export const NUM_NOTES = notes.length;
 
 
 type AScale = { head: [1]; tail: B } | { head: [1, 1]; tail: B };
@@ -95,4 +95,4 @@ function getStepsC(c: C): number[] {
     }
 }
 
-export const scales: number[][] = CScales(NUM_TONES).map(getStepsC);
+export const scales: number[][] = CScales(NUM_NOTES).map(getStepsC);

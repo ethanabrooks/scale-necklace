@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Button, Text, TouchableOpacity, View} from 'react-native';
 import "./scales";
-import {_Tone, NUM_TONES, scales, toneStrings} from "./scales";
+import {Note, NUM_NOTES, scales, notes} from "./scales";
 import {now, Synth} from "tone";
 import {styles} from "./styles";
 import {Seconds} from "tone/build/esm/core/type/Units";
@@ -37,13 +37,13 @@ export default function App(): JSX.Element {
     const rootButton: JSX.Element = (
         <Button
             title={"Randomize Root"}
-            onPress={() => setRoot(randomNumber(NUM_TONES))}
+            onPress={() => setRoot(randomNumber(NUM_NOTES))}
         />
     );
 
     const scaleIndices: number[] = scale.reduce(
         (soFar: number[], n: number) => {
-            return soFar.concat((soFar[soFar.length - 1] + n) % NUM_TONES);
+            return soFar.concat((soFar[soFar.length - 1] + n) % NUM_NOTES);
         },
         [root]
     );
@@ -56,13 +56,13 @@ export default function App(): JSX.Element {
                     width: width,
                 }}
             >
-                {toneStrings.map((_: _Tone, i: number) => {
-                    const theta = (2 * Math.PI * i) / NUM_TONES - Math.PI / 2;
+                {notes.map((_: Note, i: number) => {
+                    const theta = (2 * Math.PI * i) / NUM_NOTES - Math.PI / 2;
                     const diameter = width / 6;
                     const left = (width * (1 + Math.cos(theta)) - diameter) / 2;
                     const top = (width * (1 + Math.sin(theta))) / 2;
-                    let j = mod(i + root, NUM_TONES);
-                    const t = toneStrings[j]
+                    let j = mod(i + root, NUM_NOTES);
+                    const t = notes[j]
                     const color = scaleIndices.includes(j) ? "black" : "lightgrey";
 
 
