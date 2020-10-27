@@ -31,13 +31,11 @@ export default function App(): JSX.Element {
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
   useEffect(() => {
-    start().then(() => {
-      const synth = new Synth().toDestination();
-      setState({
-        loaded: true,
-        synth: synth,
-        notesToPlay: [],
-      });
+    const synth = new Synth().toDestination();
+    setState({
+      loaded: true,
+      synth: synth,
+      notesToPlay: [],
     });
   }, [setState]);
 
