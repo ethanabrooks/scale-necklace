@@ -10,11 +10,11 @@ type State =
       loaded: true;
       synth: Synth;
       notesToPlay: Scale;
-      octave: number;
     };
 
 export function Player(props: { notesInScale: Scale }) {
   const [state, setState] = useState<State>({ loaded: false });
+  const octave: number = 3;
 
   useEffect(() => {
     start().then(() => {
@@ -23,7 +23,6 @@ export function Player(props: { notesInScale: Scale }) {
         loaded: true,
         synth: synth,
         notesToPlay: [],
-        octave: 3,
       });
     });
   }, [setState]);
@@ -34,7 +33,9 @@ export function Player(props: { notesInScale: Scale }) {
       if (state.notesToPlay.length > 0) {
         context.resume().then(() => {
           const note = notes[head % NUM_NOTES];
-          return state.synth.triggerAttack(`${note.sharp}${state.octave}`);
+          return state.synth.triggerAttack(
+            `${note.sharp}${head < NUM_NOTES ? octave : octave + 1}`
+          );
         });
         const interval: number = setInterval(() => {
           setState({ ...state, notesToPlay: tail });
