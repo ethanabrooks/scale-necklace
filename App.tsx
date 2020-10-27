@@ -7,6 +7,14 @@ import { styles } from "./styles";
 import { Note, notes, NUM_NOTES } from "./notes";
 
 type Scale = number[];
+type State =
+  | { loaded: false }
+  | {
+      loaded: true;
+      synth: Synth;
+      notesToPlay: Scale;
+      octave: number;
+    };
 
 function randomNumber(n: number): number {
   return Math.floor(Math.random() * n);
@@ -16,16 +24,7 @@ function mod(a: number, b: number): number {
   return ((a % b) + b) % b;
 }
 
-type State =
-  | { loaded: false }
-  | {
-      loaded: true;
-      synth: Synth;
-      notesToPlay: Note[];
-      octave: number;
-    };
-
-function Timer(props: { notesInScale: Note[] }) {
+function Player(props: { notesInScale: Scale }) {
   const [state, setState] = useState<State>({ loaded: false });
 
   useEffect(() => {
@@ -42,13 +41,12 @@ function Timer(props: { notesInScale: Note[] }) {
 
   useEffect(() => {
     if (state.loaded) {
-      const [head, ...tail]: Note[] = state.notesToPlay;
+      const [head, ...tail]: Scale = state.notesToPlay;
       if (state.notesToPlay.length > 0) {
-        context
-          .resume()
-          .then(() =>
-            state.synth.triggerAttack(`${head.sharp}${state.octave}`)
-          );
+        context.resume().then(() => {
+          const note = notes[head % NUM_NOTES];
+          return state.synth.triggerAttack(`${note.sharp}${state.octave}`);
+        });
         const interval: number = setInterval(() => {
           setState({
             ...state,
@@ -85,13 +83,12 @@ export default function App(): JSX.Element {
     />
   );
 
-  const scaleIndices: number[] = scale.reduce(
-    (soFar: number[], n: number) => {
+  const scaleIndices: Scale = scale.reduce(
+    (soFar: Scale, n: number) => {
       return soFar.concat(soFar[soFar.length - 1] + n);
     },
     [root]
   );
-  const notesInScale = scaleIndices.map((i) => notes[i % NUM_NOTES]);
   const width = 250;
   const necklace = (
     <View
@@ -142,7 +139,7 @@ export default function App(): JSX.Element {
     <View style={styles.container}>
       <View style={styles.button}>{rootButton}</View>
       <View style={styles.button}>
-        <Timer notesInScale={notesInScale} />
+        <Player notesInScale={scaleIndices} />
       </View>
       <View style={styles.necklace}>{necklace}</View>
     </View>
