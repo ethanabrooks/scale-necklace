@@ -1,22 +1,22 @@
 {
   "files": {
-    "app.js": "/scale-necklace/static/js/app.e1605e48.chunk.js",
-    "app.js.map": "/scale-necklace/static/js/app.e1605e48.chunk.js.map",
+    "app.js": "/scale-necklace/static/js/app.8b834035.chunk.js",
+    "app.js.map": "/scale-necklace/static/js/app.8b834035.chunk.js.map",
     "runtime~app.js": "/scale-necklace/static/js/runtime~app.ff751e0e.js",
     "runtime~app.js.map": "/scale-necklace/static/js/runtime~app.ff751e0e.js.map",
-    "static/js/2.700c3284.chunk.js": "/scale-necklace/static/js/2.700c3284.chunk.js",
-    "static/js/2.700c3284.chunk.js.map": "/scale-necklace/static/js/2.700c3284.chunk.js.map",
+    "static/js/2.6ea64375.chunk.js": "/scale-necklace/static/js/2.6ea64375.chunk.js",
+    "static/js/2.6ea64375.chunk.js.map": "/scale-necklace/static/js/2.6ea64375.chunk.js.map",
     "favicon-16.png": "/scale-necklace/favicon-16.png",
     "favicon-32.png": "/scale-necklace/favicon-32.png",
     "favicon.ico": "/scale-necklace/favicon.ico",
     "index.html": "/scale-necklace/index.html",
     "manifest.json": "/scale-necklace/manifest.json",
     "serve.json": "/scale-necklace/serve.json",
-    "static/js/2.700c3284.chunk.js.LICENSE.txt": "/scale-necklace/static/js/2.700c3284.chunk.js.LICENSE.txt"
+    "static/js/2.6ea64375.chunk.js.LICENSE.txt": "/scale-necklace/static/js/2.6ea64375.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime~app.ff751e0e.js",
-    "static/js/2.700c3284.chunk.js",
-    "static/js/app.e1605e48.chunk.js"
+    "static/js/2.6ea64375.chunk.js",
+    "static/js/app.8b834035.chunk.js"
   ]
 }
