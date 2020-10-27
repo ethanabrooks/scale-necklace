@@ -1,10 +1,68 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Text, TouchableOpacity, View } from "react-native";
 import "./scales";
 import { scales } from "./scales";
 import { styles } from "./styles";
 import { Note, notes, NUM_NOTES } from "./notes";
-import { Player, Scale } from "./Player";
+import { context, start, Synth } from "tone";
+
+export type Scale = number[];
+export type State =
+  | { loaded: false }
+  | {
+      loaded: true;
+      synth: Synth;
+      notesToPlay: Scale;
+    };
+
+export function Player(props: { notesInScale: Scale }) {
+  const [state, setState] = useState<State>({ loaded: false });
+  const octave: number = 3;
+  const playing: boolean = state.loaded && state.notesToPlay.length > 0;
+
+  useEffect(() => {
+    start().then(() => {
+      const synth = new Synth().toDestination();
+      setState({
+        loaded: true,
+        synth: synth,
+        notesToPlay: [],
+      });
+    });
+  }, [setState]);
+
+  useEffect(() => {
+    if (state.loaded) {
+      const [head, ...tail]: Scale = state.notesToPlay;
+      if (playing) {
+        context.resume().then(() => {
+          const note = notes[head % NUM_NOTES];
+          return state.synth.triggerAttack(
+            `${note.sharp}${head < NUM_NOTES ? octave : octave + 1}`
+          );
+        });
+        const interval: number = setInterval(() => {
+          setState({ ...state, notesToPlay: tail });
+        }, 200);
+        return () => {
+          state.synth.triggerRelease();
+          clearInterval(interval);
+        };
+      }
+    }
+  }, [state]);
+
+  return state.loaded ? (
+    <Button
+      title={playing ? "Pause" : "Play"}
+      onPress={function () {
+        setState({ ...state, notesToPlay: playing ? [] : props.notesInScale });
+      }}
+    />
+  ) : (
+    <Text>loading...</Text>
+  );
+}
 
 function randomNumber(n: number): number {
   return Math.floor(Math.random() * n);
@@ -17,6 +75,59 @@ function mod(a: number, b: number): number {
 export default function App(): JSX.Element {
   const [scale, setScale] = React.useState<Scale>(scales[0]);
   const [root, setRoot] = React.useState<number>(0);
+  const [state, setState] = useState<State>({ loaded: false });
+  const octave: number = 3;
+  const playing: boolean = state.loaded && state.notesToPlay.length > 0;
+
+  useEffect(() => {
+    start().then(() => {
+      const synth = new Synth().toDestination();
+      setState({
+        loaded: true,
+        synth: synth,
+        notesToPlay: [],
+      });
+    });
+  }, [setState]);
+
+  useEffect(() => {
+    if (state.loaded) {
+      const [head, ...tail]: Scale = state.notesToPlay;
+      if (playing) {
+        context.resume().then(() => {
+          const note = notes[head % NUM_NOTES];
+          return state.synth.triggerAttack(
+            `${note.sharp}${head < NUM_NOTES ? octave : octave + 1}`
+          );
+        });
+        const interval: number = setInterval(() => {
+          setState({ ...state, notesToPlay: tail });
+        }, 200);
+        return () => {
+          state.synth.triggerRelease();
+          clearInterval(interval);
+        };
+      }
+    }
+  }, [state]);
+
+  const scaleIndices: Scale = scale.reduce(
+    (soFar: Scale, n: number) => {
+      return soFar.concat(soFar[soFar.length - 1] + n);
+    },
+    [root]
+  );
+
+  const player: JSX.Element = state.loaded ? (
+    <Button
+      title={playing ? "Pause" : "Play"}
+      onPress={function () {
+        setState({ ...state, notesToPlay: playing ? [] : scaleIndices });
+      }}
+    />
+  ) : (
+    <Text>loading...</Text>
+  );
 
   const rootButton: JSX.Element = (
     <Button
@@ -25,12 +136,6 @@ export default function App(): JSX.Element {
     />
   );
 
-  const scaleIndices: Scale = scale.reduce(
-    (soFar: Scale, n: number) => {
-      return soFar.concat(soFar[soFar.length - 1] + n);
-    },
-    [root]
-  );
   const width = 500;
   const necklace = (
     <View
