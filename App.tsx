@@ -31,13 +31,13 @@ export default function App(): JSX.Element {
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
   useEffect(() => {
-    console.log("Creating synth...");
-    const synth = new Synth().toDestination();
-    console.log("Created synth.");
-    setState({
-      loaded: true,
-      synth: synth,
-      notesToPlay: [],
+    start().then(() => {
+      const synth = new Synth().toDestination();
+      setState({
+        loaded: true,
+        synth: synth,
+        notesToPlay: [],
+      });
     });
   }, [setState]);
 
@@ -46,15 +46,13 @@ export default function App(): JSX.Element {
       const [head, ...tail]: Scale = state.notesToPlay;
       if (playing) {
         let interval: number | null = null;
-        start().then(() => {
-          const note = notes[head % NUM_NOTES];
-          state.synth.triggerAttack(
-            `${note.sharp}${head < NUM_NOTES ? octave : octave + 1}`
-          );
-          interval = setInterval(() => {
-            setState({ ...state, notesToPlay: tail });
-          }, 300);
-        });
+        const note = notes[head % NUM_NOTES];
+        state.synth.triggerAttack(
+          `${note.sharp}${head < NUM_NOTES ? octave : octave + 1}`
+        );
+        interval = setInterval(() => {
+          setState({ ...state, notesToPlay: tail });
+        }, 300);
         return () => {
           state.synth.triggerRelease();
           if (interval) clearInterval(interval);
