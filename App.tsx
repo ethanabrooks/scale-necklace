@@ -5,6 +5,8 @@ import { scales } from "./scales";
 import { styles } from "./styles";
 import { Note, notes, NUM_NOTES } from "./notes";
 import { Synth } from "tone";
+import { animated, config, useSpring } from "react-spring";
+import { Spring } from "react-spring/renderprops-universal";
 
 export type Scale = number[];
 export type State =
@@ -31,6 +33,7 @@ export default function App(): JSX.Element {
   const [scale, setScale] = React.useState<Scale>(scales[0]);
   const [root, setRoot] = React.useState<number>(0);
   const [state, setState] = useState<State>({ loaded: false });
+
   const octave: number = 3;
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
@@ -98,6 +101,8 @@ export default function App(): JSX.Element {
     />
   );
 
+  const modNotes = rotate(notes, root);
+
   const width = 500;
   const necklace = (
     <View
@@ -106,55 +111,64 @@ export default function App(): JSX.Element {
         width: width,
       }}
     >
-      {notes.map((_: Note, i: number) => {
-        const theta = (2 * Math.PI * i) / NUM_NOTES - Math.PI / 2;
-        const diameter = width / 6;
-        const left = (width * (1 + Math.cos(theta)) - diameter) / 2;
-        const top = (width * (1 + Math.sin(theta))) / 2;
-        let j = mod(i + root, NUM_NOTES);
-        const t = notes[j];
-        let color: string;
-
-        const indices = scaleIndices.map((i) => i % NUM_NOTES);
-        if (state.loaded && state.notesToPlay[0] % NUM_NOTES == j) {
-          color = "#2F4F4F";
-        } else if (indices.includes(j)) {
-          color = "grey";
-        } else {
-          color = "lightgrey";
-        }
-
+      {modNotes.map((note: Note, i: number) => {
         return (
-          <TouchableOpacity
-            style={{
-              width: diameter,
-              height: diameter,
-              position: "absolute",
-              left: left,
-              top: top,
-              backgroundColor: color,
-              borderRadius: 50,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            onPress={(e) => {
-              // @ts-ignore
-              if (e.shiftKey) {
-                const indices = scaleIndices.map((k) => k % NUM_NOTES);
-                if (indices.includes(j)) {
-                  setScale(rotate(scale, indices.indexOf(j)));
-                  setRoot(j);
-                }
+          <Spring to={{ root: root }} config={{ tension: 40 }} key={i}>
+            {(props) => {
+              const theta =
+                (2 * Math.PI * (i + (root - props.root))) / NUM_NOTES -
+                Math.PI / 2;
+              const diameter = width / 6;
+              const left = (width * (1 + Math.cos(theta)) - diameter) / 2;
+              const top = (width * (1 + Math.sin(theta))) / 2;
+              let j = mod(i + root, NUM_NOTES);
+              let color: string;
+
+              const indices = scaleIndices.map((i) => i % NUM_NOTES);
+              if (state.loaded && state.notesToPlay[0] % NUM_NOTES == j) {
+                color = "#2F4F4F";
+              } else if (indices.includes(j)) {
+                color = "grey";
               } else {
-                setRoot(j);
+                color = "lightgrey";
               }
+
+              return (
+                <TouchableOpacity
+                  style={{
+                    width: diameter,
+                    height: diameter,
+                    position: "absolute",
+                    left: left,
+                    top: top,
+                    backgroundColor: color,
+                    borderRadius: 50,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  onPress={(e) => {
+                    // @ts-ignore
+                    if (e.shiftKey) {
+                      const indices = scaleIndices.map((k) => k % NUM_NOTES);
+                      if (indices.includes(j)) {
+                        setScale(rotate(scale, indices.indexOf(j)));
+                        setRoot(j);
+                      }
+                    } else {
+                      setRoot(j);
+                    }
+                  }}
+                  key={i}
+                >
+                  <Text style={{ color: "white" }}>
+                    {note.sharp == note.flat
+                      ? note.sharp
+                      : `${note.sharp}/${note.flat}`}
+                  </Text>
+                </TouchableOpacity>
+              );
             }}
-            key={i}
-          >
-            <Text style={{ color: "white" }}>
-              {t.sharp == t.flat ? t.sharp : `${t.sharp}/${t.flat}`}
-            </Text>
-          </TouchableOpacity>
+          </Spring>
         );
       })}
     </View>
