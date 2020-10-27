@@ -10,6 +10,7 @@
     "predeploy": "expo build:web"
   },
   "dependencies": {
+    "eslint-plugin-react-hooks": "^4.2.0",
     "expo": "~39.0.2",
     "expo-status-bar": "~1.0.2",
     "fp-ts": "^2.8.4",
