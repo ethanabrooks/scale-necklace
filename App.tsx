@@ -4,7 +4,7 @@ import "./scales";
 import { scales } from "./scales";
 import { styles } from "./styles";
 import { Note, notes, NUM_NOTES } from "./notes";
-import { context, start, Synth } from "tone";
+import { Synth } from "tone";
 
 export type Scale = number[];
 export type State =
@@ -21,6 +21,10 @@ function randomNumber(n: number): number {
 
 function mod(a: number, b: number): number {
   return ((a % b) + b) % b;
+}
+
+function rotate<X>(array: X[], start: number) {
+  return array.slice(start).concat(array.slice(0, start));
 }
 
 export default function App(): JSX.Element {
@@ -87,7 +91,10 @@ export default function App(): JSX.Element {
   const scaleButton: JSX.Element = (
     <Button
       title={"Randomize Scale"}
-      onPress={() => setScale(scales[randomNumber(scales.length)])}
+      onPress={() => {
+        const newScale = scales[randomNumber(scales.length)];
+        setScale(rotate(newScale, randomNumber(newScale.length)));
+      }}
     />
   );
 
@@ -130,8 +137,17 @@ export default function App(): JSX.Element {
               alignItems: "center",
               justifyContent: "center",
             }}
-            onPress={() => {
-              setRoot(j);
+            onPress={(e) => {
+              // @ts-ignore
+              if (e.shiftKey) {
+                const indices = scaleIndices.map((k) => k % NUM_NOTES);
+                if (indices.includes(j)) {
+                  setScale(rotate(scale, indices.indexOf(j)));
+                  setRoot(j);
+                }
+              } else {
+                setRoot(j);
+              }
             }}
             key={i}
           >
