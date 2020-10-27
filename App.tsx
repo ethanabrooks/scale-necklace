@@ -88,6 +88,13 @@ export default function App(): JSX.Element {
     />
   );
 
+  const scaleButton: JSX.Element = (
+    <Button
+      title={"Randomize Scale"}
+      onPress={() => setScale(scales[randomNumber(scales.length)])}
+    />
+  );
+
   const width = 500;
   const necklace = (
     <View
@@ -129,7 +136,6 @@ export default function App(): JSX.Element {
             }}
             onPress={() => {
               setRoot(j);
-              setScale(scales[randomNumber(scales.length)]);
             }}
             key={i}
           >
@@ -145,6 +151,7 @@ export default function App(): JSX.Element {
     <View style={styles.container}>
       <View style={styles.button}>
         {rootButton}
+        {scaleButton}
         {player}
       </View>
       <View style={styles.necklace}>{necklace}</View>
