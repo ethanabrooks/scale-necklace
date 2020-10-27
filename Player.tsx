@@ -15,6 +15,7 @@ type State =
 export function Player(props: { notesInScale: Scale }) {
   const [state, setState] = useState<State>({ loaded: false });
   const octave: number = 3;
+  const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
   useEffect(() => {
     start().then(() => {
@@ -30,7 +31,7 @@ export function Player(props: { notesInScale: Scale }) {
   useEffect(() => {
     if (state.loaded) {
       const [head, ...tail]: Scale = state.notesToPlay;
-      if (state.notesToPlay.length > 0) {
+      if (playing) {
         context.resume().then(() => {
           const note = notes[head % NUM_NOTES];
           return state.synth.triggerAttack(
@@ -50,9 +51,9 @@ export function Player(props: { notesInScale: Scale }) {
 
   return state.loaded ? (
     <Button
-      title={"Play"}
+      title={playing ? "Pause" : "Play"}
       onPress={function () {
-        setState({ ...state, notesToPlay: props.notesInScale });
+        setState({ ...state, notesToPlay: playing ? [] : props.notesInScale });
       }}
     />
   ) : (

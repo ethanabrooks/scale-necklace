@@ -31,7 +31,7 @@ export default function App(): JSX.Element {
     },
     [root]
   );
-  const width = 250;
+  const width = 500;
   const necklace = (
     <View
       style={{
@@ -79,8 +79,8 @@ export default function App(): JSX.Element {
   );
   return (
     <View style={styles.container}>
-      <View style={styles.button}>{rootButton}</View>
       <View style={styles.button}>
+        {rootButton}
         <Player notesInScale={scaleIndices} />
       </View>
       <View style={styles.necklace}>{necklace}</View>
