@@ -6,8 +6,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "predeploy": "expo build:web",
-    "deploy": "gh-pages -b main -d build"
+    "deploy": "gh-pages -d web-build",
+    "predeploy": "expo build:web"
   },
   "dependencies": {
     "expo": "~39.0.2",
@@ -29,5 +29,5 @@
     "typescript": "~3.9.5"
   },
   "private": true,
-  "homepage": "http://ethanabrooks.github.io/scale-necklace"
+  "homepage": "http://scales.github.io"
 }
