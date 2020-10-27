@@ -31,7 +31,9 @@ export default function App(): JSX.Element {
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
   useEffect(() => {
+    console.log("Creating synth...");
     const synth = new Synth().toDestination();
+    console.log("Created synth.");
     setState({
       loaded: true,
       synth: synth,
@@ -43,7 +45,9 @@ export default function App(): JSX.Element {
     if (state.loaded) {
       const [head, ...tail]: Scale = state.notesToPlay;
       if (playing) {
+        console.log("Invoking Tone.start()...");
         start().then(() => {
+          console.log("Tone.start() resolved.");
           const note = notes[head % NUM_NOTES];
           return state.synth.triggerAttack(
             `${note.sharp}${head < NUM_NOTES ? octave : octave + 1}`
