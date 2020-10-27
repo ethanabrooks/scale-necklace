@@ -1,7 +1,7 @@
 {
   "files": {
-    "app.js": "/scale-necklace/static/js/app.f4b849db.chunk.js",
-    "app.js.map": "/scale-necklace/static/js/app.f4b849db.chunk.js.map",
+    "app.js": "/scale-necklace/static/js/app.9dfabaf8.chunk.js",
+    "app.js.map": "/scale-necklace/static/js/app.9dfabaf8.chunk.js.map",
     "runtime~app.js": "/scale-necklace/static/js/runtime~app.ff751e0e.js",
     "runtime~app.js.map": "/scale-necklace/static/js/runtime~app.ff751e0e.js.map",
     "static/js/2.8e99a880.chunk.js": "/scale-necklace/static/js/2.8e99a880.chunk.js",
@@ -17,6 +17,6 @@
   "entrypoints": [
     "static/js/runtime~app.ff751e0e.js",
     "static/js/2.8e99a880.chunk.js",
-    "static/js/app.f4b849db.chunk.js"
+    "static/js/app.9dfabaf8.chunk.js"
   ]
 }
