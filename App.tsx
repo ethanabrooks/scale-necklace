@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Text, TouchableOpacity, View } from "react-native";
 import "./scales";
 import { scales } from "./scales";
-import { Synth } from "tone";
+import { start, Synth } from "tone";
 import { styles } from "./styles";
 import { Note, notes, NUM_NOTES } from "./notes";
 
@@ -26,97 +26,41 @@ type State =
       seconds: number;
     };
 
-function Player(props: { notesInScale: Note[] }): JSX.Element {
-  const [state, setState] = useState<State>({ loaded: false });
-  useEffect(() => {
-    console.log("here");
-    // start().then(() => {
-    const synth = new Synth().toDestination();
-    setState({
-      loaded: true,
-      synth: synth,
-      notesToPlay: [],
-      octave: 3,
-      seconds: 0,
-    });
-    // }
-    // );
-  }, [setState]);
-
-  useEffect(() => {
-    if (state.loaded && state.notesToPlay.length > 0) {
-      const [head, ...tail]: Note[] = state.notesToPlay;
-      // state.synth.triggerAttack(`${head.sharp}${state.octave}`);
-      // console.log(`${head.sharp}${state.octave}`);
-      console.log(tail);
-      setInterval(() => {
-        // console.log("release 1");
-        setState({ ...state, notesToPlay: tail });
-      }, 1000);
-      return () => {
-        // console.log("release 2");
-        // state.synth.triggerRelease();
-      };
-    }
-    return () => {};
-  }, [setState]);
-  if (!state.loaded) {
-    return <Text>loading...</Text>;
-  }
-
-  return (
-    <View style={styles.button}>
-      <Button
-        title={"Play"}
-        onPress={() => {
-          setState({ ...state, notesToPlay: props.notesInScale });
-        }}
-      />
-    </View>
-  );
-}
-
 function Timer(props: { notesInScale: Note[] }) {
-  const [isActive, setIsActive] = useState(false);
   const [state, setState] = useState<State>({ loaded: false });
 
   useEffect(() => {
-    // start().then(() => {
-    const synth = new Synth().toDestination();
-    setState({
-      loaded: true,
-      synth: synth,
-      notesToPlay: [],
-      octave: 3,
-      seconds: 0,
+    start().then(() => {
+      const synth = new Synth().toDestination();
+      setState({
+        loaded: true,
+        synth: synth,
+        notesToPlay: [],
+        octave: 3,
+        seconds: 0,
+      });
     });
-    // });
   }, [setState]);
 
   useEffect(() => {
-    let interval: null | number = null;
     if (state.loaded) {
-      if (isActive) {
-        if (state.notesToPlay.length > 0) {
-          const [head, ...tail]: Note[] = state.notesToPlay;
-          state.synth.triggerAttack(`${head.sharp}${state.octave}`);
-          interval = setInterval(() => {
-            setState({
-              ...state,
-              seconds: state.seconds + 1,
-              notesToPlay: tail,
-            });
-          }, 1000);
-        }
-      } else if (!isActive && state.seconds !== 0) {
-        clearInterval((interval as unknown) as number);
+      const [head, ...tail]: Note[] = state.notesToPlay;
+      if (head) {
+        state.synth.triggerAttack(`${head.sharp}${state.octave}`);
+        const interval: number = setInterval(() => {
+          setState({
+            ...state,
+            seconds: state.seconds + 1,
+            notesToPlay: tail,
+          });
+        }, 200);
+        return () => {
+          state.synth.triggerRelease();
+          clearInterval(interval);
+        };
       }
     }
-    return () => {
-      if (state.loaded) state.synth.triggerRelease();
-      clearInterval((interval as unknown) as number);
-    };
-  }, [isActive, state]);
+  }, [state]);
 
   if (!state.loaded) {
     return <Text>loading...</Text>;
@@ -130,7 +74,6 @@ function Timer(props: { notesInScale: Note[] }) {
     if (state.loaded) {
       setState({ ...state, seconds: state.seconds + 1 });
     }
-    setIsActive(false);
   }
 
   return (
@@ -138,12 +81,10 @@ function Timer(props: { notesInScale: Note[] }) {
       <div className="time">{state.seconds}s</div>
       <div className="row">
         <button
-          className={`button button-primary button-primary-${
-            isActive ? "active" : "inactive"
-          }`}
+          className={`button button-primary button-primary-${"active"}`}
           onClick={toggle}
         >
-          {isActive ? "Pause" : "Start"}
+          {"Start"}
         </button>
         <button className="button" onClick={reset}>
           Reset
