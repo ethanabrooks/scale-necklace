@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Text, TouchableOpacity, View } from "react-native";
 import "./scales";
 import { scales } from "./scales";
-import { start, Synth } from "tone";
+import { context, start, Synth } from "tone";
 import { styles } from "./styles";
 import { Note, notes, NUM_NOTES } from "./notes";
 
@@ -43,8 +43,12 @@ function Timer(props: { notesInScale: Note[] }) {
   useEffect(() => {
     if (state.loaded) {
       const [head, ...tail]: Note[] = state.notesToPlay;
-      if (head) {
-        state.synth.triggerAttack(`${head.sharp}${state.octave}`);
+      if (state.notesToPlay.length > 0) {
+        context
+          .resume()
+          .then(() =>
+            state.synth.triggerAttack(`${head.sharp}${state.octave}`)
+          );
         const interval: number = setInterval(() => {
           setState({
             ...state,
