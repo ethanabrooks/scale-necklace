@@ -1,20 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button, Text, TouchableOpacity, View } from "react-native";
 import "./scales";
 import { scales } from "./scales";
-import { context, start, Synth } from "tone";
 import { styles } from "./styles";
 import { Note, notes, NUM_NOTES } from "./notes";
-
-type Scale = number[];
-type State =
-  | { loaded: false }
-  | {
-      loaded: true;
-      synth: Synth;
-      notesToPlay: Scale;
-      octave: number;
-    };
+import { Player, Scale } from "./Player";
 
 function randomNumber(n: number): number {
   return Math.floor(Math.random() * n);
@@ -22,54 +12,6 @@ function randomNumber(n: number): number {
 
 function mod(a: number, b: number): number {
   return ((a % b) + b) % b;
-}
-
-function Player(props: { notesInScale: Scale }) {
-  const [state, setState] = useState<State>({ loaded: false });
-
-  useEffect(() => {
-    start().then(() => {
-      const synth = new Synth().toDestination();
-      setState({
-        loaded: true,
-        synth: synth,
-        notesToPlay: [],
-        octave: 3,
-      });
-    });
-  }, [setState]);
-
-  useEffect(() => {
-    if (state.loaded) {
-      const [head, ...tail]: Scale = state.notesToPlay;
-      if (state.notesToPlay.length > 0) {
-        context.resume().then(() => {
-          const note = notes[head % NUM_NOTES];
-          return state.synth.triggerAttack(`${note.sharp}${state.octave}`);
-        });
-        const interval: number = setInterval(() => {
-          setState({
-            ...state,
-            notesToPlay: tail,
-          });
-        }, 200);
-        return () => {
-          state.synth.triggerRelease();
-          clearInterval(interval);
-        };
-      }
-    }
-  }, [state]);
-
-  if (!state.loaded) {
-    return <Text>loading...</Text>;
-  }
-
-  function toggle() {
-    if (state.loaded) setState({ ...state, notesToPlay: props.notesInScale });
-  }
-
-  return <Button title={"Play"} onPress={toggle} />;
 }
 
 export default function App(): JSX.Element {
