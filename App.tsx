@@ -42,11 +42,27 @@ export default function App(): JSX.Element {
 
   const scaleIndices: number[] = scale.reduce(
     (soFar: number[], n: number) => {
-      return soFar.concat((soFar[soFar.length - 1] + n) % NUM_NOTES);
+      return soFar.concat(soFar[soFar.length - 1] + n);
     },
     [root]
   );
-  const n = now();
+  const Now = now();
+
+  const playButton: JSX.Element = (
+    <Button
+      title={"Play"}
+      onPress={() => {
+        const synth = new Synth().toDestination();
+        scaleIndices.forEach((index: number, i: number) => {
+          const note = notes[index % NUM_NOTES];
+          const octave = index < NUM_NOTES ? 3 : 4;
+          synth.triggerAttack(`${note.sharp}${octave}`, Now + i);
+          synth.triggerRelease(Now + i + 0.5);
+        });
+      }}
+    />
+  );
+
   const width = 250;
   const necklace = (
     <View
@@ -62,7 +78,9 @@ export default function App(): JSX.Element {
         const top = (width * (1 + Math.sin(theta))) / 2;
         let j = mod(i + root, NUM_NOTES);
         const t = notes[j];
-        const color = scaleIndices.includes(j) ? "black" : "lightgrey";
+        const color = scaleIndices.map((i) => i % NUM_NOTES).includes(j)
+          ? "black"
+          : "lightgrey";
 
         return (
           <TouchableOpacity
@@ -80,8 +98,6 @@ export default function App(): JSX.Element {
             onPress={() => {
               setRoot(j);
               setScale(scales[randomNumber(scales.length)]);
-              state.synth.triggerAttack(`${t.sharp}3`, n);
-              state.synth.triggerRelease(n + 0.5);
             }}
             key={i}
           >
@@ -96,6 +112,7 @@ export default function App(): JSX.Element {
   return (
     <View style={styles.container}>
       <View style={styles.button}>{rootButton}</View>
+      <View style={styles.button}>{playButton}</View>
       <View style={styles.necklace}>{necklace}</View>
     </View>
   );
