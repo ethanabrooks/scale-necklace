@@ -45,7 +45,6 @@ export default function App(): JSX.Element {
     if (state.loaded) {
       const [head, ...tail]: Scale = state.notesToPlay;
       if (playing) {
-        console.log("Invoking Tone.start()...");
         let interval: number | null = null;
         start().then(() => {
           const note = notes[head % NUM_NOTES];
@@ -54,7 +53,7 @@ export default function App(): JSX.Element {
           );
           interval = setInterval(() => {
             setState({ ...state, notesToPlay: tail });
-          }, 200);
+          }, 300);
         });
         return () => {
           state.synth.triggerRelease();
