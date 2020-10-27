@@ -31,13 +31,11 @@ export default function App(): JSX.Element {
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
   useEffect(() => {
-    start().then(() => {
-      const synth = new Synth().toDestination();
-      setState({
-        loaded: true,
-        synth: synth,
-        notesToPlay: [],
-      });
+    const synth = new Synth().toDestination();
+    setState({
+      loaded: true,
+      synth: synth,
+      notesToPlay: [],
     });
   }, [setState]);
 
@@ -45,7 +43,7 @@ export default function App(): JSX.Element {
     if (state.loaded) {
       const [head, ...tail]: Scale = state.notesToPlay;
       if (playing) {
-        context.resume().then(() => {
+        start().then(() => {
           const note = notes[head % NUM_NOTES];
           return state.synth.triggerAttack(
             `${note.sharp}${head < NUM_NOTES ? octave : octave + 1}`
