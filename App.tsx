@@ -46,19 +46,19 @@ export default function App(): JSX.Element {
       const [head, ...tail]: Scale = state.notesToPlay;
       if (playing) {
         console.log("Invoking Tone.start()...");
+        let interval: number | null = null;
         start().then(() => {
-          console.log("Tone.start() resolved.");
           const note = notes[head % NUM_NOTES];
-          return state.synth.triggerAttack(
+          state.synth.triggerAttack(
             `${note.sharp}${head < NUM_NOTES ? octave : octave + 1}`
           );
+          interval = setInterval(() => {
+            setState({ ...state, notesToPlay: tail });
+          }, 200);
         });
-        const interval: number = setInterval(() => {
-          setState({ ...state, notesToPlay: tail });
-        }, 200);
         return () => {
           state.synth.triggerRelease();
-          clearInterval(interval);
+          if (interval) clearInterval(interval);
         };
       }
     }
