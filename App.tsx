@@ -23,7 +23,6 @@ type State =
       synth: Synth;
       notesToPlay: Note[];
       octave: number;
-      seconds: number;
     };
 
 function Timer(props: { notesInScale: Note[] }) {
@@ -37,7 +36,6 @@ function Timer(props: { notesInScale: Note[] }) {
         synth: synth,
         notesToPlay: [],
         octave: 3,
-        seconds: 0,
       });
     });
   }, [setState]);
@@ -50,7 +48,6 @@ function Timer(props: { notesInScale: Note[] }) {
         const interval: number = setInterval(() => {
           setState({
             ...state,
-            seconds: state.seconds + 1,
             notesToPlay: tail,
           });
         }, 200);
@@ -70,28 +67,7 @@ function Timer(props: { notesInScale: Note[] }) {
     if (state.loaded) setState({ ...state, notesToPlay: props.notesInScale });
   }
 
-  function reset() {
-    if (state.loaded) {
-      setState({ ...state, seconds: state.seconds + 1 });
-    }
-  }
-
-  return (
-    <div className="app">
-      <div className="time">{state.seconds}s</div>
-      <div className="row">
-        <button
-          className={`button button-primary button-primary-${"active"}`}
-          onClick={toggle}
-        >
-          {"Start"}
-        </button>
-        <button className="button" onClick={reset}>
-          Reset
-        </button>
-      </div>
-    </div>
-  );
+  return <Button title={"Play"} onPress={toggle} />;
 }
 
 export default function App(): JSX.Element {
