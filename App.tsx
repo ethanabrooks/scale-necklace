@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Text, TouchableOpacity, View } from "react-native";
 import "./scales";
-import { Note, NUM_NOTES, scales, notes } from "./scales";
+import { scales } from "./scales";
 import { now, Synth } from "tone";
 import { styles } from "./styles";
 import { Seconds } from "tone/build/esm/core/type/Units";
+import { Note, notes, NUM_NOTES } from "./notes";
 
 type Scale = number[];
 
@@ -22,10 +23,10 @@ export default function App(): JSX.Element {
   const [scale, setScale] = React.useState<Scale>(scales[0]);
   const [root, setRoot] = React.useState<number>(0);
   const [state, setState] = useState<State>({ loaded: false });
-  const sampler = useRef<null | Synth>(null);
+  const [notesToPlay, setNotesToPlay] = useState<number[]>([]);
 
   useEffect(() => {
-    const synth = new Synth().toMaster();
+    const synth = new Synth().toDestination();
     setState({ loaded: true, synth: synth, now: now() });
   }, []);
 
