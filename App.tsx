@@ -22,27 +22,12 @@ type Color = { r: number; g: number; b: number };
 
 type Triple = [number, number, number];
 
-function interpolate(colors: Color[]) {
-  return (i: number) => {
-    const idx = colors.length * i;
-    const lIdx = Math.floor(idx);
-    const rIdx = Math.ceil(idx);
-    const t = idx - lIdx;
-    const lColor = colors[lIdx % colors.length];
-    const rColor = colors[rIdx % colors.length];
-    const c2a = (c: Color): Triple => [c.r, c.g, c.b];
-    const a2c = ([r, g, b]: Triple) => ({ r: r, g: g, b: b });
-    const interpolated = zipWith(
-      c2a(lColor),
-      c2a(rColor),
-      (l, r) => t * l + (1 - t) * r
-    );
-    return a2c(interpolated as Triple);
-  };
-}
-
 function randomNumber(n: number): number {
   return Math.floor(Math.random() * n);
+}
+
+function mod(a: number, b: number): number {
+  return ((a % b) + b) % b;
 }
 
 function rotate<X>(array: X[], start: number) {
@@ -129,7 +114,6 @@ export default function App(): JSX.Element {
   const colors: Color[] = modNotes.map((_, i) =>
     scaleIndices.includes(i + root) ? grey : lightgrey
   );
-  const colorMap = interpolate(colors);
   const necklace = (
     <View
       style={{
@@ -146,16 +130,21 @@ export default function App(): JSX.Element {
                 Math.PI / 2;
               const left = (width * (1 + Math.cos(theta)) - diameter) / 2;
               const top = (width * (1 + Math.sin(theta))) / 2;
+              const idx = mod(theta / (2 * Math.PI) + 1 / 4, 1) * notes.length;
+              const lIdx = Math.floor(idx);
+              const rIdx = Math.ceil(idx);
+              const t = idx - lIdx;
+              const lColor = colors[lIdx % colors.length];
+              const rColor = colors[rIdx % colors.length];
+              const c2a = (c: Color): Triple => [c.r, c.g, c.b];
+              const a2c = ([r, g, b]: Triple) => ({ r: r, g: g, b: b });
+              const interpolated = zipWith(
+                c2a(lColor),
+                c2a(rColor),
+                (l, r) => (1 - t) * l + t * r
+              );
+              const color = a2c(interpolated as Triple);
               const j = i + root;
-              let color: string;
-              if (state.loaded && state.notesToPlay[0] - root == i) {
-                color = "#2F4F4F";
-              } else if (scaleIndices.includes(j)) {
-                color = "grey";
-              } else {
-                color = "lightgrey";
-              }
-
               return (
                 <TouchableOpacity
                   style={{
@@ -164,7 +153,7 @@ export default function App(): JSX.Element {
                     position: "absolute",
                     left: left,
                     top: top,
-                    backgroundColor: color,
+                    backgroundColor: `rgb(${color.r},${color.g},${color.b})`,
                     borderRadius: 50,
                     alignItems: "center",
                     justifyContent: "center",
