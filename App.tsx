@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Button, Text, TouchableOpacity, View } from "react-native";
+import { zipWith } from "fp-ts/Array";
 import "./scales";
 import { scales } from "./scales";
 import { styles } from "./styles";
-import { Note, notes, NUM_NOTES } from "./notes";
+import { Note, notes } from "./notes";
 import { Synth } from "tone";
-import { animated, config, useSpring } from "react-spring";
 import { Spring } from "react-spring/renderprops-universal";
+
+const parse = require("color-parse");
 
 export type Scale = number[];
 export type State =
@@ -16,13 +18,31 @@ export type State =
       synth: Synth;
       notesToPlay: Scale;
     };
+type Color = { r: number; g: number; b: number };
+
+type Triple = [number, number, number];
+
+function interpolate(colors: Color[]) {
+  return (i: number) => {
+    const idx = colors.length * i;
+    const lIdx = Math.floor(idx);
+    const rIdx = Math.ceil(idx);
+    const t = idx - lIdx;
+    const lColor = colors[lIdx % colors.length];
+    const rColor = colors[rIdx % colors.length];
+    const c2a = (c: Color): Triple => [c.r, c.g, c.b];
+    const a2c = ([r, g, b]: Triple) => ({ r: r, g: g, b: b });
+    const interpolated = zipWith(
+      c2a(lColor),
+      c2a(rColor),
+      (l, r) => t * l + (1 - t) * r
+    );
+    return a2c(interpolated as Triple);
+  };
+}
 
 function randomNumber(n: number): number {
   return Math.floor(Math.random() * n);
-}
-
-function mod(a: number, b: number): number {
-  return ((a % b) + b) % b;
 }
 
 function rotate<X>(array: X[], start: number) {
@@ -51,9 +71,9 @@ export default function App(): JSX.Element {
       const [head, ...tail]: Scale = state.notesToPlay;
       if (playing) {
         let interval: number | null = null;
-        const note = notes[head % NUM_NOTES];
+        const note = notes[head % notes.length];
         state.synth.triggerAttack(
-          `${note.sharp}${head < NUM_NOTES ? octave : octave + 1}`
+          `${note.sharp}${head < notes.length ? octave : octave + 1}`
         );
         interval = setInterval(() => {
           setState({ ...state, notesToPlay: tail });
@@ -87,7 +107,7 @@ export default function App(): JSX.Element {
   const rootButton: JSX.Element = (
     <Button
       title={"Randomize Root"}
-      onPress={() => setRoot(randomNumber(NUM_NOTES))}
+      onPress={() => setRoot(randomNumber(notes.length))}
     />
   );
 
@@ -102,8 +122,14 @@ export default function App(): JSX.Element {
   );
 
   const modNotes = rotate(notes, root);
-
   const width = 500;
+  const diameter = width / 6;
+  const grey = { r: 128, g: 128, b: 128 };
+  const lightgrey = { r: 211, g: 211, b: 211 };
+  const colors: Color[] = modNotes.map((_, i) =>
+    scaleIndices.includes(i + root) ? grey : lightgrey
+  );
+  const colorMap = interpolate(colors);
   const necklace = (
     <View
       style={{
@@ -116,18 +142,15 @@ export default function App(): JSX.Element {
           <Spring to={{ root: root }} config={{ tension: 40 }} key={i}>
             {(props) => {
               const theta =
-                (2 * Math.PI * (i + (root - props.root))) / NUM_NOTES -
+                (2 * Math.PI * (i + (root - props.root))) / notes.length -
                 Math.PI / 2;
-              const diameter = width / 6;
               const left = (width * (1 + Math.cos(theta)) - diameter) / 2;
               const top = (width * (1 + Math.sin(theta))) / 2;
-              let j = mod(i + root, NUM_NOTES);
+              const j = i + root;
               let color: string;
-
-              const indices = scaleIndices.map((i) => i % NUM_NOTES);
-              if (state.loaded && state.notesToPlay[0] % NUM_NOTES == j) {
+              if (state.loaded && state.notesToPlay[0] - root == i) {
                 color = "#2F4F4F";
-              } else if (indices.includes(j)) {
+              } else if (scaleIndices.includes(j)) {
                 color = "grey";
               } else {
                 color = "lightgrey";
@@ -149,7 +172,7 @@ export default function App(): JSX.Element {
                   onPress={(e) => {
                     // @ts-ignore
                     if (e.shiftKey) {
-                      const indices = scaleIndices.map((k) => k % NUM_NOTES);
+                      const indices = scaleIndices.map((k) => k % notes.length);
                       if (indices.includes(j)) {
                         setScale(rotate(scale, indices.indexOf(j)));
                         setRoot(j);
