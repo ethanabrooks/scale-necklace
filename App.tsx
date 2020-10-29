@@ -185,87 +185,28 @@ export default function App(): JSX.Element {
     </View>
   );
 
-  var departments = [
-    {
-      name: "Sales",
-      color: "green",
-      count: 5,
-    },
-    {
-      name: "Tech Lead",
-      color: "red",
-      count: 8,
-    },
-    {
-      name: "HR",
-      color: "orange",
-      count: 3,
-    },
-    {
-      name: "Development",
-      color: "blue",
-      count: 12,
-    },
-    {
-      name: "QA",
-      color: "pink",
-      count: 6,
-    },
-    {
-      name: "Finance",
-      color: "purple",
-      count: 9,
-    },
-    {
-      name: "PL",
-      color: "gray",
-      count: 1,
-    },
-    {
-      name: "Marketing",
-      color: "yellow",
-      count: 4,
-    },
-  ];
-
-  var innerRadius = 50;
-  var outerRadius = 200;
-  var maxLeaveCount = departments.reduce(
-    (max, department) => (max < department.count ? department.count : max),
-    0
-  );
-
-  var svgContainer = d3
-    .select("#container")
-    .append("svg")
-    .attr("width", 3 * outerRadius)
-    .attr("height", 3 * outerRadius);
-
-  var arcGen = d3
+  const innerRadius = 120;
+  const outerRadius = 200;
+  const arcSize = (2 * Math.PI) / notes.length;
+  const arcGen = d3
     .arc()
     .innerRadius(innerRadius)
-    .outerRadius((d) => (d.count / maxLeaveCount) * (outerRadius / 0.9))
-    .startAngle((d, i) => (2 * Math.PI * i) / departments.length)
-    .endAngle(
-      (d, i) =>
-        (2 * Math.PI * i) / departments.length +
-        (2 * Math.PI) / departments.length
-    );
-  const arcD: string[] = departments.map(arcGen);
-  console.log(arcD);
+    .outerRadius(outerRadius)
+    .startAngle((_: Note, i: number) => i * arcSize)
+    .endAngle((_: Note, i: number) => (i + 1) * arcSize);
+  const arcD: string[] = notes.map(arcGen);
   let translation = (3 * outerRadius) / 2;
   return (
     <svg width={3 * outerRadius} height={3 * outerRadius}>
-      <g fill="green">
-        {arcD.map((d: string) => {
-          return (
-            <path
-              transform={`translate(${translation},${translation})`}
-              d={d}
-            />
-          );
-        })}
-      </g>
+      {arcD.map((d: string, i: number) => (
+        <path
+          fill={scaleIndices.includes(i) ? "grey" : "lightgrey"}
+          stroke={"white"}
+          transform={`translate(${translation},${translation})`}
+          d={d}
+          key={i}
+        />
+      ))}
     </svg>
   );
 }
