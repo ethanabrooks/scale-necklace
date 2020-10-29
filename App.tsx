@@ -34,15 +34,32 @@ function rotate<X>(array: X[], start: number) {
   return array.slice(start).concat(array.slice(0, start));
 }
 
-function useNearestDividend(pp: number, m: number): number {
+// useNearestModulo returns a value minimizing the distance traveled around a
+// circle. It always satisfies useNearestModulo(P, M) % M = P.
+//
+// useNearestModulo(P', M) = Q' such that Q' % M = P' but minimizing |Q' - Q|,
+// where Q is the return value from the previous call. The returned value Q' is
+// then used as the Q for the next call, and so forth.
+//
+// In the code below, P' is pp and Q' is qq.
+//
+// Example (sequence of calls):
+//   useNearestModulo( 0, 12) =  0
+//   useNearestModulo(10, 12) = -2
+//   useNearestModulo( 3, 12) =  3
+//   useNearestModulo( 7, 12) =  7
+//   useNearestModulo(10, 12) = 10
+function useNearestModulo(pp: number, m: number): number {
   const q = React.useRef<number | null>(null);
+
+  // If the function hasn't been called yet, just return P' which satisfies
+  // P' % M = P', but record it as Q for the next call.
   if (q.current == null) {
-    q.current = pp
-    return pp
+    q.current = pp;
+    return pp;
   }
 
-  const a = Math.round((q.current - pp) / m);
-  const qq = a*m + pp;
+  const qq = Math.round((q.current - pp) / m) * m + pp;
   q.current = qq;
   return qq;
 }
@@ -52,7 +69,7 @@ export default function App(): JSX.Element {
   const [root, setRoot] = React.useState<number>(0);
   const [state, setState] = useState<State>({ loaded: false });
 
-  const targetRoot = useNearestDividend(root, notes.length);
+  const targetRoot = useNearestModulo(root, notes.length);
 
   const octave: number = 3;
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
