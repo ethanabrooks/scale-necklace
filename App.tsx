@@ -59,6 +59,8 @@ function useNearestModulo(pp: number, m: number): number {
     return pp;
   }
 
+  // Calculate Q' that gets as close to Q as possible while satisfying
+  // Q' % M = P'.
   const qq = Math.round((q.current - pp) / m) * m + pp;
   q.current = qq;
   return qq;
