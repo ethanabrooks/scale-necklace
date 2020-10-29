@@ -34,10 +34,25 @@ function rotate<X>(array: X[], start: number) {
   return array.slice(start).concat(array.slice(0, start));
 }
 
+function useNearestDividend(pp: number, m: number): number {
+  const q = React.useRef<number | null>(null);
+  if (q.current == null) {
+    q.current = pp
+    return pp
+  }
+
+  const a = Math.round((q.current - pp) / m);
+  const qq = a*m + pp;
+  q.current = qq;
+  return qq;
+}
+
 export default function App(): JSX.Element {
   const [scale, setScale] = React.useState<Scale>(scales[0]);
   const [root, setRoot] = React.useState<number>(0);
   const [state, setState] = useState<State>({ loaded: false });
+
+  const targetRoot = useNearestDividend(root, notes.length);
 
   const octave: number = 3;
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
@@ -123,7 +138,7 @@ export default function App(): JSX.Element {
     >
       {modNotes.map((note: Note, i: number) => {
         return (
-          <Spring to={{ root: root }} config={{ tension: 40 }} key={i}>
+          <Spring to={{ root: targetRoot }} config={{ tension: 40 }} key={i}>
             {(props) => {
               const theta =
                 (2 * Math.PI * (i + (root - props.root))) / notes.length -
@@ -164,10 +179,10 @@ export default function App(): JSX.Element {
                       const indices = scaleIndices.map((k) => k % notes.length);
                       if (indices.includes(j)) {
                         setScale(rotate(scale, indices.indexOf(j)));
-                        setRoot(j);
+                        setRoot(j % notes.length);
                       }
                     } else {
-                      setRoot(j);
+                      setRoot(j % notes.length);
                     }
                   }}
                   key={i}
