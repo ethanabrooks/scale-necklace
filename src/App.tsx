@@ -4,6 +4,7 @@ import {scales} from "./scales";
 import {Note, notes} from "./notes";
 import {Synth} from "tone";
 import * as d3 from "d3";
+import "./styles.scss"
 
 export type Scale = number[];
 export type State =
@@ -100,18 +101,9 @@ export default function App(): JSX.Element {
   const size = 500;
   const diameter = size / 6;
   const noteNames = modNotes.map((note: Note, i: number) => {
-    const theta = (2 * Math.PI * i) / notes.length - Math.PI / 2;
-    const left = (size * (1 + Math.cos(theta)) - diameter) / 2;
-    const top = (size * (1 + Math.sin(theta))) / 2;
     const j = i + root;
     return (
-      <button
-        style={{
-          height: diameter,
-          position: "absolute",
-          left: left,
-          top: top,
-        }}
+      <a style={{"--i": i} as any}
         onClick={(e) => {
           // @ts-ignore
           if (e.shiftKey) {
@@ -129,7 +121,7 @@ export default function App(): JSX.Element {
         <text style={{ color: "black" }}>
           {note.sharp == note.flat ? note.sharp : `${note.sharp}/${note.flat}`}
         </text>
-      </button>
+      </a>
     );
   });
 
@@ -159,7 +151,6 @@ export default function App(): JSX.Element {
           style={{
             width: size,
             height: size,
-            backgroundColor: "green",
             position: "absolute",
           }}
         >
@@ -180,12 +171,8 @@ export default function App(): JSX.Element {
           })}
         </svg>
         <div
-          style={{
-            position: "absolute",
-            width: size,
-            height: size,
-            backgroundColor: "yellow",
-          }}
+          className={"notenames"}
+          style={({"--m": notes.length, "--tan": 0.36}) as any}
         >
           {noteNames}
         </div>
