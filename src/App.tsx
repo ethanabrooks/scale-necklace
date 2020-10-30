@@ -13,17 +13,11 @@ export type State =
       synth: Synth;
       notesToPlay: Scale;
     };
-type Color = { r: number; g: number; b: number };
-
-type Triple = [number, number, number];
 
 function randomNumber(n: number): number {
   return Math.floor(Math.random() * n);
 }
 
-function mod(a: number, b: number): number {
-  return ((a % b) + b) % b;
-}
 
 function rotate<X>(array: X[], start: number) {
   return array.slice(start).concat(array.slice(0, start));
@@ -103,12 +97,12 @@ export default function App(): JSX.Element {
   );
 
   const modNotes = rotate(notes, root);
-  const width = 500;
-  const diameter = width / 6;
+  const size = 500;
+  const diameter = size / 6;
   const noteNames = modNotes.map((note: Note, i: number) => {
     const theta = (2 * Math.PI * i) / notes.length - Math.PI / 2;
-    const left = (width * (1 + Math.cos(theta)) - diameter) / 2;
-    const top = (width * (1 + Math.sin(theta))) / 2;
+    const left = (size * (1 + Math.cos(theta)) - diameter) / 2;
+    const top = (size * (1 + Math.sin(theta))) / 2;
     const j = i + root;
     return (
       <button
@@ -163,8 +157,8 @@ export default function App(): JSX.Element {
       }}>
         <svg
           style={{
-            width: width,
-            height: width,
+            width: size,
+            height: size,
             backgroundColor: "green",
             position: "absolute",
           }}
@@ -178,7 +172,7 @@ export default function App(): JSX.Element {
                     : "lightgrey"
                 }
                 stroke={"white"}
-                transform={`translate(${width / 10},${width / 3})`}
+                transform={`translate(${size / 10},${size / 3})`}
                 d={d}
                 key={i}
               />
@@ -188,8 +182,8 @@ export default function App(): JSX.Element {
         <div
           style={{
             position: "absolute",
-            width: width,
-            height: width,
+            width: size,
+            height: size,
             backgroundColor: "yellow",
           }}
         >
