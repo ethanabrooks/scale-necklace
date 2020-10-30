@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Button, Text, TouchableOpacity, View } from "react-native";
-import { zipWith } from "fp-ts/Array";
+import React, {useEffect, useState} from "react";
 import "./scales";
-import { scales } from "./scales";
-import { styles } from "./styles";
-import { Note, notes } from "./notes";
-import { Synth } from "tone";
-import { Spring } from "react-spring/renderprops-universal";
+import {scales} from "./scales";
+import {Note, notes} from "./notes";
+import {Synth} from "tone";
 import * as d3 from "d3";
 
 export type Scale = number[];
@@ -59,7 +55,8 @@ export default function App(): JSX.Element {
         state.synth.triggerAttack(
           `${note.sharp}${head < notes.length ? octave : octave + 1}`
         );
-        interval = setInterval(() => {
+        // @ts-ignore
+          interval = setInterval(() => {
           setState({ ...state, notesToPlay: tail });
         }, 300);
         return () => {
@@ -78,27 +75,27 @@ export default function App(): JSX.Element {
   );
 
   const player: JSX.Element = state.loaded ? (
-    <Button
+    <button
       title={playing ? "Pause" : "Play"}
-      onPress={function () {
+      onClick={function () {
         setState({ ...state, notesToPlay: playing ? [] : scaleIndices });
       }}
     />
   ) : (
-    <Text>loading...</Text>
+    <text>loading...</text>
   );
 
   const rootButton: JSX.Element = (
-    <Button
+    <button
       title={"Randomize Root"}
-      onPress={() => setRoot(randomNumber(notes.length))}
+      onClick={() => setRoot(randomNumber(notes.length))}
     />
   );
 
   const scaleButton: JSX.Element = (
-    <Button
+    <button
       title={"Randomize Scale"}
-      onPress={() => {
+      onClick={() => {
         const newScale = scales[randomNumber(scales.length)];
         setScale(rotate(newScale, randomNumber(newScale.length)));
       }}
@@ -114,23 +111,14 @@ export default function App(): JSX.Element {
     const top = (width * (1 + Math.sin(theta))) / 2;
     const j = i + root;
     return (
-      <TouchableOpacity
+      <button
         style={{
           height: diameter,
           position: "absolute",
           left: left,
           top: top,
-          transform: "translate(-50%,-50%)",
-          MozTransform: "translate(-50% -50%)",
-          WebkitTransform: "translate(-50% -50%)",
-          OTransform: "translate(-50% -50%)",
-          border: "1px red solid",
-          // maxWidth: 50,
-          // width: "100%",
-          // alignItems: "center",
-          // justifyContent: "center",
         }}
-        onPress={(e) => {
+        onClick={(e) => {
           // @ts-ignore
           if (e.shiftKey) {
             const indices = scaleIndices.map((k) => k % notes.length);
@@ -144,10 +132,10 @@ export default function App(): JSX.Element {
         }}
         key={i}
       >
-        <Text style={{ color: "black" }}>
+        <text style={{ color: "black" }}>
           {note.sharp == note.flat ? note.sharp : `${note.sharp}/${note.flat}`}
-        </Text>
-      </TouchableOpacity>
+        </text>
+      </button>
     );
   });
 
@@ -155,20 +143,24 @@ export default function App(): JSX.Element {
   const outerRadius = diameter / 2;
   const arcSize = (2 * Math.PI) / notes.length;
   const arcGen = d3
-    .arc()
+    .arc<Note>()
     .innerRadius(innerRadius)
     .outerRadius(outerRadius)
-    .startAngle((_: Note, i: number) => (i + 0.5) * arcSize)
-    .endAngle((_: Note, i: number) => (i + 1.5) * arcSize);
-  const arcD: string[] = notes.map(arcGen);
+    .startAngle(((_, i: number) => (i + 0.5) * arcSize))
+    .endAngle((_, i: number) => (i + 1.5) * arcSize);
+  const arcD: string[] = notes.map(arcGen) as unknown as string[];
   return (
-    <View style={styles.container}>
-      <View style={styles.button}>
+    <div style={{flex: 1, height: "100%"}}>
+      <div style={{flex: 1, width: "100%"}}>
         {rootButton}
         {scaleButton}
         {player}
-      </View>
-      <View style={styles.necklace}>
+      </div>
+      <div style={{
+          flex: 3,
+          width: "100%",
+          alignItems: "center",
+      }}>
         <svg
           style={{
             width: width,
@@ -193,7 +185,7 @@ export default function App(): JSX.Element {
             );
           })}
         </svg>
-        <View
+        <div
           style={{
             position: "absolute",
             width: width,
@@ -202,8 +194,8 @@ export default function App(): JSX.Element {
           }}
         >
           {noteNames}
-        </View>
-      </View>
-    </View>
+        </div>
+      </div>
+    </div>
   );
 }
