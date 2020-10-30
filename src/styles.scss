@@ -7,6 +7,7 @@
   justify-content: center;
 }
 .buttons div {
+  font-size: var(--f);
   position: relative;
   text-align: center;
 }
@@ -27,7 +28,7 @@
 }
 
 .note-names {
-  --d: 100px; /* image size */
+  --d: calc(var(--s)/4); /* image size */
   --r: calc((var(--s) - var(--d))/2); /* radius */
   width: var(--s); height: var(--s);
   position: absolute;
@@ -43,6 +44,7 @@
   width: var(--d);
   height: var(--d);
   line-height: var(--d);
+  font-size: var(--f);
   text-align: center;
   transform:
           rotate(var(--az))

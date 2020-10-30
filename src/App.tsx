@@ -27,6 +27,17 @@ export default function App(): JSX.Element {
   const [scale, setScale] = React.useState<Scale>(scales[0]);
   const [root, setRoot] = React.useState<number>(0);
   const [state, setState] = useState<State>({ loaded: false });
+  const [{ width, height }, setWindow] = React.useState<{
+    width: number;
+    height: number;
+  }>({ width: window.innerWidth, height: window.innerHeight });
+
+  React.useEffect(() => {
+    const listener = () =>
+      setWindow({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener("resize", listener);
+    return () => window.removeEventListener("resize", listener);
+  }, []);
 
   const octave: number = 3;
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
@@ -68,8 +79,11 @@ export default function App(): JSX.Element {
     [root]
   );
 
+  const containerSize = Math.min(width, height);
+  const fontSize = `${containerSize / 50}pt`;
   const player: JSX.Element = state.loaded ? (
     <div
+      style={{ "--f": fontSize } as any}
       onClick={function () {
         setState({ ...state, notesToPlay: playing ? [] : scaleIndices });
       }}
@@ -81,13 +95,17 @@ export default function App(): JSX.Element {
   );
 
   const rootButton: JSX.Element = (
-    <div onClick={() => setRoot(randomNumber(notes.length))}>
+    <div
+      style={{ "--f": fontSize } as any}
+      onClick={() => setRoot(randomNumber(notes.length))}
+    >
       Randomize Root
     </div>
   );
 
   const scaleButton: JSX.Element = (
     <div
+      style={{ "--f": fontSize } as any}
       onClick={() => {
         const newScale = scales[randomNumber(scales.length)];
         setScale(rotate(newScale, randomNumber(newScale.length)));
@@ -100,9 +118,15 @@ export default function App(): JSX.Element {
   const modNotes = rotate(notes, root);
   const noteNames = modNotes.map((note: Note, i: number) => {
     const j = i + root;
+    const noteName =
+      note.sharp == note.flat
+        ? note.sharp
+        : `${note.sharp}/${note.flat}`
+            .replace(/(\w)#/, "$1♯")
+            .replace(/(\w)b/, "$1♭");
     return (
       <a
-        style={{ "--i": i } as any}
+        style={{ "--i": i, "--f": fontSize } as any}
         onClick={(e) => {
           // @ts-ignore
           if (e.shiftKey) {
@@ -117,35 +141,33 @@ export default function App(): JSX.Element {
         }}
         key={i}
       >
-        <text style={{ color: "black" }}>
-          {note.sharp == note.flat ? note.sharp : `${note.sharp}/${note.flat}`}
-        </text>
+        <text style={{ color: "white" }}>{noteName}</text>
       </a>
     );
   });
 
-  const containerSize = 500;
   const arcSize = (2 * Math.PI) / notes.length;
   const arcGen = d3
     .arc<Note>()
-    .innerRadius(containerSize / 4)
+    .innerRadius(containerSize / 3.4)
     .outerRadius(containerSize / 2)
     .startAngle((_, i: number) => (i + 0.5) * arcSize)
-    .endAngle((_, i: number) => (i + 1.5) * arcSize);
+    .endAngle((_, i: number) => (i + 1.5) * arcSize)
+    .cornerRadius(containerSize);
+
   return (
     <div style={{}}>
       <div className={"necklace"}>
-        <svg style={{ "--r": `${containerSize / 2}px` } as any}>
+        <svg>
           {notes.map(arcGen).map((d: unknown, i: number) => {
             return (
               <path
                 fill={
                   scaleIndices.map((j) => j % notes.length).includes(i)
-                    ? "grey"
-                    : "lightgrey"
+                    ? "#505050"
+                    : "grey"
                 }
                 stroke={"white"}
-                // transform={`translate(${500 / 2},${500 / 2})`}
                 d={d as string}
                 key={i}
               />
