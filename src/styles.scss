@@ -7,6 +7,15 @@
 body {
   background-color: var(--bg);
 }
+
+svg {
+  pointer-events: none;
+}
+
+path{
+  pointer-events: auto;
+}
+
 .buttons {
   position: absolute;
   height: 100%;
@@ -41,12 +50,17 @@ body {
   margin: 1px;
 }
 
-.necklace svg {
+.necklace div {
   left: 0;
   top: 0;
+  height: 100px;
+  width: 100px;
   position: absolute;
   overflow: visible;
 }
+ .svg {
+   overflow: visible;
+ }
 
 .note-names {
   --d: calc(var(--s)/10); /* image size */

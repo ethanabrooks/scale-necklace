@@ -184,20 +184,32 @@ export default function App(): JSX.Element {
 
   return (
     <div className={"container"}>
+      <div className={"buttons"} style={{ "--s": `${containerSize}px` } as any}>
+        {rootButton}
+        {scaleButton}
+        {player}
+      </div>
       <div className={"necklace"}>
         {included
           .map((n, i) => ({ ...n, d: arcGen(i - root) }))
           .map(({ included, note, d }, i: number) => {
             return (
-              <div key={i}>
-                <svg>
-                  <path
-                    stroke={included ? highlightColor : lowLightColor}
-                    fill={backgroundColor}
-                    strokeWidth={2}
-                    d={d as string}
-                    key={i}
-                  />
+              <div
+                onClick={() => console.log("click")}
+                onMouseEnter={() => alert("mouse")}
+              >
+                <svg className={"svg"}>
+                  <g onClick={() => console.log("g")}>
+                    <path
+                      stroke={included ? highlightColor : lowLightColor}
+                      fill={backgroundColor}
+                      strokeWidth={2}
+                      d={d as string}
+                      key={i}
+                      onMouseEnter={() => console.log("enter")}
+                      onClick={() => console.log("click")}
+                    />
+                  </g>
                 </svg>
               </div>
             );
@@ -208,11 +220,6 @@ export default function App(): JSX.Element {
         >
           {noteNames}
         </div>
-      </div>
-      <div className={"buttons"} style={{ "--s": `${containerSize}px` } as any}>
-        {rootButton}
-        {scaleButton}
-        {player}
       </div>
     </div>
   );
