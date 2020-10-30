@@ -69,31 +69,32 @@ export default function App(): JSX.Element {
   );
 
   const player: JSX.Element = state.loaded ? (
-    <button
-      title={playing ? "Pause" : "Play"}
+    <div
       onClick={function () {
         setState({ ...state, notesToPlay: playing ? [] : scaleIndices });
       }}
-    />
+    >
+      {playing ? "Pause" : "Play"}
+    </div>
   ) : (
     <text>loading...</text>
   );
 
   const rootButton: JSX.Element = (
-    <button
-      title={"Randomize Root"}
-      onClick={() => setRoot(randomNumber(notes.length))}
-    />
+    <div onClick={() => setRoot(randomNumber(notes.length))}>
+      Randomize Root
+    </div>
   );
 
   const scaleButton: JSX.Element = (
-    <button
-      title={"Randomize Scale"}
+    <div
       onClick={() => {
         const newScale = scales[randomNumber(scales.length)];
         setScale(rotate(newScale, randomNumber(newScale.length)));
       }}
-    />
+    >
+      Randomize Scale
+    </div>
   );
 
   const modNotes = rotate(notes, root);
@@ -133,37 +134,10 @@ export default function App(): JSX.Element {
     .endAngle((_, i: number) => (i + 1.5) * arcSize);
   return (
     <div style={{}}>
-      <div style={{ position: "relative", left: 10, top: 10 }}>
-        <svg
-          style={{
-            left: containerSize / 2,
-            top: containerSize / 2,
-            position: "absolute",
-            overflow: "visible",
-          }}
-        >
-          {notes.map(arcGen).map((d: unknown, i: number) => {
-            return (
-              <path
-                fill={
-                  scaleIndices.map((j) => j % notes.length).includes(i)
-                    ? "grey"
-                    : "lightgrey"
-                }
-                stroke={"white"}
-                // transform={`translate(${500 / 2},${500 / 2})`}
-                d={d as string}
-                key={i}
-              />
-            );
-          })}
-        </svg>
-        <div
-          className={"note-names"}
-          style={{ "--m": notes.length, "--s": `${containerSize}px` } as any}
-        >
-          {noteNames}
-        </div>
+      <div className={"buttons"} style={{ "--s": `${containerSize}px` } as any}>
+        {rootButton}
+        {scaleButton}
+        {player}
       </div>
     </div>
   );

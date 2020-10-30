@@ -1,3 +1,16 @@
+.buttons {
+  height: var(--s);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: bisque;
+}
+.buttons div {
+  position: relative;
+  text-align: center;
+  width:100%;
+}
+
 .note-names {
   --d: 100px; /* image size */
   --r: calc((var(--s) - var(--d))/2); /* radius */
