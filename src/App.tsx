@@ -5,6 +5,7 @@ import { Note, notes } from "./notes";
 import { Synth } from "tone";
 import * as d3 from "d3";
 import "./styles.scss";
+import { zip, zipWith } from "fp-ts/Array";
 
 const backgroundColor = getComputedStyle(
   document.documentElement
@@ -99,78 +100,7 @@ export default function App(): JSX.Element {
 
   const containerSize = Math.min(width - 30, height - 30);
   const fontSize = `${containerSize / 50}pt`;
-  const player: JSX.Element = state.loaded ? (
-    <button
-      style={{ "--f": fontSize } as any}
-      onClick={function () {
-        setState({ ...state, notesToPlay: playing ? [] : scaleIndices });
-      }}
-    >
-      {playing ? "Pause" : "Play"}
-    </button>
-  ) : (
-    <text>loading...</text>
-  );
-
-  const rootButton: JSX.Element = (
-    <button
-      style={{ "--f": fontSize } as any}
-      onClick={() => setRoot(randomNumber(notes.length))}
-    >
-      Randomize Root
-    </button>
-  );
-
-  const scaleButton: JSX.Element = (
-    <button
-      style={{ "--f": fontSize } as any}
-      onClick={() => {
-        const newScale = scales[randomNumber(scales.length)];
-        setScale(rotate(newScale, randomNumber(newScale.length)));
-      }}
-    >
-      Randomize Scale
-    </button>
-  );
-  console.log(notes[root], scaleIndices);
-
-  const noteNames = rotate(included, root).map(
-    ({ note, included }, i: number) => {
-      const j = i + root;
-      const noteName =
-        note.sharp == note.flat
-          ? note.sharp
-          : `${note.sharp}/${note.flat}`
-              .replace(/(\w)#/, "$1♯")
-              .replace(/(\w)b/, "$1♭");
-      return (
-        <a
-          style={
-            {
-              "--i": i,
-              "--f": fontSize,
-              "--c": included ? highlightColor : lowLightColor,
-            } as any
-          }
-          onClick={(e) => {
-            // @ts-ignore
-            if (e.shiftKey) {
-              const indices = scaleIndices.map((k) => k % notes.length);
-              if (indices.includes(j)) {
-                setScale(rotate(scale, indices.indexOf(j)));
-                setRoot(j);
-              }
-            } else {
-              setRoot(j);
-            }
-          }}
-          key={i}
-        >
-          {noteName}
-        </a>
-      );
-    }
-  );
+  console.log(root, notes[root], scaleIndices);
 
   const arcSize = (2 * Math.PI) / notes.length;
   const arcGen = d3
@@ -182,43 +112,86 @@ export default function App(): JSX.Element {
     .endAngle((i: number) => (i + 0.5) * arcSize)
     .cornerRadius(containerSize);
 
+  let setRandomRoot = () => setRoot(randomNumber(notes.length));
+  let fontStyle = { "--f": fontSize } as any;
+  let setRandomScale = () => {
+    const newScale = scales[randomNumber(scales.length)];
+    setScale(rotate(newScale, randomNumber(newScale.length)));
+  };
+  let setNotesToPlay = () => {
+    if (state.loaded)
+      setState({
+        ...state,
+        notesToPlay: playing ? [] : scaleIndices,
+      });
+  };
+  let noteNamesStyle = {
+    "--m": notes.length,
+    "--s": `${containerSize}px`,
+  } as any;
+  const noteClickHandler = (i: number) => (
+    e: React.MouseEvent<HTMLAnchorElement>
+  ) => {
+    const newRoot = (i + root) % notes.length;
+    if (e.shiftKey) {
+      if (included) {
+        setScale(rotate(scale, scale.indexOf(i)));
+        setRoot(newRoot);
+      }
+    } else {
+      setRoot(newRoot);
+    }
+  };
+  const noteNames = rotate(notes, root).map((note: Note) =>
+    note.sharp == note.flat
+      ? note.sharp
+      : `${note.sharp}/${note.flat}`
+          .replace(/(\w)#/, "$1♯")
+          .replace(/(\w)b/, "$1♭")
+  );
+  const noteStyles: any[] = rotate(included, root).map(
+    ({ note, included }, i: number) =>
+      ({
+        "--i": i,
+        "--f": fontSize,
+        "--c": included ? highlightColor : lowLightColor,
+      } as any)
+  );
   return (
     <div className={"container"}>
       <div className={"buttons"} style={{ "--s": `${containerSize}px` } as any}>
-        {rootButton}
-        {scaleButton}
-        {player}
+        <button style={fontStyle} onClick={setRandomRoot}>
+          Randomize Root
+        </button>
+        <button style={fontStyle} onClick={setRandomScale}>
+          Randomize Scale
+        </button>
+        <button style={fontStyle} onClick={setNotesToPlay}>
+          {playing ? "Pause" : "Play"}
+        </button>
       </div>
       <div className={"necklace"}>
-        {included
-          .map((n, i) => ({ ...n, d: arcGen(i - root) }))
-          .map(({ included, note, d }, i: number) => {
-            return (
-              <div
-                onClick={() => console.log("click")}
-                onMouseEnter={() => alert("mouse")}
-              >
-                <svg className={"svg"}>
-                  <g onClick={() => console.log("g")}>
-                    <path
-                      stroke={included ? highlightColor : lowLightColor}
-                      fill={backgroundColor}
-                      strokeWidth={2}
-                      d={d as string}
-                      key={i}
-                      onMouseEnter={() => console.log("enter")}
-                      onClick={() => console.log("click")}
-                    />
-                  </g>
-                </svg>
-              </div>
-            );
-          })}
-        <div
-          className={"note-names"}
-          style={{ "--m": notes.length, "--s": `${containerSize}px` } as any}
-        >
-          {noteNames}
+        {included.map(({ included, note }, i: number) => {
+          return (
+            <svg className={"svg"}>
+              <path
+                stroke={included ? highlightColor : lowLightColor}
+                fill={backgroundColor}
+                strokeWidth={2}
+                d={arcGen(i - root) as string}
+                key={i}
+                onMouseEnter={() => console.log("enter path")}
+                onClick={() => console.log("click path")}
+              />
+            </svg>
+          );
+        })}
+        <div className={"note-names"} style={noteNamesStyle}>
+          {zip(noteNames, noteStyles).map(([name, style], i) => (
+            <a style={style} key={i}>
+              {name}
+            </a>
+          ))}
         </div>
       </div>
     </div>
