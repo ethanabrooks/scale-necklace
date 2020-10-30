@@ -6,6 +6,19 @@ import { Synth } from "tone";
 import * as d3 from "d3";
 import "./styles.scss";
 
+const backgroundColor = getComputedStyle(
+  document.documentElement
+).getPropertyValue("--bg");
+const highlightColor = getComputedStyle(
+  document.documentElement
+).getPropertyValue("--hl");
+const lowLightColor = getComputedStyle(
+  document.documentElement
+).getPropertyValue("--ll");
+const playingColor = getComputedStyle(
+  document.documentElement
+).getPropertyValue("--pl");
+
 export type Scale = number[];
 export type State =
   | { loaded: false }
@@ -78,33 +91,38 @@ export default function App(): JSX.Element {
     },
     [root]
   );
+  const modScaleIndices = scaleIndices.map((i) => i % notes.length);
+  const included = notes.map((n, i) => ({
+    note: n,
+    included: modScaleIndices.includes(i),
+  }));
 
-  const containerSize = Math.min(width, height);
+  const containerSize = Math.min(width - 30, height - 30);
   const fontSize = `${containerSize / 50}pt`;
   const player: JSX.Element = state.loaded ? (
-    <div
+    <button
       style={{ "--f": fontSize } as any}
       onClick={function () {
         setState({ ...state, notesToPlay: playing ? [] : scaleIndices });
       }}
     >
       {playing ? "Pause" : "Play"}
-    </div>
+    </button>
   ) : (
     <text>loading...</text>
   );
 
   const rootButton: JSX.Element = (
-    <div
+    <button
       style={{ "--f": fontSize } as any}
       onClick={() => setRoot(randomNumber(notes.length))}
     >
       Randomize Root
-    </div>
+    </button>
   );
 
   const scaleButton: JSX.Element = (
-    <div
+    <button
       style={{ "--f": fontSize } as any}
       onClick={() => {
         const newScale = scales[randomNumber(scales.length)];
@@ -112,68 +130,78 @@ export default function App(): JSX.Element {
       }}
     >
       Randomize Scale
-    </div>
+    </button>
   );
+  console.log(notes[root], scaleIndices);
 
-  const modNotes = rotate(notes, root);
-  const noteNames = modNotes.map((note: Note, i: number) => {
-    const j = i + root;
-    const noteName =
-      note.sharp == note.flat
-        ? note.sharp
-        : `${note.sharp}/${note.flat}`
-            .replace(/(\w)#/, "$1♯")
-            .replace(/(\w)b/, "$1♭");
-    return (
-      <a
-        style={{ "--i": i, "--f": fontSize } as any}
-        onClick={(e) => {
-          // @ts-ignore
-          if (e.shiftKey) {
-            const indices = scaleIndices.map((k) => k % notes.length);
-            if (indices.includes(j)) {
-              setScale(rotate(scale, indices.indexOf(j)));
+  const noteNames = rotate(included, root).map(
+    ({ note, included }, i: number) => {
+      const j = i + root;
+      const noteName =
+        note.sharp == note.flat
+          ? note.sharp
+          : `${note.sharp}/${note.flat}`
+              .replace(/(\w)#/, "$1♯")
+              .replace(/(\w)b/, "$1♭");
+      return (
+        <a
+          style={
+            {
+              "--i": i,
+              "--f": fontSize,
+              "--c": included ? highlightColor : lowLightColor,
+            } as any
+          }
+          onClick={(e) => {
+            // @ts-ignore
+            if (e.shiftKey) {
+              const indices = scaleIndices.map((k) => k % notes.length);
+              if (indices.includes(j)) {
+                setScale(rotate(scale, indices.indexOf(j)));
+                setRoot(j);
+              }
+            } else {
               setRoot(j);
             }
-          } else {
-            setRoot(j);
-          }
-        }}
-        key={i}
-      >
-        <text style={{ color: "white" }}>{noteName}</text>
-      </a>
-    );
-  });
+          }}
+          key={i}
+        >
+          {noteName}
+        </a>
+      );
+    }
+  );
 
   const arcSize = (2 * Math.PI) / notes.length;
   const arcGen = d3
-    .arc<Note>()
-    .innerRadius(containerSize / 3.4)
+    .arc<number>()
+    .padAngle(0.02)
+    .innerRadius(containerSize / 2.5)
     .outerRadius(containerSize / 2)
-    .startAngle((_, i: number) => (i + 0.5) * arcSize)
-    .endAngle((_, i: number) => (i + 1.5) * arcSize)
+    .startAngle((i: number) => (i - 0.5) * arcSize)
+    .endAngle((i: number) => (i + 0.5) * arcSize)
     .cornerRadius(containerSize);
 
   return (
-    <div style={{}}>
+    <div className={"container"}>
       <div className={"necklace"}>
-        <svg>
-          {notes.map(arcGen).map((d: unknown, i: number) => {
+        {included
+          .map((n, i) => ({ ...n, d: arcGen(i - root) }))
+          .map(({ included, note, d }, i: number) => {
             return (
-              <path
-                fill={
-                  scaleIndices.map((j) => j % notes.length).includes(i)
-                    ? "#505050"
-                    : "grey"
-                }
-                stroke={"white"}
-                d={d as string}
-                key={i}
-              />
+              <div key={i}>
+                <svg>
+                  <path
+                    stroke={included ? highlightColor : lowLightColor}
+                    fill={backgroundColor}
+                    strokeWidth={2}
+                    d={d as string}
+                    key={i}
+                  />
+                </svg>
+              </div>
             );
           })}
-        </svg>
         <div
           className={"note-names"}
           style={{ "--m": notes.length, "--s": `${containerSize}px` } as any}

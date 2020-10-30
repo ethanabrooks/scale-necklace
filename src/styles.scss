@@ -1,3 +1,12 @@
+:root {
+  --bg: #000000;
+  --ll: #e5e5e5;
+  --hl: #fca311;
+  --pl: #ffffff;
+}
+body {
+  background-color: var(--bg);
+}
 .buttons {
   position: absolute;
   height: 100%;
@@ -6,10 +15,22 @@
   flex-direction: column;
   justify-content: center;
 }
-.buttons div {
+.buttons button {
   font-size: var(--f);
-  position: relative;
-  text-align: center;
+  margin: 10px auto;
+  border: 1px solid var(--ll);
+  color: var(--ll);
+  background-color: var(--bg);
+  border-radius:0.12em;
+}
+
+.buttons button:hover {
+  color: var(--bg);
+  background-color: var(--ll);
+}
+.buttons button:active {
+  border: 1px solid var(--hl);
+  background-color: var(--hl);
 }
 
 .necklace {
@@ -17,18 +38,18 @@
   top: 50%;
   left: 50%;
   height: 100%;
-  width: 100%;
+  margin: 1px;
 }
 
 .necklace svg {
   left: 0;
   top: 0;
-  position: relative;
+  position: absolute;
   overflow: visible;
 }
 
 .note-names {
-  --d: calc(var(--s)/4); /* image size */
+  --d: calc(var(--s)/10); /* image size */
   --r: calc((var(--s) - var(--d))/2); /* radius */
   width: var(--s); height: var(--s);
   position: absolute;
@@ -38,13 +59,14 @@
 
 .note-names a {
   $number: calc(-1 * var(--az));
-  --az: calc(var(--i)*1turn/var(--m));
+  --az: calc((var(--i)*1turn/var(--m)) - .25turn);
   position: absolute;
   margin: calc(-.5*var(--d));
   width: var(--d);
   height: var(--d);
   line-height: var(--d);
   font-size: var(--f);
+  color: var(--c);
   text-align: center;
   transform:
           rotate(var(--az))
