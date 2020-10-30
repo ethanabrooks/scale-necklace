@@ -123,39 +123,26 @@ export default function App(): JSX.Element {
     );
   });
 
-  const diameter = 500;
-  const innerRadius = diameter / 4;
-  const outerRadius = diameter;
+  const containerSize = 500;
   const arcSize = (2 * Math.PI) / notes.length;
   const arcGen = d3
     .arc<Note>()
-    .innerRadius(innerRadius)
-    .outerRadius(outerRadius)
+    .innerRadius(containerSize / 4)
+    .outerRadius(containerSize / 2)
     .startAngle((_, i: number) => (i + 0.5) * arcSize)
     .endAngle((_, i: number) => (i + 1.5) * arcSize);
-  const arcD: string[] = (notes.map(arcGen) as unknown) as string[];
   return (
-    <div style={{ flex: 1, height: "100%" }}>
-      <div style={{ flex: 1, width: "100%" }}>
-        {rootButton}
-        {scaleButton}
-        {player}
-      </div>
-      <div
-        style={{
-          flex: 3,
-          width: "100%",
-          alignItems: "center",
-        }}
-      >
+    <div style={{}}>
+      <div style={{ position: "relative", left: 10, top: 10 }}>
         <svg
           style={{
-            width: 2 * diameter,
-            height: 2 * diameter,
+            left: containerSize / 2,
+            top: containerSize / 2,
             position: "absolute",
+            overflow: "visible",
           }}
         >
-          {arcD.map((d: string, i: number) => {
+          {notes.map(arcGen).map((d: unknown, i: number) => {
             return (
               <path
                 fill={
@@ -164,8 +151,8 @@ export default function App(): JSX.Element {
                     : "lightgrey"
                 }
                 stroke={"white"}
-                transform={`translate(${500 / 2},${500 / 2})`}
-                d={d}
+                // transform={`translate(${500 / 2},${500 / 2})`}
+                d={d as string}
                 key={i}
               />
             );
@@ -173,7 +160,7 @@ export default function App(): JSX.Element {
         </svg>
         <div
           className={"note-names"}
-          style={{ "--m": notes.length, "--tan": 0.36 } as any}
+          style={{ "--m": notes.length, "--s": `${containerSize}px` } as any}
         >
           {noteNames}
         </div>

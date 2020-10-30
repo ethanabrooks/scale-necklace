@@ -1,24 +1,23 @@
 .note-names {
-  --d: 6.5em; /* image size */
-  --rel: 1; /* how much extra space we want between images, 1 = one image size */
-  --r: calc(.5*(1 + var(--rel))*var(--d)/var(--tan)); /* circle radius */
-  --s: calc(2*var(--r) + var(--d)); /* container size */
+  --d: 100px; /* image size */
+  --r: calc((var(--s) - var(--d))/2); /* radius */
   position: absolute;
   width: var(--s); height: var(--s);
 }
 
 .note-names a {
   $number: calc(-1 * var(--az));
+  --az: calc(var(--i)*1turn/var(--m));
   position: absolute;
   top: 50%; left: 50%;
   margin: calc(-.5*var(--d));
   width: var(--d);
   height: var(--d);
-  --az: calc(var(--i)*1turn/var(--m));
+  background-color: aquamarine;
+  opacity: 50%;
   transform:
           rotate(var(--az))
           translate(var(--r))
           rotate($number)
 }
 
-img { max-width: 100% }
