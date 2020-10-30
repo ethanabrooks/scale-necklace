@@ -1,33 +1,49 @@
 .buttons {
-  height: var(--s);
+  position: absolute;
+  height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: bisque;
 }
 .buttons div {
   position: relative;
   text-align: center;
-  width:100%;
+}
+
+.necklace {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 100%;
+  width: 100%;
+}
+
+.necklace svg {
+  left: 0;
+  top: 0;
+  position: relative;
+  overflow: visible;
 }
 
 .note-names {
   --d: 100px; /* image size */
   --r: calc((var(--s) - var(--d))/2); /* radius */
-  position: absolute;
   width: var(--s); height: var(--s);
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .note-names a {
   $number: calc(-1 * var(--az));
   --az: calc(var(--i)*1turn/var(--m));
   position: absolute;
-  top: 50%; left: 50%;
   margin: calc(-.5*var(--d));
   width: var(--d);
   height: var(--d);
-  background-color: aquamarine;
-  opacity: 50%;
+  line-height: var(--d);
+  text-align: center;
   transform:
           rotate(var(--az))
           translate(var(--r))

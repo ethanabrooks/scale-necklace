@@ -134,6 +134,31 @@ export default function App(): JSX.Element {
     .endAngle((_, i: number) => (i + 1.5) * arcSize);
   return (
     <div style={{}}>
+      <div className={"necklace"}>
+        <svg style={{ "--r": `${containerSize / 2}px` } as any}>
+          {notes.map(arcGen).map((d: unknown, i: number) => {
+            return (
+              <path
+                fill={
+                  scaleIndices.map((j) => j % notes.length).includes(i)
+                    ? "grey"
+                    : "lightgrey"
+                }
+                stroke={"white"}
+                // transform={`translate(${500 / 2},${500 / 2})`}
+                d={d as string}
+                key={i}
+              />
+            );
+          })}
+        </svg>
+        <div
+          className={"note-names"}
+          style={{ "--m": notes.length, "--s": `${containerSize}px` } as any}
+        >
+          {noteNames}
+        </div>
+      </div>
       <div className={"buttons"} style={{ "--s": `${containerSize}px` } as any}>
         {rootButton}
         {scaleButton}
