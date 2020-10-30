@@ -123,10 +123,9 @@ export default function App(): JSX.Element {
     );
   });
 
-  const size = 500;
-  const diameter = size / 6;
+  const diameter = 500;
   const innerRadius = diameter / 4;
-  const outerRadius = diameter / 2;
+  const outerRadius = diameter;
   const arcSize = (2 * Math.PI) / notes.length;
   const arcGen = d3
     .arc<Note>()
@@ -149,16 +148,10 @@ export default function App(): JSX.Element {
           alignItems: "center",
         }}
       >
-        <div
-          className={"note-names"}
-          style={{ "--m": notes.length, "--tan": 0.36 } as any}
-        >
-          {noteNames}
-        </div>
         <svg
           style={{
-            width: size,
-            height: size,
+            width: 2 * diameter,
+            height: 2 * diameter,
             position: "absolute",
           }}
         >
@@ -171,13 +164,19 @@ export default function App(): JSX.Element {
                     : "lightgrey"
                 }
                 stroke={"white"}
-                transform={`translate(${size / 10},${size / 3})`}
+                transform={`translate(${500 / 2},${500 / 2})`}
                 d={d}
                 key={i}
               />
             );
           })}
         </svg>
+        <div
+          className={"note-names"}
+          style={{ "--m": notes.length, "--tan": 0.36 } as any}
+        >
+          {noteNames}
+        </div>
       </div>
     </div>
   );
