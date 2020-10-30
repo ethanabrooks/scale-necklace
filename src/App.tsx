@@ -38,55 +38,14 @@ function rotate<X>(array: X[], start: number) {
   return array.slice(start).concat(array.slice(0, start));
 }
 
-// useNearestModulo returns a value minimizing the distance traveled around a
-// circle. It always satisfies useNearestModulo(P, M) % M = P.
-//
-// useNearestModulo(P', M) = Q' such that Q' % M = P' but minimizing |Q' - Q|,
-// where Q is the return value from the previous call. The returned value Q' is
-// then used as the Q for the next call, and so forth.
-//
-// In the code below, P' is pp and Q' is qq.
-//
-// Example (sequence of calls):
-//   useNearestModulo( 0, 12) =  0
-//   useNearestModulo(10, 12) = -2
-//   useNearestModulo( 3, 12) =  3
-//   useNearestModulo( 7, 12) =  7
-//   useNearestModulo(10, 12) = 10
-//   useNearestModulo(8, 10) = 2
-function useNearestModulo(pp: number, m: number): number {
-  // Calculate Q' that gets as close to Q as possible while satisfying
-  // Q' % M = P'.
-  const qq = Math.abs(Math.round(pp / m) * m - pp);
-  return qq;
-}
-const AnimatedBox = animated.div;
-
 export default function App(): JSX.Element {
   const [scale, setScale] = React.useState<Scale>(scales[0]);
   const [root, setRoot] = React.useState<number>(0);
   const [state, setState] = useState<State>({ loaded: false });
   const [mousedOver, setMouseOver] = useState<number | null>(null);
   const clicked = mousedOver === null;
-  const {
-    size,
-    counter,
-    progress,
-    counterFontColor,
-    ...springProps
-  } = useSpring({
-    progress: clicked ? "100%" : "0%",
+  const { size } = useSpring({
     size: clicked ? 300 : 200,
-    counter: clicked ? 100 : 0,
-    counterFontColor: clicked ? "#fff" : "#000",
-    backgroundPosition: clicked ? "50% 100%" : "50% 0%",
-    from: {
-      progress: "0%",
-      size: 200,
-      counter: 0,
-      counterFontColor: "#000",
-      backgroundPosition: "50% 0%",
-    },
   });
   const [{ width, height }, setWindow] = React.useState<{
     width: number;
@@ -242,12 +201,12 @@ export default function App(): JSX.Element {
           ))}
         </div>
       </div>
-      <AnimatedBox>
+      <animated.div>
         {size.interpolate((val: number) => {
           console.log(val);
           return Math.floor(val) + "px";
         })}
-      </AnimatedBox>
+      </animated.div>
     </div>
   );
 }
