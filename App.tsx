@@ -106,107 +106,104 @@ export default function App(): JSX.Element {
   );
 
   const modNotes = rotate(notes, root);
-  var width = 500;
+  const width = 500;
   const diameter = width / 6;
-  const grey = { r: 128, g: 128, b: 128 };
-  const lightgrey = { r: 211, g: 211, b: 211 };
-  const colors: Color[] = modNotes.map((_, i) =>
-    scaleIndices.includes(i + root) ? grey : lightgrey
-  );
-  const necklace = (
-    <View
-      style={{
-        flex: 1,
-        width: width,
-      }}
-    >
-      {modNotes.map((note: Note, i: number) => {
-        return (
-          <Spring to={{ root: root }} config={{ tension: 40 }} key={i}>
-            {(props) => {
-              const theta =
-                (2 * Math.PI * (i + (root - props.root))) / notes.length -
-                Math.PI / 2;
-              const left = (width * (1 + Math.cos(theta)) - diameter) / 2;
-              const top = (width * (1 + Math.sin(theta))) / 2;
-              const idx = mod(theta / (2 * Math.PI) + 1 / 4, 1) * notes.length;
-              const lIdx = Math.floor(idx);
-              const rIdx = Math.ceil(idx);
-              const t = idx - lIdx;
-              const lColor = colors[lIdx % colors.length];
-              const rColor = colors[rIdx % colors.length];
-              const c2a = (c: Color): Triple => [c.r, c.g, c.b];
-              const a2c = ([r, g, b]: Triple) => ({ r: r, g: g, b: b });
-              const interpolated = zipWith(
-                c2a(lColor),
-                c2a(rColor),
-                (l, r) => (1 - t) * l + t * r
-              );
-              const color = a2c(interpolated as Triple);
-              const j = i + root;
-              return (
-                <TouchableOpacity
-                  style={{
-                    width: diameter,
-                    height: diameter,
-                    position: "absolute",
-                    left: left,
-                    top: top,
-                    backgroundColor: `rgb(${color.r},${color.g},${color.b})`,
-                    borderRadius: 50,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  onPress={(e) => {
-                    // @ts-ignore
-                    if (e.shiftKey) {
-                      const indices = scaleIndices.map((k) => k % notes.length);
-                      if (indices.includes(j)) {
-                        setScale(rotate(scale, indices.indexOf(j)));
-                        setRoot(j);
-                      }
-                    } else {
-                      setRoot(j);
-                    }
-                  }}
-                  key={i}
-                >
-                  <Text style={{ color: "white" }}>
-                    {note.sharp == note.flat
-                      ? note.sharp
-                      : `${note.sharp}/${note.flat}`}
-                  </Text>
-                </TouchableOpacity>
-              );
-            }}
-          </Spring>
-        );
-      })}
-    </View>
-  );
+  const noteNames = modNotes.map((note: Note, i: number) => {
+    const theta = (2 * Math.PI * i) / notes.length - Math.PI / 2;
+    const left = (width * (1 + Math.cos(theta)) - diameter) / 2;
+    const top = (width * (1 + Math.sin(theta))) / 2;
+    const j = i + root;
+    return (
+      <TouchableOpacity
+        style={{
+          height: diameter,
+          position: "absolute",
+          left: left,
+          top: top,
+          transform: "translate(-50%,-50%)",
+          MozTransform: "translate(-50% -50%)",
+          WebkitTransform: "translate(-50% -50%)",
+          OTransform: "translate(-50% -50%)",
+          border: "1px red solid",
+          // maxWidth: 50,
+          // width: "100%",
+          // alignItems: "center",
+          // justifyContent: "center",
+        }}
+        onPress={(e) => {
+          // @ts-ignore
+          if (e.shiftKey) {
+            const indices = scaleIndices.map((k) => k % notes.length);
+            if (indices.includes(j)) {
+              setScale(rotate(scale, indices.indexOf(j)));
+              setRoot(j);
+            }
+          } else {
+            setRoot(j);
+          }
+        }}
+        key={i}
+      >
+        <Text style={{ color: "black" }}>
+          {note.sharp == note.flat ? note.sharp : `${note.sharp}/${note.flat}`}
+        </Text>
+      </TouchableOpacity>
+    );
+  });
 
-  const innerRadius = 120;
-  const outerRadius = 200;
+  const innerRadius = diameter / 4;
+  const outerRadius = diameter / 2;
   const arcSize = (2 * Math.PI) / notes.length;
   const arcGen = d3
     .arc()
     .innerRadius(innerRadius)
     .outerRadius(outerRadius)
-    .startAngle((_: Note, i: number) => i * arcSize)
-    .endAngle((_: Note, i: number) => (i + 1) * arcSize);
+    .startAngle((_: Note, i: number) => (i + 0.5) * arcSize)
+    .endAngle((_: Note, i: number) => (i + 1.5) * arcSize);
   const arcD: string[] = notes.map(arcGen);
-  let translation = (3 * outerRadius) / 2;
   return (
-    <svg width={3 * outerRadius} height={3 * outerRadius}>
-      {arcD.map((d: string, i: number) => (
-        <path
-          fill={scaleIndices.includes(i) ? "grey" : "lightgrey"}
-          stroke={"white"}
-          transform={`translate(${translation},${translation})`}
-          d={d}
-          key={i}
-        />
-      ))}
-    </svg>
+    <View style={styles.container}>
+      <View style={styles.button}>
+        {rootButton}
+        {scaleButton}
+        {player}
+      </View>
+      <View style={styles.necklace}>
+        <svg
+          style={{
+            width: width,
+            height: width,
+            backgroundColor: "green",
+            position: "absolute",
+          }}
+        >
+          {arcD.map((d: string, i: number) => {
+            return (
+              <path
+                fill={
+                  scaleIndices.map((j) => j % notes.length).includes(i)
+                    ? "grey"
+                    : "lightgrey"
+                }
+                stroke={"white"}
+                transform={`translate(${width / 10},${width / 3})`}
+                d={d}
+                key={i}
+              />
+            );
+          })}
+        </svg>
+        <View
+          style={{
+            position: "absolute",
+            width: width,
+            height: width,
+            backgroundColor: "yellow",
+          }}
+        >
+          {noteNames}
+        </View>
+      </View>
+    </View>
   );
 }
