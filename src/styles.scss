@@ -1,5 +1,5 @@
 :root {
-  --bg: #000000;
+  --bg: #222222;
   --ll: #e5e5e5;
   --hl: #fca311;
   --pl: #ffffff;
@@ -44,6 +44,7 @@ path{
   left: 50%;
   height: 100%;
   margin: 1px;
+  pointer-events: none;
 }
 
 .necklace svg {

@@ -6,6 +6,7 @@ import { Synth } from "tone";
 import * as d3 from "d3";
 import "./styles.scss";
 import { zip } from "fp-ts/Array";
+import { useSpring, animated } from "react-spring";
 
 const backgroundColor = getComputedStyle(
   document.documentElement
@@ -37,15 +38,65 @@ function rotate<X>(array: X[], start: number) {
   return array.slice(start).concat(array.slice(0, start));
 }
 
+// useNearestModulo returns a value minimizing the distance traveled around a
+// circle. It always satisfies useNearestModulo(P, M) % M = P.
+//
+// useNearestModulo(P', M) = Q' such that Q' % M = P' but minimizing |Q' - Q|,
+// where Q is the return value from the previous call. The returned value Q' is
+// then used as the Q for the next call, and so forth.
+//
+// In the code below, P' is pp and Q' is qq.
+//
+// Example (sequence of calls):
+//   useNearestModulo( 0, 12) =  0
+//   useNearestModulo(10, 12) = -2
+//   useNearestModulo( 3, 12) =  3
+//   useNearestModulo( 7, 12) =  7
+//   useNearestModulo(10, 12) = 10
+//   useNearestModulo(8, 10) = 2
+function useNearestModulo(pp: number, m: number): number {
+  // Calculate Q' that gets as close to Q as possible while satisfying
+  // Q' % M = P'.
+  const qq = Math.abs(Math.round(pp / m) * m - pp);
+  return qq;
+}
+const AnimatedBox = animated.div;
+
 export default function App(): JSX.Element {
   const [scale, setScale] = React.useState<Scale>(scales[0]);
   const [root, setRoot] = React.useState<number>(0);
   const [state, setState] = useState<State>({ loaded: false });
   const [mousedOver, setMouseOver] = useState<number | null>(null);
+  const clicked = mousedOver === null;
+  const {
+    size,
+    counter,
+    progress,
+    counterFontColor,
+    ...springProps
+  } = useSpring({
+    progress: clicked ? "100%" : "0%",
+    size: clicked ? 300 : 200,
+    counter: clicked ? 100 : 0,
+    counterFontColor: clicked ? "#fff" : "#000",
+    backgroundPosition: clicked ? "50% 100%" : "50% 0%",
+    from: {
+      progress: "0%",
+      size: 200,
+      counter: 0,
+      counterFontColor: "#000",
+      backgroundPosition: "50% 0%",
+    },
+  });
   const [{ width, height }, setWindow] = React.useState<{
     width: number;
     height: number;
   }>({ width: window.innerWidth, height: window.innerHeight });
+
+  // const props = useSpring();
+
+  const octave: number = 3;
+  const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
   React.useEffect(() => {
     const listener = () =>
@@ -53,9 +104,6 @@ export default function App(): JSX.Element {
     window.addEventListener("resize", listener);
     return () => window.removeEventListener("resize", listener);
   }, []);
-
-  const octave: number = 3;
-  const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
   useEffect(() => {
     const synth = new Synth().toDestination();
@@ -101,7 +149,6 @@ export default function App(): JSX.Element {
 
   const containerSize = Math.min(width - 30, height - 30);
   const fontSize = `${containerSize / 50}pt`;
-  console.log(root, notes[root], scaleIndices);
 
   const arcSize = (2 * Math.PI) / notes.length;
   const arcGen = d3
@@ -113,7 +160,9 @@ export default function App(): JSX.Element {
     .endAngle((i: number) => (i + 0.5) * arcSize)
     .cornerRadius(containerSize);
 
-  let setRandomRoot = () => setRoot(randomNumber(notes.length));
+  let setRandomRoot = () => {
+    setRoot(randomNumber(notes.length));
+  };
   let fontStyle = { "--f": fontSize } as any;
   let setRandomScale = () => {
     const newScale = scales[randomNumber(scales.length)];
@@ -163,7 +212,7 @@ export default function App(): JSX.Element {
           let stroke = included ? highlightColor : lowLightColor;
           return (
             <svg className={"svg"}>
-              <path
+              <animated.path
                 stroke={stroke}
                 fill={i == mousedOver ? stroke : backgroundColor}
                 strokeWidth={2}
@@ -172,7 +221,6 @@ export default function App(): JSX.Element {
                 onMouseEnter={() => setMouseOver(i)}
                 onMouseLeave={() => setMouseOver(null)}
                 onClick={(e) => {
-                  console.log("click path");
                   if (e.shiftKey) {
                     if (included) {
                       setScale(rotate(scale, scale.indexOf(i)));
@@ -194,6 +242,12 @@ export default function App(): JSX.Element {
           ))}
         </div>
       </div>
+      <AnimatedBox>
+        {size.interpolate((val: number) => {
+          console.log(val);
+          return Math.floor(val) + "px";
+        })}
+      </AnimatedBox>
     </div>
   );
 }
