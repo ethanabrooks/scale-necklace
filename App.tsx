@@ -8,8 +8,6 @@ import { Note, notes } from "./notes";
 import { Synth } from "tone";
 import { Spring } from "react-spring/renderprops-universal";
 
-const parse = require("color-parse");
-
 export type Scale = number[];
 export type State =
   | { loaded: false }
