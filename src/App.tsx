@@ -43,10 +43,7 @@ export default function App(): JSX.Element {
   const [root, setRoot] = React.useState<number>(0);
   const [state, setState] = useState<State>({ loaded: false });
   const [mousedOver, setMouseOver] = useState<number | null>(null);
-  const clicked = mousedOver === null;
-  const { size } = useSpring({
-    size: clicked ? 300 : 200,
-  });
+  const spring = useSpring({ root: root });
   const [{ width, height }, setWindow] = React.useState<{
     width: number;
     height: number;
@@ -166,18 +163,24 @@ export default function App(): JSX.Element {
           {playing ? "Pause" : "Play"}
         </button>
       </div>
-      <div className={"necklace"}>
+      <animated.div className={"necklace"}>
         {included.map(({ included, note }, i: number) => {
           let stroke = included ? highlightColor : lowLightColor;
           return (
-            <svg className={"svg"}>
+            <animated.svg className={"svg"}>
               <animated.path
                 stroke={stroke}
                 fill={i == mousedOver ? stroke : backgroundColor}
                 strokeWidth={2}
-                d={arcGen(i - root) as string}
+                d={arcGen(i) as string}
                 key={i}
-                onMouseEnter={() => setMouseOver(i)}
+                transform={spring.root.interpolate(
+                  (root) => `rotate(${(root / notes.length) * 360})`
+                )}
+                onMouseEnter={() => {
+                  console.log(spring.root);
+                  setMouseOver(i);
+                }}
                 onMouseLeave={() => setMouseOver(null)}
                 onClick={(e) => {
                   if (e.shiftKey) {
@@ -190,7 +193,7 @@ export default function App(): JSX.Element {
                   }
                 }}
               />
-            </svg>
+            </animated.svg>
           );
         })}
         <div className={"note-names"} style={noteNamesStyle}>
@@ -200,12 +203,6 @@ export default function App(): JSX.Element {
             </a>
           ))}
         </div>
-      </div>
-      <animated.div>
-        {size.interpolate((val: number) => {
-          console.log(val);
-          return Math.floor(val) + "px";
-        })}
       </animated.div>
     </div>
   );
