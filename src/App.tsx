@@ -5,7 +5,7 @@ import { Note, notes } from "./notes";
 import { Synth } from "tone";
 import * as d3 from "d3";
 import "./styles.scss";
-import { zip, zipWith } from "fp-ts/Array";
+import { zip } from "fp-ts/Array";
 
 const backgroundColor = getComputedStyle(
   document.documentElement
@@ -41,6 +41,7 @@ export default function App(): JSX.Element {
   const [scale, setScale] = React.useState<Scale>(scales[0]);
   const [root, setRoot] = React.useState<number>(0);
   const [state, setState] = useState<State>({ loaded: false });
+  const [mousedOver, setMouseOver] = useState<number | null>(null);
   const [{ width, height }, setWindow] = React.useState<{
     width: number;
     height: number;
@@ -129,19 +130,6 @@ export default function App(): JSX.Element {
     "--m": notes.length,
     "--s": `${containerSize}px`,
   } as any;
-  const noteClickHandler = (i: number) => (
-    e: React.MouseEvent<HTMLAnchorElement>
-  ) => {
-    const newRoot = (i + root) % notes.length;
-    if (e.shiftKey) {
-      if (included) {
-        setScale(rotate(scale, scale.indexOf(i)));
-        setRoot(newRoot);
-      }
-    } else {
-      setRoot(newRoot);
-    }
-  };
   const noteNames = rotate(notes, root).map((note: Note) =>
     note.sharp == note.flat
       ? note.sharp
@@ -149,13 +137,13 @@ export default function App(): JSX.Element {
           .replace(/(\w)#/, "$1♯")
           .replace(/(\w)b/, "$1♭")
   );
-  const noteStyles: any[] = rotate(included, root).map(
-    ({ note, included }, i: number) =>
-      ({
-        "--i": i,
-        "--f": fontSize,
-        "--c": included ? highlightColor : lowLightColor,
-      } as any)
+  const noteColors = included.map(({ note, included }, i: number) => {
+    if (i == mousedOver) return backgroundColor;
+    return included ? highlightColor : lowLightColor;
+  });
+  const noteStyles: any[] = rotate(noteColors, root).map(
+    (color: string, i: number) =>
+      ({ "--i": i, "--f": fontSize, "--c": color } as any)
   );
   return (
     <div className={"container"}>
@@ -172,16 +160,28 @@ export default function App(): JSX.Element {
       </div>
       <div className={"necklace"}>
         {included.map(({ included, note }, i: number) => {
+          let stroke = included ? highlightColor : lowLightColor;
           return (
             <svg className={"svg"}>
               <path
-                stroke={included ? highlightColor : lowLightColor}
-                fill={backgroundColor}
+                stroke={stroke}
+                fill={i == mousedOver ? stroke : backgroundColor}
                 strokeWidth={2}
                 d={arcGen(i - root) as string}
                 key={i}
-                onMouseEnter={() => console.log("enter path")}
-                onClick={() => console.log("click path")}
+                onMouseEnter={() => setMouseOver(i)}
+                onMouseLeave={() => setMouseOver(null)}
+                onClick={(e) => {
+                  console.log("click path");
+                  if (e.shiftKey) {
+                    if (included) {
+                      setScale(rotate(scale, scale.indexOf(i)));
+                      setRoot(i);
+                    }
+                  } else {
+                    setRoot(i);
+                  }
+                }}
               />
             </svg>
           );

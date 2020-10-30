@@ -8,10 +8,6 @@ body {
   background-color: var(--bg);
 }
 
-svg {
-  pointer-events: none;
-}
-
 path{
   pointer-events: auto;
 }
@@ -82,6 +78,7 @@ path{
   font-size: var(--f);
   color: var(--c);
   text-align: center;
+  pointer-events: none;
   transform:
           rotate(var(--az))
           translate(var(--r))
