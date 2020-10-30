@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import "./scales";
-import {scales} from "./scales";
-import {Note, notes} from "./notes";
-import {Synth} from "tone";
+import { scales } from "./scales";
+import { Note, notes } from "./notes";
+import { Synth } from "tone";
 import * as d3 from "d3";
-import "./styles.scss"
+import "./styles.scss";
 
 export type Scale = number[];
 export type State =
@@ -18,7 +18,6 @@ export type State =
 function randomNumber(n: number): number {
   return Math.floor(Math.random() * n);
 }
-
 
 function rotate<X>(array: X[], start: number) {
   return array.slice(start).concat(array.slice(0, start));
@@ -51,7 +50,7 @@ export default function App(): JSX.Element {
           `${note.sharp}${head < notes.length ? octave : octave + 1}`
         );
         // @ts-ignore
-          interval = setInterval(() => {
+        interval = setInterval(() => {
           setState({ ...state, notesToPlay: tail });
         }, 300);
         return () => {
@@ -98,12 +97,11 @@ export default function App(): JSX.Element {
   );
 
   const modNotes = rotate(notes, root);
-  const size = 500;
-  const diameter = size / 6;
   const noteNames = modNotes.map((note: Note, i: number) => {
     const j = i + root;
     return (
-      <a style={{"--i": i} as any}
+      <a
+        style={{ "--i": i } as any}
         onClick={(e) => {
           // @ts-ignore
           if (e.shiftKey) {
@@ -125,6 +123,8 @@ export default function App(): JSX.Element {
     );
   });
 
+  const size = 500;
+  const diameter = size / 6;
   const innerRadius = diameter / 4;
   const outerRadius = diameter / 2;
   const arcSize = (2 * Math.PI) / notes.length;
@@ -132,21 +132,29 @@ export default function App(): JSX.Element {
     .arc<Note>()
     .innerRadius(innerRadius)
     .outerRadius(outerRadius)
-    .startAngle(((_, i: number) => (i + 0.5) * arcSize))
+    .startAngle((_, i: number) => (i + 0.5) * arcSize)
     .endAngle((_, i: number) => (i + 1.5) * arcSize);
-  const arcD: string[] = notes.map(arcGen) as unknown as string[];
+  const arcD: string[] = (notes.map(arcGen) as unknown) as string[];
   return (
-    <div style={{flex: 1, height: "100%"}}>
-      <div style={{flex: 1, width: "100%"}}>
+    <div style={{ flex: 1, height: "100%" }}>
+      <div style={{ flex: 1, width: "100%" }}>
         {rootButton}
         {scaleButton}
         {player}
       </div>
-      <div style={{
+      <div
+        style={{
           flex: 3,
           width: "100%",
           alignItems: "center",
-      }}>
+        }}
+      >
+        <div
+          className={"note-names"}
+          style={{ "--m": notes.length, "--tan": 0.36 } as any}
+        >
+          {noteNames}
+        </div>
         <svg
           style={{
             width: size,
@@ -170,12 +178,6 @@ export default function App(): JSX.Element {
             );
           })}
         </svg>
-        <div
-          className={"notenames"}
-          style={({"--m": notes.length, "--tan": 0.36}) as any}
-        >
-          {noteNames}
-        </div>
       </div>
     </div>
   );
