@@ -146,10 +146,30 @@ export default function App(): JSX.Element {
     if (i == mousedOver) return backgroundColor;
     return included ? highlightColor : lowLightColor;
   });
-  const noteStyles: any[] = rotate(noteColors, root).map(
+  const noteStyles: any[] = noteColors.map(
     (color: string, i: number) =>
-      ({ "--i": i, "--f": fontSize, "--c": color } as any)
+      ({
+        "--i": spring.root.interpolate((r) => i + root - (r % notes.length)),
+        "--f": fontSize,
+        "--c": color,
+      } as any)
   );
+  let svgTransform = spring.root.interpolate(
+    (r) => `rotate(${(-(r % notes.length) / notes.length) * 360})`
+  );
+  let handleClickOnPath = (i: number, included: boolean) => (
+    e: React.MouseEvent<SVGPathElement>
+  ) => {
+    if (e.shiftKey) {
+      console.log("shift", included);
+      if (included) {
+        setScale(rotate(scale, scale.indexOf(i)));
+        setRoot(i);
+      }
+    } else {
+      setRoot(i);
+    }
+  };
   return (
     <div className={"container"}>
       <div className={"buttons"} style={{ "--s": `${containerSize}px` } as any}>
@@ -167,40 +187,26 @@ export default function App(): JSX.Element {
         {included.map(({ included, note }, i: number) => {
           let stroke = included ? highlightColor : lowLightColor;
           return (
-            <animated.svg className={"svg"}>
+            <svg className={"svg"}>
               <animated.path
                 stroke={stroke}
                 fill={i == mousedOver ? stroke : backgroundColor}
                 strokeWidth={2}
                 d={arcGen(i) as string}
                 key={i}
-                transform={spring.root.interpolate(
-                  (root) => `rotate(${(root / notes.length) * 360})`
-                )}
-                onMouseEnter={() => {
-                  console.log(spring.root);
-                  setMouseOver(i);
-                }}
+                transform={svgTransform}
+                onMouseEnter={() => setMouseOver(i)}
                 onMouseLeave={() => setMouseOver(null)}
-                onClick={(e) => {
-                  if (e.shiftKey) {
-                    if (included) {
-                      setScale(rotate(scale, scale.indexOf(i)));
-                      setRoot(i);
-                    }
-                  } else {
-                    setRoot(i);
-                  }
-                }}
+                onClick={handleClickOnPath(i, included)}
               />
-            </animated.svg>
+            </svg>
           );
         })}
         <div className={"note-names"} style={noteNamesStyle}>
           {zip(noteNames, noteStyles).map(([name, style], i) => (
-            <a style={style} key={i}>
+            <animated.a style={style} key={i}>
               {name}
-            </a>
+            </animated.a>
           ))}
         </div>
       </animated.div>
