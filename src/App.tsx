@@ -36,7 +36,7 @@ function randomNumber(n: number): number {
 }
 
 function rotate<X>(array: X[], start: number) {
-  return array.slice(start).concat(array.slice(0, start));
+  return array.slice(mod(start, array.length)).concat(array.slice(0, start));
 }
 function zip3<A, B, C>(a: A[], b: B[], c: C[]): [A, B, C][] {
   return zip(zip(a, b), c).map(([[a, b], c]) => [a, b, c]);
@@ -44,6 +44,10 @@ function zip3<A, B, C>(a: A[], b: B[], c: C[]): [A, B, C][] {
 
 function zip4<A, B, C, D>(a: A[], b: B[], c: C[], d: D[]): [A, B, C, D][] {
   return zip(zip(zip(a, b), c), d).map(([[[a, b], c], d]) => [a, b, c, d]);
+}
+
+function mod(a: number, b: number) {
+  return ((a % b) + b) % b;
 }
 
 export default function App(): JSX.Element {
@@ -142,13 +146,13 @@ export default function App(): JSX.Element {
     .endAngle((i: number) => (i + 0.5) * arcSize)
     .cornerRadius(containerSize);
   const arcs = notes.map((_, i) => arcGen(i) as string);
+  let rotation = mod(root - stepsStart, notes.length);
+  console.log(root, stepsStart);
   const arcInfo: [number, boolean, string, string][] = rotate(
     zip3(included, colors, arcs).map((x, i) => [i, ...x]),
-    stepsStart
+    rotation
   );
-  console.log(included);
-  console.log(colors);
-  console.log(arcs);
+  console.log(arcInfo.map(([i]) => i));
 
   const noteNames = notes.map((note: Note) =>
     note.sharp == note.flat
@@ -175,18 +179,17 @@ export default function App(): JSX.Element {
       <animated.div className={"necklace"}>
         {arcInfo.map(([absIndex, included, color, d], i: number) => {
           return (
-            <svg className={"svg"}>
+            <svg className={"svg"} key={i}>
               <animated.path
                 stroke={color}
                 fill={absIndex == mousedOver ? color : backgroundColor}
                 strokeWidth={2}
                 d={d}
-                key={i}
                 transform={spring.root.interpolate((r) => {
-                  const degrees = (stepsStart * 360) / notes.length;
+                  const degrees = (-stepsStart * 360) / notes.length;
                   return `rotate(${degrees})`;
                 })}
-                onMouseEnter={() => setMouseOver(i)}
+                onMouseEnter={() => setMouseOver(absIndex)}
                 onMouseLeave={() => setMouseOver(null)}
                 onClick={(e: React.MouseEvent<SVGPathElement>) => {
                   if (e.shiftKey) {
