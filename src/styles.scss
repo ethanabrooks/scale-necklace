@@ -3,11 +3,12 @@
   --ll: #e5e5e5;
   --hl: #fca311;
 }
+
 body {
   background-color: var(--bg);
 }
 
-path{
+path {
   pointer-events: auto;
 }
 
@@ -19,20 +20,22 @@ path{
   flex-direction: column;
   justify-content: center;
 }
+
 .buttons button {
   font-size: var(--f);
   margin: 10px auto;
   border: none;
-  outline:none;
+  outline: none;
   color: var(--ll);
   background-color: var(--bg);
-  border-radius:0.12em;
+  border-radius: 0.12em;
 }
 
 .buttons button:hover {
   color: var(--bg);
   background-color: var(--ll);
 }
+
 .buttons button:active {
   border: 1px solid var(--hl);
   background-color: var(--hl);
@@ -56,18 +59,15 @@ path{
 .path {
 }
 
-
 @keyframes pulse {
   0% {
     transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
   }
-
   70% {
     transform: scale(1);
     box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
   }
-
   100% {
     transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
@@ -75,7 +75,7 @@ path{
 }
 
 .icon:hover {
-  fill: #DA4567;
+  fill: #da4567;
 }
 
 .necklace svg:hover {
@@ -83,9 +83,12 @@ path{
 }
 
 .note-names {
-  --d: calc(var(--s)/10); /* image size */
-  --r: calc((var(--s) - var(--d))/2); /* radius */
-  width: var(--s); height: var(--s);
+  --d: calc(var(--s) / 10);
+  /* image size */
+  --r: calc((var(--s) - var(--d)) / 2);
+  /* radius */
+  width: var(--s);
+  height: var(--s);
   position: absolute;
   top: 0;
   left: 0;
@@ -94,9 +97,9 @@ path{
 
 .note-names a {
   $number: calc(-1 * var(--az));
-  --az: calc((var(--i)*1turn/var(--m)) - .25turn);
+  --az: calc((var(--i) * 1turn / var(--m)) - 0.25turn);
   position: absolute;
-  margin: calc(-.5*var(--d));
+  margin: calc(-0.5 * var(--d));
   width: var(--d);
   height: var(--d);
   line-height: var(--d);
@@ -105,9 +108,5 @@ path{
   text-align: center;
   pointer-events: none;
   mix-blend-mode: difference;
-  transform:
-          rotate(var(--az))
-          translate(var(--r))
-          rotate($number)
+  transform: rotate(var(--az)) translate(var(--r)) rotate($number);
 }
-
