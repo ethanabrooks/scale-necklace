@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/scale-necklace/static/css/main.6e3da7aa.chunk.css",
-    "main.js": "/scale-necklace/static/js/main.e6f38e07.chunk.js",
-    "main.js.map": "/scale-necklace/static/js/main.e6f38e07.chunk.js.map",
+    "main.js": "/scale-necklace/static/js/main.b8092545.chunk.js",
+    "main.js.map": "/scale-necklace/static/js/main.b8092545.chunk.js.map",
     "runtime-main.js": "/scale-necklace/static/js/runtime-main.91a7d5c1.js",
     "runtime-main.js.map": "/scale-necklace/static/js/runtime-main.91a7d5c1.js.map",
     "static/js/2.375e08a3.chunk.js": "/scale-necklace/static/js/2.375e08a3.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.91a7d5c1.js",
     "static/js/2.375e08a3.chunk.js",
     "static/css/main.6e3da7aa.chunk.css",
-    "static/js/main.e6f38e07.chunk.js"
+    "static/js/main.b8092545.chunk.js"
   ]
 }
