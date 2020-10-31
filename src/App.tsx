@@ -85,7 +85,7 @@ export default function App(): JSX.Element {
   const { springRoot, springOffset } = useSpring({
     springRoot: modRoot,
     springOffset: modOffset,
-    config: { tension: 40, friction: 30, mass: 10 },
+    config: { tension: 40, friction: 40, mass: 10 },
   });
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
