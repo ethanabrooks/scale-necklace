@@ -52,7 +52,7 @@ body {
 }
 
 .note-names {
-  --d: calc(var(--s) / 10);
+  --d: calc(var(--s) / 7);
   /* image size */
   --r: calc((var(--s) - var(--d)) / 2);
   /* radius */
@@ -65,8 +65,8 @@ body {
 }
 
 .note-names a {
-  $number: calc(-1 * var(--az));
   --az: calc((var(--i) / var(--m) * 1turn) - 0.25turn);
+  $negAz: calc(-1 * var(--az));
   position: absolute;
   margin: calc(-0.5 * var(--d));
   width: var(--d);
@@ -77,7 +77,7 @@ body {
   text-align: center;
   pointer-events: none;
   mix-blend-mode: difference;
-  transform: rotate(var(--az)) translate(var(--r)) rotate($number);
+  transform: rotate(var(--az)) translate(var(--r)) rotate($negAz);
 }
 
 .svg {

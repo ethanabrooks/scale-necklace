@@ -174,8 +174,8 @@ export default function App(): JSX.Element {
   });
   const arcGen = d3
     .arc<number>()
-    .padAngle(0.02)
-    .innerRadius(containerSize / 2.5)
+    .padAngle(0.05)
+    .innerRadius(containerSize / 2.8)
     .outerRadius(containerSize / 2)
     .startAngle((i: number) => (i - 0.5) * arcSize)
     .endAngle((i: number) => (i + 0.5) * arcSize)
