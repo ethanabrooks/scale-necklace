@@ -124,17 +124,17 @@ export default function App(): JSX.Element {
       });
   };
 
-  const absOffsets: Scale = stepsBetween.reduce(
-    (soFar: Scale, n: number) => soFar.concat(soFar[soFar.length - 1] + n),
-    [0]
-  );
-  const rotatedSteps = rotate(stepsBetween, absOffsets.indexOf(offsetFromRoot));
-  const absIndices: Scale = rotatedSteps.reduce(
+  const absIndices: Scale = stepsBetween.reduce(
     (soFar: Scale, n: number) => soFar.concat(soFar[soFar.length - 1] + n),
     [root]
   );
   const modIndices = absIndices.map((i) => i % notes.length);
-  const included = notes.map((_, i) => modIndices.includes(i));
+  console.log("steps", stepsBetween);
+  console.log("modIndices", modIndices);
+  const included = notes.map((_, i) => {
+    return modIndices.includes(i);
+  });
+  console.log("included", included);
   const colors = included.map((inc) => {
     if (playing) return playingColor;
     if (inc) return highlightColor;
@@ -149,21 +149,20 @@ export default function App(): JSX.Element {
     .endAngle((i: number) => (i + 0.5) * arcSize)
     .cornerRadius(containerSize);
   const arcs = notes.map((_, i) => arcGen(i) as string);
+  console.log("root", root, "offset", offsetFromRoot);
+  let range = Array.from(Array(notes.length).keys());
   const arcInfo: [[number, boolean, string], string][] = zip(
-    rotate(
-      zip(included, colors).map((x, i) => [i, ...x]),
-      -offsetFromRoot
-    ),
+    rotate(zip3(range, included, colors), root - offsetFromRoot),
     arcs
   );
-  // let intInc = included.map((i) => (i ? 1 : 0));
-  // console.log(intInc);
-  // console.log(
-  //   "rotate neg",
-  //   -offsetFromRoot,
-  //   mod(-offsetFromRoot, intInc.length),
-  //   rotate(intInc, -offsetFromRoot)
-  // );
+  let intInc = included.map((i) => (i ? 1 : 0));
+  console.log("colors", colors);
+  console.log(
+    "rotate neg",
+    -offsetFromRoot,
+    mod(-offsetFromRoot, intInc.length),
+    rotate(intInc, -offsetFromRoot)
+  );
 
   const noteNames = notes.map((note: Note) =>
     note.sharp == note.flat
@@ -210,10 +209,14 @@ export default function App(): JSX.Element {
                   if (e.shiftKey) {
                     if (included) {
                       setOffsetFromRoot(newOffset);
+                      setStepsBetween(
+                        rotate(stepsBetween, modIndices.indexOf(absIndex))
+                      );
                     }
                   } else {
                     setRoot(absIndex);
-                    setOffsetFromRoot(newOffset);
+                    console.log(offsetFromRoot, absIndex, root);
+                    setOffsetFromRoot(offsetFromRoot + (absIndex - root));
                   }
                 }}
               />
