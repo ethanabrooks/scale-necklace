@@ -65,7 +65,8 @@ body {
 }
 
 .note-names a {
-  --az: calc((var(--i) / var(--m) * 1turn) - 0.25turn);
+  --ai: calc(var(--a) + var(--i));
+  --az: calc((var(--ai) / var(--m) * 1turn) - 0.25turn);
   $negAz: calc(-1 * var(--az));
   position: absolute;
   margin: calc(-0.5 * var(--d));

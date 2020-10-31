@@ -249,22 +249,16 @@ export default function App(): JSX.Element {
             </animated.svg>
           );
         })}
-        <div className={"note-names"}>
+        <animated.div
+          className={"note-names"}
+          style={{ "--a": springRoot.interpolate((r) => root - r) } as any}
+        >
           {noteNamesInfo.map(([name, color], i) => (
-            <animated.a
-              style={
-                {
-                  "--i": springRoot.interpolate((r) => i + (root - r)),
-                  "--c": color,
-                  ...fontStyle,
-                } as any
-              }
-              key={i}
-            >
+            <a style={{ "--i": i, "--c": color, ...fontStyle } as any} key={i}>
               {name}
-            </animated.a>
+            </a>
           ))}
-        </div>
+        </animated.div>
       </div>
     </div>
   );
