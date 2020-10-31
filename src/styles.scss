@@ -26,6 +26,7 @@ body {
   color: var(--ll);
   background-color: var(--bg);
   border-radius: 0.12em;
+  z-index: 100;
 }
 
 .buttons button:hover {
@@ -48,7 +49,7 @@ body {
 
 .path {
   stroke-width: 4;
-  transform: translate(100px, 100px);
+  transform: translate(10px, 10px);
 }
 
 .note-names {
@@ -84,12 +85,13 @@ body {
   --az: calc(var(--r) / var(--m) * 1turn);
   left: 0;
   top: 0;
-  height: 200px;
-  width: 200px;
-  transform: translate(-100px, -100px) rotate(var(--az));
+  height: 20px;
+  width: 20px;
+  transform: translate(-10px, -10px) rotate(var(--az));
   position: absolute;
   overflow: visible;
-  fill: var(--bg);
+  fill: none;
+  pointer-events: visiblePainted;
 }
 
 .path:hover {

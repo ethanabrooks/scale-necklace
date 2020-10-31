@@ -8,9 +8,6 @@ import "./styles.scss";
 import { animated, useSpring } from "react-spring";
 import { zip } from "fp-ts/Array";
 
-const backgroundColor = getComputedStyle(
-  document.documentElement
-).getPropertyValue("--bg");
 const highlightColor = getComputedStyle(
   document.documentElement
 ).getPropertyValue("--hl");
@@ -38,13 +35,6 @@ function rotate<X>(array: X[], start: number) {
   let modStart = mod(start, array.length);
   return array.slice(modStart).concat(array.slice(0, modStart));
 }
-// function zip3<A, B, C>(a: A[], b: B[], c: C[]): [A, B, C][] {
-//   return zip(zip(a, b), c).map(([[a, b], c]) => [a, b, c]);
-// }
-//
-// function zip4<A, B, C, D>(a: A[], b: B[], c: C[], d: D[]): [A, B, C, D][] {
-//   return zip(zip(zip(a, b), c), d).map(([[[a, b], c], d]) => [a, b, c, d]);
-// }
 
 function mod(a: number, b: number) {
   return ((a % b) + b) % b;
@@ -77,7 +67,6 @@ export default function App(): JSX.Element {
   const [modOffset, setModOffset] = React.useState<number>(0);
   const [modRoot, setModRoot] = React.useState<number>(0);
   const [state, setState] = useState<State>({ loaded: false });
-  // const [mousedOver, setMouseOver] = useState<number | null>(null);
   const [{ width, height }, setWindow] = React.useState<{
     width: number;
     height: number;
@@ -85,7 +74,7 @@ export default function App(): JSX.Element {
   const { springRoot, springOffset } = useSpring({
     springRoot: modRoot,
     springOffset: modOffset,
-    config: { tension: 40, friction: 40, mass: 10 },
+    config: { tension: 100, friction: 60, mass: 10 },
   });
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
