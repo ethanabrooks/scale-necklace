@@ -17,6 +17,9 @@ const highlightColor = getComputedStyle(
 const lowLightColor = getComputedStyle(
   document.documentElement
 ).getPropertyValue("--ll");
+const playingColor = getComputedStyle(
+  document.documentElement
+).getPropertyValue("--pl");
 
 export type Scale = number[];
 export type State =
@@ -82,7 +85,7 @@ export default function App(): JSX.Element {
   const { springRoot, springOffset } = useSpring({
     springRoot: modRoot,
     springOffset: modOffset,
-    config: { tension: 40 },
+    config: { tension: 60 },
   });
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
@@ -161,13 +164,13 @@ export default function App(): JSX.Element {
   const included = notes.map((_, i) => {
     return modIndices.includes(i);
   });
-  const colors = included.map((inc) => {
-    // if (
-    //   state.loaded &&
-    //   state.notesToPlay.length > 0 &&
-    //   modNotes(state.notesToPlay[0]) == i
-    // )
-    //   return playingColor;
+  const colors = included.map((inc, i) => {
+    if (
+      state.loaded &&
+      state.notesToPlay.length > 0 &&
+      modNotes(state.notesToPlay[0]) == i
+    )
+      return playingColor;
     if (inc) return highlightColor;
     return lowLightColor;
   });
