@@ -1,0 +1,3 @@
+- optimize by trying with and without css variables
+- add split/merge buttons
+- get hovering to work as desired
