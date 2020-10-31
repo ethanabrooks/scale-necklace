@@ -8,10 +8,6 @@ body {
   background-color: var(--bg);
 }
 
-path {
-  pointer-events: auto;
-}
-
 .buttons {
   position: absolute;
   height: 100%;
@@ -47,16 +43,24 @@ path {
   left: 50%;
   height: 100%;
   margin: 1px;
+  pointer-events: none;
 }
 
-.necklace svg {
+.svg {
+  --az: calc(var(--r) * 1turn);
   left: 0;
   top: 0;
+  height: 200px;
+  width: 200px;
+  transform: translate(-100px, -100px) rotate(var(--az));
   position: absolute;
   overflow: visible;
 }
 
-.path {
+path {
+  pointer-events: auto;
+  stroke-width: 2;
+  transform: translate(100px, 100px);
 }
 
 @keyframes pulse {
@@ -97,7 +101,7 @@ path {
 
 .note-names a {
   $number: calc(-1 * var(--az));
-  --az: calc((var(--i) * 1turn / var(--m)) - 0.25turn);
+  --az: calc((var(--i) / var(--m) * 1turn) - 0.25turn);
   position: absolute;
   margin: calc(-0.5 * var(--d));
   width: var(--d);

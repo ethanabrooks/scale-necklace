@@ -82,7 +82,7 @@ export default function App(): JSX.Element {
   const { springRoot, springOffset } = useSpring({
     springRoot: modRoot,
     springOffset: modOffset,
-    // config: { tension: 40 },
+    config: { tension: 40 },
   });
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
@@ -213,19 +213,22 @@ export default function App(): JSX.Element {
       <div className={"necklace"}>
         {arcInfo.map(([[absIndex, included, color], d], i: number) => {
           return (
-            <svg className={"svg"} key={i}>
+            <animated.svg
+              className={"svg"}
+              key={i}
+              style={
+                {
+                  "--r": springOffset.interpolate(
+                    (r: number) => -r / notes.length
+                  ),
+                } as any
+              }
+            >
               <animated.path
                 className={"path"}
                 stroke={color}
                 fill={backgroundColor}
-                strokeWidth={2}
                 d={d}
-                transform={springOffset.interpolate((r: number) => {
-                  const degrees = (-r * 360) / notes.length;
-                  return `rotate(${degrees})`;
-                })}
-                // onMouseEnter={() => setMouseOver(absIndex)}
-                // onMouseLeave={() => setMouseOver(null)}
                 onClick={(e: React.MouseEvent<SVGPathElement>) => {
                   let newOffset = modNotes(offset + (absIndex - root));
                   if (e.shiftKey) {
@@ -241,7 +244,7 @@ export default function App(): JSX.Element {
                   }
                 }}
               />
-            </svg>
+            </animated.svg>
           );
         })}
         <div className={"note-names"} style={noteNamesStyle}>
