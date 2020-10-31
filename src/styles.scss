@@ -52,7 +52,7 @@ body {
 }
 
 .note-names {
-  --d: calc(var(--s) / 7);
+  --d: calc(var(--s) / 6.5);
   /* image size */
   --r: calc((var(--s) - var(--d)) / 2);
   /* radius */
