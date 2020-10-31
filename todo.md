@@ -1,4 +1,3 @@
 - add split/merge buttons
-- get hovering to work as desired
-- fix initial sound issue
-- optimize by trying with and without css variables
+- adjust prob of 2 minor seconds and augmented seconds
+- fix shift clicking for accessibility
