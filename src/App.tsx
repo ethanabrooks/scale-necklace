@@ -60,7 +60,10 @@ export default function App(): JSX.Element {
     width: number;
     height: number;
   }>({ width: window.innerWidth, height: window.innerHeight });
-  const spring = useSpring({ root: root });
+  const { springRoot, springOffset } = useSpring({
+    springRoot: root,
+    springOffset: offsetFromRoot,
+  });
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
   React.useEffect(() => {
@@ -129,12 +132,9 @@ export default function App(): JSX.Element {
     [root]
   );
   const modIndices = absIndices.map((i) => i % notes.length);
-  console.log("steps", stepsBetween);
-  console.log("modIndices", modIndices);
   const included = notes.map((_, i) => {
     return modIndices.includes(i);
   });
-  console.log("included", included);
   const colors = included.map((inc) => {
     if (playing) return playingColor;
     if (inc) return highlightColor;
@@ -149,20 +149,12 @@ export default function App(): JSX.Element {
     .endAngle((i: number) => (i + 0.5) * arcSize)
     .cornerRadius(containerSize);
   const arcs = notes.map((_, i) => arcGen(i) as string);
-  console.log("root", root, "offset", offsetFromRoot);
   let range = Array.from(Array(notes.length).keys());
   const arcInfo: [[number, boolean, string], string][] = zip(
     rotate(zip3(range, included, colors), root - offsetFromRoot),
     arcs
   );
   let intInc = included.map((i) => (i ? 1 : 0));
-  console.log("colors", colors);
-  console.log(
-    "rotate neg",
-    -offsetFromRoot,
-    mod(-offsetFromRoot, intInc.length),
-    rotate(intInc, -offsetFromRoot)
-  );
 
   const noteNames = notes.map((note: Note) =>
     note.sharp == note.flat
@@ -195,11 +187,14 @@ export default function App(): JSX.Element {
                 fill={i == mousedOver ? color : backgroundColor}
                 strokeWidth={2}
                 d={d}
-                transform={spring.root.interpolate((r) => {
-                  const degrees = (-offsetFromRoot * 360) / notes.length;
+                transform={springOffset.interpolate((r: number) => {
+                  const degrees = (-r * 360) / notes.length;
                   return `rotate(${degrees})`;
                 })}
-                onMouseEnter={() => setMouseOver(i)}
+                onMouseEnter={() => {
+                  console.log(absIndex);
+                  setMouseOver(absIndex);
+                }}
                 onMouseLeave={() => setMouseOver(null)}
                 onClick={(e: React.MouseEvent<SVGPathElement>) => {
                   let newOffset = mod(
@@ -215,7 +210,6 @@ export default function App(): JSX.Element {
                     }
                   } else {
                     setRoot(absIndex);
-                    console.log(offsetFromRoot, absIndex, root);
                     setOffsetFromRoot(offsetFromRoot + (absIndex - root));
                   }
                 }}
@@ -229,7 +223,7 @@ export default function App(): JSX.Element {
               style={
                 {
                   "--i": i,
-                  "--c": i == mousedOver ? backgroundColor : color,
+                  "--c": root + i == mousedOver ? backgroundColor : color,
                   ...fontStyle,
                 } as any
               }
