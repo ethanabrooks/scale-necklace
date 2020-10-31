@@ -211,7 +211,10 @@ export default function App(): JSX.Element {
         <button style={fontStyle} onClick={() => setNotesToPlay(absIndices)}>
           {playing ? "Pause" : "Play"}
         </button>
-        <span style={fontStyle}>Try shift-clicking on the yellow notes...</span>
+        <span style={fontStyle}>&nbsp;</span>
+        <span style={fontStyle}>
+          Try clicking on a note or shift-clicking on yellow note.
+        </span>
       </div>
       <animated.div
         className={"necklace"}
