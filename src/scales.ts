@@ -36,7 +36,7 @@ function BScales(len: number): B[] {
 function CScales(len: number): C[] {
   if (len < 0) {
     return [];
-  } else if (len == 0) {
+  } else if (len === 0) {
     return [{ tag: "C", scale: null }];
   } else {
     return flatten<A | B>([AScales(len), BScales(len)]).map((c: CScale) => ({

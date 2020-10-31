@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./scales";
 import { scales } from "./scales";
 import { Note, notes } from "./notes";
-import { Synth } from "tone";
+import { start, Synth } from "tone";
 import * as d3 from "d3";
 import "./styles.scss";
 import { animated, useSpring } from "react-spring";
@@ -102,10 +102,9 @@ export default function App(): JSX.Element {
   }, [setWindow]);
 
   useEffect(() => {
-    let synth = new Synth().toDestination();
     setState({
       loaded: true,
-      synth: synth,
+      synth: new Synth().toDestination(),
       notesToPlay: [],
     });
   }, [setState]);
@@ -147,11 +146,13 @@ export default function App(): JSX.Element {
     setNotesToPlay([]);
   };
   const setNotesToPlay = (notes: Scale) => {
-    if (state.loaded)
-      setState({
-        ...state,
-        notesToPlay: playing ? [] : notes,
-      });
+    if (state.loaded) {
+      if (playing) {
+        setState({ ...state, notesToPlay: [] });
+      } else {
+        start().then(() => setState({ ...state, notesToPlay: notes }));
+      }
+    }
   };
 
   const absIndices: Scale = stepsBetween.reduce(
@@ -248,9 +249,12 @@ export default function App(): JSX.Element {
           style={{ "--a": springRoot.interpolate((r) => root - r) } as any}
         >
           {noteNamesInfo.map(([name, color], i) => (
-            <a style={{ "--i": i, "--c": color, ...fontStyle } as any} key={i}>
+            <span
+              style={{ "--i": i, "--c": color, ...fontStyle } as any}
+              key={i}
+            >
               {name}
-            </a>
+            </span>
           ))}
         </animated.div>
       </animated.div>

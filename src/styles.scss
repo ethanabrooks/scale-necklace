@@ -64,7 +64,7 @@ body {
   pointer-events: none;
 }
 
-.note-names a {
+.note-names span {
   --ai: calc(var(--a) + var(--i));
   --az: calc((var(--ai) / var(--m) * 1turn) - 0.25turn);
   $negAz: calc(-1 * var(--az));
