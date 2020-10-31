@@ -44,7 +44,6 @@ body {
   left: 50%;
   height: 100%;
   margin: 1px;
-  pointer-events: none;
 }
 
 .svg {
@@ -58,33 +57,13 @@ body {
   overflow: visible;
 }
 
-path {
-  pointer-events: auto;
+.path {
   stroke-width: 2;
   transform: translate(100px, 100px);
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
-  }
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-  }
-}
-
-.icon:hover {
-  fill: #da4567;
-}
-
-.necklace svg:hover {
-  fill: var(--bg);
+.path:hover {
+  background-color: green;
 }
 
 .note-names {
@@ -114,4 +93,19 @@ path {
   pointer-events: none;
   mix-blend-mode: difference;
   transform: rotate(var(--az)) translate(var(--r)) rotate($number);
+}
+
+svg {
+  --az: calc(var(--r) / var(--m) * 1turn);
+  left: 0;
+  top: 0;
+  height: 200px;
+  width: 200px;
+  transform: translate(-100px, -100px) rotate(var(--az));
+  position: absolute;
+  overflow: visible;
+  fill: var(--bg);
+}
+svg:hover {
+  fill: red;
 }
