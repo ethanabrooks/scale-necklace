@@ -1,4 +1,3 @@
-import * as A from "fp-ts/lib/Array";
 import { flatten } from "fp-ts/lib/Array";
 import { NUM_NOTES } from "./notes";
 

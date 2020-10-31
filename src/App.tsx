@@ -90,7 +90,7 @@ export default function App(): JSX.Element {
   const { springRoot, springOffset } = useSpring({
     springRoot: targetRoot,
     springOffset: targetOffset,
-    config: { tension: 100, friction: 60, mass: 10 },
+    config: { tension: 200, friction: 120, mass: 10 },
   });
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
@@ -103,15 +103,11 @@ export default function App(): JSX.Element {
 
   useEffect(() => {
     let synth = new Synth().toDestination();
-    console.log("aiting");
-    // setTimeout(() => {
-    console.log("go");
     setState({
       loaded: true,
       synth: synth,
       notesToPlay: [],
     });
-    // }, 200);
   }, [setState]);
 
   useEffect(() => {
@@ -170,7 +166,7 @@ export default function App(): JSX.Element {
     if (
       state.loaded &&
       state.notesToPlay.length > 0 &&
-      modNotes(state.notesToPlay[0]) == i
+      modNotes(state.notesToPlay[0]) === i
     )
       return playingColor;
     if (inc) return highlightColor;
@@ -194,7 +190,7 @@ export default function App(): JSX.Element {
   );
 
   const noteNames = notes.map((note: Note) =>
-    note.sharp == note.flat
+    note.sharp === note.flat
       ? note.sharp
       : `${note.sharp}/${note.flat}`
           .replace(/(\w)#/, "$1♯")
