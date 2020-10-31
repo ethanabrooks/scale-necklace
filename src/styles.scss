@@ -48,7 +48,7 @@ body {
 }
 
 .svg {
-  --az: calc(var(--r) * 1turn);
+  --az: calc(var(--r) / var(--m) * 1turn);
   left: 0;
   top: 0;
   height: 200px;

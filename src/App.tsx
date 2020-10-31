@@ -136,10 +136,6 @@ export default function App(): JSX.Element {
   const fontSize = `${containerSize / 50}pt`;
   const arcSize = (2 * Math.PI) / notes.length;
   const fontStyle = { "--f": fontSize } as any;
-  let noteNamesStyle = {
-    "--m": notes.length,
-    "--s": `${containerSize}px`,
-  } as any;
   const setRandomRoot = () => {
     setRootNearestModule(randomNumber(notes.length));
     setOffsetNearestModule(0);
@@ -201,8 +197,11 @@ export default function App(): JSX.Element {
   const noteNamesInfo = rotate(zip(noteNames, colors), root);
 
   return (
-    <div className={"container"}>
-      <div className={"buttons"} style={{ "--s": `${containerSize}px` } as any}>
+    <div
+      className={"container"}
+      style={{ "--s": `${containerSize}px`, "--m": notes.length } as any}
+    >
+      <div className={"buttons"}>
         <button style={fontStyle} onClick={setRandomRoot}>
           Randomize Root
         </button>
@@ -221,9 +220,7 @@ export default function App(): JSX.Element {
               key={i}
               style={
                 {
-                  "--r": springOffset.interpolate(
-                    (r: number) => -r / notes.length
-                  ),
+                  "--r": springOffset.interpolate((r: number) => -r),
                 } as any
               }
             >
@@ -250,7 +247,7 @@ export default function App(): JSX.Element {
             </animated.svg>
           );
         })}
-        <div className={"note-names"} style={noteNamesStyle}>
+        <div className={"note-names"}>
           {noteNamesInfo.map(([name, color], i) => (
             <animated.a
               style={
