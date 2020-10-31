@@ -26,6 +26,7 @@ body {
   color: var(--ll);
   background-color: var(--bg);
   border-radius: 0.12em;
+  z-index: 1000;
 }
 
 .buttons button:hover {
