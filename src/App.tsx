@@ -191,10 +191,7 @@ export default function App(): JSX.Element {
                   const degrees = (-r * 360) / notes.length;
                   return `rotate(${degrees})`;
                 })}
-                onMouseEnter={() => {
-                  console.log(absIndex);
-                  setMouseOver(absIndex);
-                }}
+                onMouseEnter={() => setMouseOver(absIndex)}
                 onMouseLeave={() => setMouseOver(null)}
                 onClick={(e: React.MouseEvent<SVGPathElement>) => {
                   let newOffset = mod(
@@ -222,7 +219,7 @@ export default function App(): JSX.Element {
             <animated.a
               style={
                 {
-                  "--i": i,
+                  "--i": springRoot.interpolate((r) => i + (root - r)),
                   "--c": root + i == mousedOver ? backgroundColor : color,
                   ...fontStyle,
                 } as any
