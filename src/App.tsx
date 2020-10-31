@@ -141,16 +141,18 @@ export default function App(): JSX.Element {
   const setRandomRoot = () => {
     setRootNearestModule(randomNumber(notes.length));
     setOffsetNearestModule(0);
+    setNotesToPlay([]);
   };
   let setRandomScale = () => {
     const newScale = scales[randomNumber(scales.length)];
     setStepsBetween(rotate(newScale, randomNumber(newScale.length)));
+    setNotesToPlay([]);
   };
-  const setNotesToPlay = () => {
+  const setNotesToPlay = (notes: Scale) => {
     if (state.loaded)
       setState({
         ...state,
-        notesToPlay: playing ? [] : absIndices,
+        notesToPlay: playing ? [] : notes,
       });
   };
 
@@ -208,7 +210,7 @@ export default function App(): JSX.Element {
         <button style={fontStyle} onClick={setRandomScale}>
           Randomize Scale
         </button>
-        <button style={fontStyle} onClick={setNotesToPlay}>
+        <button style={fontStyle} onClick={() => setNotesToPlay(absIndices)}>
           {playing ? "Pause" : "Play"}
         </button>
       </div>
@@ -224,6 +226,7 @@ export default function App(): JSX.Element {
               d={d}
               onClick={(e: React.MouseEvent<SVGPathElement>) => {
                 let newOffset = modNotes(offset + (absIndex - root));
+                setNotesToPlay([]);
                 if (e.shiftKey) {
                   if (included) {
                     setOffsetNearestModule(newOffset);
