@@ -17,9 +17,6 @@ const highlightColor = getComputedStyle(
 const lowLightColor = getComputedStyle(
   document.documentElement
 ).getPropertyValue("--ll");
-const playingColor = getComputedStyle(
-  document.documentElement
-).getPropertyValue("--pl");
 
 export type Scale = number[];
 export type State =
@@ -50,10 +47,33 @@ function mod(a: number, b: number) {
   return ((a % b) + b) % b;
 }
 
+function modNotes(a: number) {
+  return mod(a, notes.length);
+}
+
+// useNearestModulo returns a value minimizing the distance traveled around a
+// circle. It always satisfies useNearestModulo(P, N % M, M) % M = N.
+//
+// useNearestModulo(P, N, M) finds N' that minimizes |N' - P|
+// with the constraint that N' % M = N % M,
+//
+// Examples:
+//   useNearestModulo(5, 0, 12) =  0  // travel downward/counterclockwise
+//   useNearestModulo(6, 0, 12) =  0  // tie resolved downward
+//   useNearestModulo(7, 0, 12) = 12  // travel upward/clockwise
+//   useNearestModulo(7, 1, 12) = 1
+//   useNearestModulo(7,-1, 12) = 11  // -1 % 12 = 11
+function getNearestModulo(current: number, target: number, m: number): number {
+  console.log("called");
+  const q = current % m;
+  const pp = target % m;
+  return Math.round((q - pp) / m) * m + pp;
+}
+
 export default function App(): JSX.Element {
   const [stepsBetween, setStepsBetween] = React.useState<Scale>(scales[0]);
-  const [offsetFromRoot, setOffsetFromRoot] = React.useState<number>(0);
-  const [root, setRoot] = React.useState<number>(0);
+  const [modOffset, setModOffset] = React.useState<number>(0);
+  const [modRoot, setModRoot] = React.useState<number>(0);
   const [state, setState] = useState<State>({ loaded: false });
   const [mousedOver, setMouseOver] = useState<number | null>(null);
   const [{ width, height }, setWindow] = React.useState<{
@@ -61,8 +81,9 @@ export default function App(): JSX.Element {
     height: number;
   }>({ width: window.innerWidth, height: window.innerHeight });
   const { springRoot, springOffset } = useSpring({
-    springRoot: root,
-    springOffset: offsetFromRoot,
+    springRoot: modRoot,
+    springOffset: modOffset,
+    config: { tension: 40 },
   });
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
@@ -102,6 +123,12 @@ export default function App(): JSX.Element {
     }
   }, [state, playing]);
 
+  const root = modNotes(modRoot);
+  const offset = modNotes(modOffset);
+  const setRootNearestModule = (newRoot: number) =>
+    setModRoot(getNearestModulo(root, newRoot, notes.length));
+  const setOffsetNearestModule = (newOffset: number) =>
+    setModOffset(getNearestModulo(offset, newOffset, notes.length));
   const octave: number = 3;
   const containerSize = Math.min(width - 30, height - 30);
   const fontSize = `${containerSize / 50}pt`;
@@ -112,8 +139,8 @@ export default function App(): JSX.Element {
     "--s": `${containerSize}px`,
   } as any;
   const setRandomRoot = () => {
-    setRoot(randomNumber(notes.length));
-    setOffsetFromRoot(0);
+    setRootNearestModule(randomNumber(notes.length));
+    setOffsetNearestModule(0);
   };
   let setRandomScale = () => {
     const newScale = scales[randomNumber(scales.length)];
@@ -135,8 +162,13 @@ export default function App(): JSX.Element {
   const included = notes.map((_, i) => {
     return modIndices.includes(i);
   });
-  const colors = included.map((inc) => {
-    if (playing) return playingColor;
+  const colors = included.map((inc, i) => {
+    // if (
+    //   state.loaded &&
+    //   state.notesToPlay.length > 0 &&
+    //   modNotes(state.notesToPlay[0]) == i
+    // )
+    //   return playingColor;
     if (inc) return highlightColor;
     return lowLightColor;
   });
@@ -151,10 +183,9 @@ export default function App(): JSX.Element {
   const arcs = notes.map((_, i) => arcGen(i) as string);
   let range = Array.from(Array(notes.length).keys());
   const arcInfo: [[number, boolean, string], string][] = zip(
-    rotate(zip3(range, included, colors), root - offsetFromRoot),
+    rotate(zip3(range, included, colors), root - offset),
     arcs
   );
-  let intInc = included.map((i) => (i ? 1 : 0));
 
   const noteNames = notes.map((note: Note) =>
     note.sharp == note.flat
@@ -183,8 +214,9 @@ export default function App(): JSX.Element {
           return (
             <svg className={"svg"} key={i}>
               <animated.path
+                className={"path"}
                 stroke={color}
-                fill={i == mousedOver ? color : backgroundColor}
+                fill={backgroundColor}
                 strokeWidth={2}
                 d={d}
                 transform={springOffset.interpolate((r: number) => {
@@ -194,20 +226,17 @@ export default function App(): JSX.Element {
                 onMouseEnter={() => setMouseOver(absIndex)}
                 onMouseLeave={() => setMouseOver(null)}
                 onClick={(e: React.MouseEvent<SVGPathElement>) => {
-                  let newOffset = mod(
-                    offsetFromRoot + (absIndex - root),
-                    notes.length
-                  );
+                  let newOffset = modNotes(offset + (absIndex - root));
                   if (e.shiftKey) {
                     if (included) {
-                      setOffsetFromRoot(newOffset);
+                      setOffsetNearestModule(newOffset);
                       setStepsBetween(
                         rotate(stepsBetween, modIndices.indexOf(absIndex))
                       );
                     }
                   } else {
-                    setRoot(absIndex);
-                    setOffsetFromRoot(offsetFromRoot + (absIndex - root));
+                    setRootNearestModule(absIndex);
+                    setOffsetNearestModule(offset + (absIndex - root));
                   }
                 }}
               />
@@ -220,7 +249,7 @@ export default function App(): JSX.Element {
               style={
                 {
                   "--i": springRoot.interpolate((r) => i + (root - r)),
-                  "--c": root + i == mousedOver ? backgroundColor : color,
+                  "--c": color,
                   ...fontStyle,
                 } as any
               }
