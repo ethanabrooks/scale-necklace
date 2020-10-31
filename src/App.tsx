@@ -7,7 +7,6 @@ import * as d3 from "d3";
 import "./styles.scss";
 import { animated, useSpring } from "react-spring";
 import { zip } from "fp-ts/Array";
-import { pipe } from "fp-ts/function";
 
 const backgroundColor = getComputedStyle(
   document.documentElement
@@ -52,7 +51,7 @@ function mod(a: number, b: number) {
 
 export default function App(): JSX.Element {
   const [stepsBetween, setStepsBetween] = React.useState<Scale>(scales[0]);
-  const [stepsStart, setStepsStart] = React.useState<number>(0);
+  const [offsetFromRoot, setOffsetFromRoot] = React.useState<number>(0);
   const [root, setRoot] = React.useState<number>(0);
   const [state, setState] = useState<State>({ loaded: false });
   const [mousedOver, setMouseOver] = useState<number | null>(null);
@@ -110,7 +109,7 @@ export default function App(): JSX.Element {
   } as any;
   const setRandomRoot = () => {
     setRoot(randomNumber(notes.length));
-    setStepsStart(0);
+    setOffsetFromRoot(0);
   };
   let setRandomScale = () => {
     const newScale = scales[randomNumber(scales.length)];
@@ -124,10 +123,16 @@ export default function App(): JSX.Element {
       });
   };
 
-  const absIndices: Scale = stepsBetween.reduce(
+  const absOffsets: Scale = stepsBetween.reduce(
+    (soFar: Scale, n: number) => soFar.concat(soFar[soFar.length - 1] + n),
+    [0]
+  );
+  const rotatedSteps = rotate(stepsBetween, absOffsets.indexOf(offsetFromRoot));
+  const absIndices: Scale = rotatedSteps.reduce(
     (soFar: Scale, n: number) => soFar.concat(soFar[soFar.length - 1] + n),
     [root]
   );
+  console.log(absIndices);
   const modIndices = absIndices.map((i) => i % notes.length);
   const included = notes.map((_, i) => modIndices.includes(i));
   const colors = included.map((inc) => {
@@ -144,13 +149,21 @@ export default function App(): JSX.Element {
     .endAngle((i: number) => (i + 0.5) * arcSize)
     .cornerRadius(containerSize);
   const arcs = notes.map((_, i) => arcGen(i) as string);
-  let rotation = mod(root - stepsStart, notes.length);
-  console.log(root, stepsStart);
-  const arcInfo: [number, boolean, string, string][] = rotate(
-    zip3(included, colors, arcs).map((x, i) => [i, ...x]),
-    rotation
+  console.log(root, offsetFromRoot);
+  const arcInfo: [[number, boolean, string], string][] = zip(
+    rotate(
+      zip(included, colors).map((x, i) => [i, ...x]),
+      -offsetFromRoot
+    ),
+    arcs
   );
-  console.log(arcInfo.map(([i]) => i));
+  console.log("included", included);
+  console.log(mod(-offsetFromRoot, included.length));
+  console.log("rotate neg", rotate(included, -offsetFromRoot));
+  console.log(
+    "arcInfoIncluded",
+    arcInfo.map(([i, inc]) => inc)
+  );
 
   const noteNames = notes.map((note: Note) =>
     note.sharp == note.flat
@@ -159,7 +172,7 @@ export default function App(): JSX.Element {
           .replace(/(\w)#/, "$1♯")
           .replace(/(\w)b/, "$1♭")
   );
-  const noteNamesInfo = zip(noteNames, rotate(colors, -rotation));
+  const noteNamesInfo = rotate(zip(noteNames, colors), root);
 
   return (
     <div className={"container"}>
@@ -174,8 +187,9 @@ export default function App(): JSX.Element {
           {playing ? "Pause" : "Play"}
         </button>
       </div>
-      <animated.div className={"necklace"}>
-        {arcInfo.map(([absIndex, included, color, d], i: number) => {
+      <div className={"necklace"}>
+        {arcInfo.map(([[absIndex, included, color], d], i: number) => {
+          console.log(absIndex, included, color);
           return (
             <svg className={"svg"} key={i}>
               <animated.path
@@ -184,7 +198,7 @@ export default function App(): JSX.Element {
                 strokeWidth={2}
                 d={d}
                 transform={spring.root.interpolate((r) => {
-                  const degrees = (-stepsStart * 360) / notes.length;
+                  const degrees = (-offsetFromRoot * 360) / notes.length;
                   return `rotate(${degrees})`;
                 })}
                 onMouseEnter={() => setMouseOver(i)}
@@ -192,11 +206,11 @@ export default function App(): JSX.Element {
                 onClick={(e: React.MouseEvent<SVGPathElement>) => {
                   if (e.shiftKey) {
                     if (included) {
-                      setStepsStart(absIndex);
+                      setOffsetFromRoot(absIndex - root);
                     }
                   } else {
                     setRoot(absIndex);
-                    setStepsStart(absIndex);
+                    setOffsetFromRoot(absIndex - root);
                   }
                 }}
               />
@@ -219,7 +233,7 @@ export default function App(): JSX.Element {
             </animated.a>
           ))}
         </div>
-      </animated.div>
+      </div>
     </div>
   );
 }
