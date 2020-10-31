@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/scale-necklace/static/css/main.dad79dec.chunk.css",
-    "main.js": "/scale-necklace/static/js/main.77555c35.chunk.js",
-    "main.js.map": "/scale-necklace/static/js/main.77555c35.chunk.js.map",
+    "main.css": "/scale-necklace/static/css/main.56a52478.chunk.css",
+    "main.js": "/scale-necklace/static/js/main.e1edc35b.chunk.js",
+    "main.js.map": "/scale-necklace/static/js/main.e1edc35b.chunk.js.map",
     "runtime-main.js": "/scale-necklace/static/js/runtime-main.91a7d5c1.js",
     "runtime-main.js.map": "/scale-necklace/static/js/runtime-main.91a7d5c1.js.map",
     "static/js/2.6e8cc4a2.chunk.js": "/scale-necklace/static/js/2.6e8cc4a2.chunk.js",
@@ -10,13 +10,13 @@
     "static/js/3.28a77e91.chunk.js": "/scale-necklace/static/js/3.28a77e91.chunk.js",
     "static/js/3.28a77e91.chunk.js.map": "/scale-necklace/static/js/3.28a77e91.chunk.js.map",
     "index.html": "/scale-necklace/index.html",
-    "static/css/main.dad79dec.chunk.css.map": "/scale-necklace/static/css/main.dad79dec.chunk.css.map",
+    "static/css/main.56a52478.chunk.css.map": "/scale-necklace/static/css/main.56a52478.chunk.css.map",
     "static/js/2.6e8cc4a2.chunk.js.LICENSE.txt": "/scale-necklace/static/js/2.6e8cc4a2.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.91a7d5c1.js",
     "static/js/2.6e8cc4a2.chunk.js",
-    "static/css/main.dad79dec.chunk.css",
-    "static/js/main.77555c35.chunk.js"
+    "static/css/main.56a52478.chunk.css",
+    "static/js/main.e1edc35b.chunk.js"
   ]
 }
