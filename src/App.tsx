@@ -131,16 +131,14 @@ export default function App(): JSX.Element {
     }
   }, [state, playing]);
 
-  const setRootNearestModule = (newRoot: number) => setRoot(newRoot);
-  const setOffsetNearestModule = (newOffset: number) => setOffset(newOffset);
   const octave: number = 3;
   const containerSize = Math.min(width - 30, height - 30);
   const fontSize = `${containerSize / 50}pt`;
   const arcSize = (2 * Math.PI) / notes.length;
   const fontStyle = { "--f": fontSize } as any;
   const setRandomRoot = () => {
-    setRootNearestModule(randomNumber(notes.length));
-    setOffsetNearestModule(0);
+    setRoot(randomNumber(notes.length));
+    setOffset(0);
     setNotesToPlay([]);
   };
   let setRandomScale = () => {
@@ -213,6 +211,7 @@ export default function App(): JSX.Element {
         <button style={fontStyle} onClick={() => setNotesToPlay(absIndices)}>
           {playing ? "Pause" : "Play"}
         </button>
+        <span style={fontStyle}>Try shift-clicking on the yellow notes...</span>
       </div>
       <animated.div
         className={"necklace"}
@@ -229,14 +228,13 @@ export default function App(): JSX.Element {
                 setNotesToPlay([]);
                 if (e.shiftKey) {
                   if (included) {
-                    setOffsetNearestModule(newOffset);
+                    setOffset(newOffset);
                     setStepsBetween(
                       rotate(stepsBetween, modIndices.indexOf(absIndex))
                     );
                   }
                 } else {
-                  setRootNearestModule(absIndex);
-                  setOffsetNearestModule(offset + (absIndex - root));
+                  setRoot(absIndex);
                 }
               }}
             />
