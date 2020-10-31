@@ -159,9 +159,7 @@ export default function App(): JSX.Element {
     [root]
   );
   const modIndices = absIndices.map((i) => i % notes.length);
-  const included = notes.map((_, i) => {
-    return modIndices.includes(i);
-  });
+  const included = notes.map((_, i) => modIndices.includes(i));
   const colors = included.map((inc, i) => {
     if (
       state.loaded &&
@@ -214,41 +212,33 @@ export default function App(): JSX.Element {
           {playing ? "Pause" : "Play"}
         </button>
       </div>
-      <div className={"necklace"}>
-        {arcInfo.map(([[absIndex, included, color], d], i: number) => {
-          return (
-            <animated.svg
-              className={"svg"}
-              key={i}
-              style={
-                {
-                  "--c": color,
-                  "--r": springOffset.interpolate((r: number) => -r),
-                } as any
-              }
-            >
-              <path
-                className={"path"}
-                stroke={color}
-                d={d}
-                onClick={(e: React.MouseEvent<SVGPathElement>) => {
-                  let newOffset = modNotes(offset + (absIndex - root));
-                  if (e.shiftKey) {
-                    if (included) {
-                      setOffsetNearestModule(newOffset);
-                      setStepsBetween(
-                        rotate(stepsBetween, modIndices.indexOf(absIndex))
-                      );
-                    }
-                  } else {
-                    setRootNearestModule(absIndex);
-                    setOffsetNearestModule(offset + (absIndex - root));
+      <animated.div
+        className={"necklace"}
+        style={{ "--r": springOffset.interpolate((r: number) => -r) } as any}
+      >
+        {arcInfo.map(([[absIndex, included, color], d], i: number) => (
+          <svg className={"svg"} key={i} style={{ "--c": color } as any}>
+            <path
+              className={"path"}
+              stroke={color}
+              d={d}
+              onClick={(e: React.MouseEvent<SVGPathElement>) => {
+                let newOffset = modNotes(offset + (absIndex - root));
+                if (e.shiftKey) {
+                  if (included) {
+                    setOffsetNearestModule(newOffset);
+                    setStepsBetween(
+                      rotate(stepsBetween, modIndices.indexOf(absIndex))
+                    );
                   }
-                }}
-              />
-            </animated.svg>
-          );
-        })}
+                } else {
+                  setRootNearestModule(absIndex);
+                  setOffsetNearestModule(offset + (absIndex - root));
+                }
+              }}
+            />
+          </svg>
+        ))}
         <animated.div
           className={"note-names"}
           style={{ "--a": springRoot.interpolate((r) => root - r) } as any}
@@ -259,7 +249,7 @@ export default function App(): JSX.Element {
             </a>
           ))}
         </animated.div>
-      </div>
+      </animated.div>
     </div>
   );
 }
