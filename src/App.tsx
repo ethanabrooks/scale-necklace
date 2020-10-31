@@ -102,11 +102,16 @@ export default function App(): JSX.Element {
   }, [setWindow]);
 
   useEffect(() => {
+    let synth = new Synth().toDestination();
+    console.log("aiting");
+    // setTimeout(() => {
+    console.log("go");
     setState({
       loaded: true,
-      synth: new Synth().toDestination(),
+      synth: synth,
       notesToPlay: [],
     });
+    // }, 200);
   }, [setState]);
 
   useEffect(() => {
