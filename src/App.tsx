@@ -173,8 +173,8 @@ export default function App(): JSX.Element {
   });
   const arcGen = d3
     .arc<number>()
-    .padAngle(0.05)
-    .innerRadius(containerSize / 2.8)
+    .padAngle(0.1)
+    .innerRadius(containerSize / 2.9)
     .outerRadius(containerSize / 2)
     .startAngle((i: number) => (i - 0.5) * arcSize)
     .endAngle((i: number) => (i + 0.5) * arcSize)
@@ -222,7 +222,12 @@ export default function App(): JSX.Element {
         style={{ "--r": springOffset.interpolate((r: number) => -r) } as any}
       >
         {arcInfo.map(([[absIndex, included, color], d], i: number) => (
-          <svg className={"svg"} key={i} style={{ "--c": color } as any}>
+          <svg
+            className={"svg"}
+            key={i}
+            tabIndex={absIndex}
+            style={{ "--c": color } as any}
+          >
             <path
               className={"path"}
               stroke={color}
