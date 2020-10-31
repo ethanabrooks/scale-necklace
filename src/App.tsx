@@ -45,35 +45,51 @@ function modNotes(a: number) {
 }
 
 // useNearestModulo returns a value minimizing the distance traveled around a
-// circle. It always satisfies useNearestModulo(P, N % M, M) % M = N.
+// circle. It always satisfies useNearestModulo(P, M) % M = P.
 //
-// useNearestModulo(P, N, M) finds N' that minimizes |N' - P|
-// with the constraint that N' % M = N % M,
+// useNearestModulo(P', M) = Q' such that Q' % M = P' but minimizing |Q' - Q|,
+// where Q is the return value from the previous call. The returned value Q' is
+// then used as the Q for the next call, and so forth.
 //
-// Examples:
-//   useNearestModulo(5, 0, 12) =  0  // travel downward/counterclockwise
-//   useNearestModulo(6, 0, 12) =  0  // tie resolved downward
-//   useNearestModulo(7, 0, 12) = 12  // travel upward/clockwise
-//   useNearestModulo(7, 1, 12) = 1
-//   useNearestModulo(7,-1, 12) = 11  // -1 % 12 = 11
-function getNearestModulo(current: number, target: number, m: number): number {
-  const q = current % m;
-  const pp = target % m;
-  return Math.round((q - pp) / m) * m + pp;
+// In the code below, P' is pp and Q' is qq.
+//
+// Example (sequence of calls):
+//   useNearestModulo( 0, 12) =  0
+//   useNearestModulo(10, 12) = -2
+//   useNearestModulo( 3, 12) =  3
+//   useNearestModulo( 7, 12) =  7
+//   useNearestModulo(10, 12) = 10
+function useNearestModulo(pp: number, m: number): number {
+  const q = React.useRef<number | null>(null);
+
+  // If the function hasn't been called yet, just return P' which satisfies
+  // P' % M = P', but record it as Q for the next call.
+  if (q.current == null) {
+    q.current = pp;
+    return pp;
+  }
+
+  // Calculate Q' that gets as close to Q as possible while satisfying
+  // Q' % M = P'.
+  const qq = Math.round((q.current - pp) / m) * m + pp;
+  q.current = qq;
+  return qq;
 }
 
 export default function App(): JSX.Element {
   const [stepsBetween, setStepsBetween] = React.useState<Scale>(scales[0]);
-  const [modOffset, setModOffset] = React.useState<number>(0);
-  const [modRoot, setModRoot] = React.useState<number>(0);
+  const [offset, setOffset] = React.useState<number>(0);
+  const [root, setRoot] = React.useState<number>(0);
   const [state, setState] = useState<State>({ loaded: false });
   const [{ width, height }, setWindow] = React.useState<{
     width: number;
     height: number;
   }>({ width: window.innerWidth, height: window.innerHeight });
+  const targetRoot = useNearestModulo(root, notes.length);
+  const targetOffset = useNearestModulo(offset, notes.length);
   const { springRoot, springOffset } = useSpring({
-    springRoot: modRoot,
-    springOffset: modOffset,
+    springRoot: targetRoot,
+    springOffset: targetOffset,
     config: { tension: 100, friction: 60, mass: 10 },
   });
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
@@ -114,12 +130,8 @@ export default function App(): JSX.Element {
     }
   }, [state, playing]);
 
-  const root = modNotes(modRoot);
-  const offset = modNotes(modOffset);
-  const setRootNearestModule = (newRoot: number) =>
-    setModRoot(getNearestModulo(root, newRoot, notes.length));
-  const setOffsetNearestModule = (newOffset: number) =>
-    setModOffset(getNearestModulo(offset, newOffset, notes.length));
+  const setRootNearestModule = (newRoot: number) => setRoot(newRoot);
+  const setOffsetNearestModule = (newOffset: number) => setOffset(newOffset);
   const octave: number = 3;
   const containerSize = Math.min(width - 30, height - 30);
   const fontSize = `${containerSize / 50}pt`;
