@@ -35,7 +35,8 @@ function randomNumber(n: number): number {
 }
 
 function rotate<X>(array: X[], start: number) {
-  return array.slice(mod(start, array.length)).concat(array.slice(0, start));
+  let modStart = mod(start, array.length);
+  return array.slice(modStart).concat(array.slice(0, modStart));
 }
 function zip3<A, B, C>(a: A[], b: B[], c: C[]): [A, B, C][] {
   return zip(zip(a, b), c).map(([[a, b], c]) => [a, b, c]);
@@ -132,7 +133,6 @@ export default function App(): JSX.Element {
     (soFar: Scale, n: number) => soFar.concat(soFar[soFar.length - 1] + n),
     [root]
   );
-  console.log(absIndices);
   const modIndices = absIndices.map((i) => i % notes.length);
   const included = notes.map((_, i) => modIndices.includes(i));
   const colors = included.map((inc) => {
@@ -149,7 +149,6 @@ export default function App(): JSX.Element {
     .endAngle((i: number) => (i + 0.5) * arcSize)
     .cornerRadius(containerSize);
   const arcs = notes.map((_, i) => arcGen(i) as string);
-  console.log(root, offsetFromRoot);
   const arcInfo: [[number, boolean, string], string][] = zip(
     rotate(
       zip(included, colors).map((x, i) => [i, ...x]),
@@ -157,13 +156,14 @@ export default function App(): JSX.Element {
     ),
     arcs
   );
-  console.log("included", included);
-  console.log(mod(-offsetFromRoot, included.length));
-  console.log("rotate neg", rotate(included, -offsetFromRoot));
-  console.log(
-    "arcInfoIncluded",
-    arcInfo.map(([i, inc]) => inc)
-  );
+  // let intInc = included.map((i) => (i ? 1 : 0));
+  // console.log(intInc);
+  // console.log(
+  //   "rotate neg",
+  //   -offsetFromRoot,
+  //   mod(-offsetFromRoot, intInc.length),
+  //   rotate(intInc, -offsetFromRoot)
+  // );
 
   const noteNames = notes.map((note: Note) =>
     note.sharp == note.flat
@@ -189,7 +189,6 @@ export default function App(): JSX.Element {
       </div>
       <div className={"necklace"}>
         {arcInfo.map(([[absIndex, included, color], d], i: number) => {
-          console.log(absIndex, included, color);
           return (
             <svg className={"svg"} key={i}>
               <animated.path
@@ -204,13 +203,17 @@ export default function App(): JSX.Element {
                 onMouseEnter={() => setMouseOver(i)}
                 onMouseLeave={() => setMouseOver(null)}
                 onClick={(e: React.MouseEvent<SVGPathElement>) => {
+                  let newOffset = mod(
+                    offsetFromRoot + (absIndex - root),
+                    notes.length
+                  );
                   if (e.shiftKey) {
                     if (included) {
-                      setOffsetFromRoot(absIndex - root);
+                      setOffsetFromRoot(newOffset);
                     }
                   } else {
                     setRoot(absIndex);
-                    setOffsetFromRoot(absIndex - root);
+                    setOffsetFromRoot(newOffset);
                   }
                 }}
               />
