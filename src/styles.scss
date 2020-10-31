@@ -20,7 +20,7 @@ body {
 
 .buttons > * {
   font-size: var(--f);
-  margin: 10px auto;
+  margin: 100px auto;
   border: none;
   outline: none;
   color: var(--ll);
@@ -48,7 +48,7 @@ body {
 
 .path {
   stroke-width: 2;
-  transform: translate(10px, 10px);
+  transform: translate(100px, 100px);
 }
 
 .note-names {
@@ -87,7 +87,7 @@ body {
   top: 0;
   height: 20px;
   width: 20px;
-  transform: translate(-10px, -10px) rotate(var(--az));
+  transform: translate(-100px, -100px) rotate(var(--az));
   position: absolute;
   overflow: visible;
   fill: var(--bg);
