@@ -125,9 +125,7 @@ export default function App(): JSX.Element {
   };
 
   const absIndices: Scale = stepsBetween.reduce(
-    (soFar: Scale, n: number) => {
-      return soFar.concat(soFar[soFar.length - 1] + n);
-    },
+    (soFar: Scale, n: number) => soFar.concat(soFar[soFar.length - 1] + n),
     [root]
   );
   const modIndices = absIndices.map((i) => i % notes.length);
@@ -161,7 +159,7 @@ export default function App(): JSX.Element {
           .replace(/(\w)#/, "$1♯")
           .replace(/(\w)b/, "$1♭")
   );
-  const noteNamesInfo = zip(noteNames, colors);
+  const noteNamesInfo = zip(noteNames, rotate(colors, -rotation));
 
   return (
     <div className={"container"}>
@@ -182,14 +180,14 @@ export default function App(): JSX.Element {
             <svg className={"svg"} key={i}>
               <animated.path
                 stroke={color}
-                fill={absIndex == mousedOver ? color : backgroundColor}
+                fill={i == mousedOver ? color : backgroundColor}
                 strokeWidth={2}
                 d={d}
                 transform={spring.root.interpolate((r) => {
                   const degrees = (-stepsStart * 360) / notes.length;
                   return `rotate(${degrees})`;
                 })}
-                onMouseEnter={() => setMouseOver(absIndex)}
+                onMouseEnter={() => setMouseOver(i)}
                 onMouseLeave={() => setMouseOver(null)}
                 onClick={(e: React.MouseEvent<SVGPathElement>) => {
                   if (e.shiftKey) {
@@ -198,22 +196,29 @@ export default function App(): JSX.Element {
                     }
                   } else {
                     setRoot(absIndex);
+                    setStepsStart(absIndex);
                   }
                 }}
               />
             </svg>
           );
         })}
-        {/*<div className={"note-names"} style={noteNamesStyle}>*/}
-        {/*  {noteNamesInfo.map(([name, color], i) => (*/}
-        {/*    <animated.a*/}
-        {/*      style={{ "--i": i, "--c": color, ...fontStyle } as any}*/}
-        {/*      key={i}*/}
-        {/*    >*/}
-        {/*      {name}*/}
-        {/*    </animated.a>*/}
-        {/*  ))}*/}
-        {/*</div>*/}
+        <div className={"note-names"} style={noteNamesStyle}>
+          {noteNamesInfo.map(([name, color], i) => (
+            <animated.a
+              style={
+                {
+                  "--i": i,
+                  "--c": i == mousedOver ? backgroundColor : color,
+                  ...fontStyle,
+                } as any
+              }
+              key={i}
+            >
+              {name}
+            </animated.a>
+          ))}
+        </div>
       </animated.div>
     </div>
   );
