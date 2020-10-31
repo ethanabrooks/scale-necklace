@@ -48,11 +48,11 @@ body {
 
 .path {
   stroke-width: 2;
-  transform: translate(100px, 100px);
+  transform: translate(10px, 10px);
 }
 
 .note-names {
-  --d: calc(var(--s) / 6.5);
+  --d: calc(var(--s) / 7);
   /* image size */
   --r: calc((var(--s) - var(--d)) / 2);
   /* radius */
@@ -87,7 +87,8 @@ body {
   top: 0;
   height: 20px;
   width: 20px;
-  transform: translate(-100px, -100px) rotate(var(--az));
+  outline: none;
+  transform: translate(-10px, -10px) rotate(var(--az));
   position: absolute;
   overflow: visible;
   fill: var(--bg);
