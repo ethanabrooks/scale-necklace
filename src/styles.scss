@@ -26,7 +26,6 @@ body {
   color: var(--ll);
   background-color: var(--bg);
   border-radius: 0.12em;
-  z-index: 100;
 }
 
 .buttons button:hover {
@@ -48,7 +47,7 @@ body {
 }
 
 .path {
-  stroke-width: 4;
+  stroke-width: 2;
   transform: translate(10px, 10px);
 }
 
@@ -90,8 +89,7 @@ body {
   transform: translate(-10px, -10px) rotate(var(--az));
   position: absolute;
   overflow: visible;
-  fill: none;
-  pointer-events: visiblePainted;
+  fill: var(--bg);
 }
 
 .path:hover {
