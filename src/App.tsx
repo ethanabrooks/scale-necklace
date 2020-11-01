@@ -97,11 +97,31 @@ export default function App(): JSX.Element {
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
 
   React.useEffect(() => {
-    const listener = () =>
+    const resizeListener = () =>
       setWindow({ width: window.innerWidth, height: window.innerHeight });
-    window.addEventListener("resize", listener);
-    return () => window.removeEventListener("resize", listener);
+    window.addEventListener("resize", resizeListener);
+    return () => {
+      window.removeEventListener("resize", resizeListener);
+    };
   }, [setWindow]);
+
+  React.useEffect(() => {
+    const keyDownListener = ({ key }: { key: string }) => {
+      if (key === "Shift") setMoveRoot(false);
+      if (key === "Enter") {
+        setMoveRoot(!moveRoot);
+      }
+    };
+    const keyUpListener = ({ key }: { key: string }) => {
+      if (key === "Shift") setMoveRoot(true);
+    };
+    window.addEventListener("keydown", keyDownListener);
+    window.addEventListener("keyup", keyUpListener);
+    return () => {
+      window.removeEventListener("keydown", keyDownListener);
+      window.removeEventListener("keyup", keyUpListener);
+    };
+  }, [moveRoot, setMoveRoot]);
 
   useEffect(() => {
     setState({
@@ -131,16 +151,6 @@ export default function App(): JSX.Element {
       }
     }
   }, [state, playing]);
-
-  window.addEventListener("keypress", ({ key }) => {
-    if (key === "Enter") setMoveRoot(!moveRoot);
-  });
-  window.addEventListener("keydown", ({ key }) => {
-    if (key === "Shift") setMoveRoot(false);
-  });
-  window.addEventListener("keyup", ({ key }) => {
-    if (key === "Shift") setMoveRoot(true);
-  });
 
   const octave: number = 3;
   const containerSize = Math.min(width - 30, height - 30);
