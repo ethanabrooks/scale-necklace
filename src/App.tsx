@@ -181,20 +181,23 @@ export default function App(): JSX.Element {
       style={{ "--s": `${containerSize}px`, "--m": notes.length } as any}
     >
       <div className={"buttons"}>
-        <button style={fontStyle} onClick={setRandomRoot}>
-          Randomize Root
-        </button>
-        <button style={fontStyle} onClick={() => setStepsBetween(randomSteps)}>
-          Randomize Scale
-        </button>
-        <button
-          style={fontStyle}
-          onClick={() => setNotesToPlay(absIndices)}
-          aria-pressed={playing}
-        >
-          {playing ? "Pause" : "Play"}
-        </button>
         <div style={{ zIndex: 1000 } as any}>
+          <button style={fontStyle} onClick={setRandomRoot}>
+            Randomize Root
+          </button>
+          <button
+            style={fontStyle}
+            onClick={() => setStepsBetween(randomSteps)}
+          >
+            Randomize Scale
+          </button>
+          <button
+            style={fontStyle}
+            onClick={() => setNotesToPlay(absIndices)}
+            aria-pressed={playing}
+          >
+            {playing ? "Pause" : "Play"}
+          </button>
           <Typography style={{ ...fontStyle, color: "#999999" } as any}>
             Click on a note or shift-click on a yellow note.
           </Typography>
