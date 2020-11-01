@@ -231,7 +231,11 @@ export default function App(): JSX.Element {
         <button style={fontStyle} onClick={setRandomScale}>
           Randomize Scale
         </button>
-        <button style={fontStyle} onClick={() => setNotesToPlay(absIndices)}>
+        <button
+          style={fontStyle}
+          onClick={() => setNotesToPlay(absIndices)}
+          aria-pressed={playing}
+        >
           {playing ? "Pause" : "Play"}
         </button>
         <span style={{ ...fontStyle, color: "#999999" } as any}>
