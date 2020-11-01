@@ -1,5 +1,6 @@
 $nobDiam: 13px;
 $toggleTransition: 0.2s;
+$smallFont: calc(var(--s) / 40);
 
 :root {
   --bg: #222222;
@@ -13,6 +14,16 @@ body {
   background-color: var(--bg);
 }
 
+.static {
+  color: var(--ll);
+  font-size: $smallFont;
+}
+
+.button {
+  color: var(--fg);
+  font-size: calc(var(--s) / 30);
+}
+
 .buttons {
   position: absolute;
   height: 100%;
@@ -24,10 +35,8 @@ body {
 
 .buttons > * {
   outline: none;
-  font-size: var(--f);
   margin: 10px auto;
   border: none;
-  color: var(--fg);
   background-color: var(--bg);
   border-radius: 0.12em;
   z-index: 1000;
@@ -72,7 +81,7 @@ body {
   width: var(--d);
   height: var(--d);
   line-height: var(--d);
-  font-size: var(--f);
+  font-size: $smallFont;
   color: var(--c);
   text-align: center;
   pointer-events: none;
@@ -139,14 +148,6 @@ body {
   border-radius: 50%;
 }
 
-//input:checked + .slide {
-//  background-color: var(--fg);
-//}
-
-//input:focus + .slider {
-//box-shadow: 0 0 1px;
-//}
-
 input:checked + .slide:before {
   -webkit-transform: translateX($nobDiam);
   -ms-transform: translateX($nobDiam);
@@ -173,10 +174,10 @@ input:checked + .slide:before {
   cursor: pointer;
 }
 
-//.slider::-moz-range-thumb {
-//  width: 25px;
-//  height: 25px;
-//  border-radius: 50%;
-//  background: var(--hl);
-//  cursor: pointer;
-//}
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--hl);
+  cursor: pointer;
+}

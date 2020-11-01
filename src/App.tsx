@@ -150,8 +150,6 @@ export default function App(): JSX.Element {
     .endAngle((i: number) => (i + 0.5) * arcSize)
     .cornerRadius(containerSize);
   const arcs = notes.map((_, i) => arcGen(i) as string);
-  const fontSize = `${containerSize / 50}pt`;
-  const fontStyle = { "--f": fontSize } as any;
   const randomAdjacent = () => {};
   const setRandomRoot = () => {
     setRoot(randomNumber(notes.length));
@@ -210,29 +208,29 @@ export default function App(): JSX.Element {
       style={{ "--s": `${containerSize}px`, "--m": notes.length } as any}
     >
       <div className={"buttons"}>
-        <button style={fontStyle} onClick={setRandomRoot}>
+        <button className={"button"} onClick={setRandomRoot}>
           Randomize Root
         </button>
-        <button style={fontStyle} onClick={setRandomScale}>
+        <button className={"button"} onClick={setRandomScale}>
           Randomize Scale
         </button>
-        <button style={fontStyle} onClick={setRandomScale}>
+        <button className={"button"} onClick={setRandomScale}>
           Random adjacent Scale
         </button>
         <button
-          style={fontStyle}
+          className={"button"}
           onClick={() => setNotesToPlay(absIndices)}
           aria-pressed={playing}
         >
           {playing ? "Pause" : "Play"}
         </button>
-        <span style={{ ...fontStyle, color: lowlightColor } as any}>
+        <span className={"static"}>
           Click on a note or shift-click on a yellow note.
         </span>
         <Switch value={moveRoot} setValue={setMoveRoot} />
-        <span>Probability of consecutive half-steps</span>
+        <span className={"static"}>Probability of consecutive half-steps</span>
         <Slider value={doubleHalfStepsProb} setValue={setDoubleHalfStepsProb} />
-        <span>Probability of augmented 2nd</span>
+        <span className={"static"}>Probability of augmented 2nd</span>
         <Slider value={aug2ndProb} setValue={setAug2ndProb} />
       </div>
       <animated.div
@@ -269,7 +267,7 @@ export default function App(): JSX.Element {
         >
           {noteNamesInfo.map(([name, color], i) => (
             <span
-              style={{ "--i": i, "--c": color, ...fontStyle } as any}
+              style={{ "--i": i, "--c": color } as any}
               id={`note${root + i}`}
               key={i}
             >
