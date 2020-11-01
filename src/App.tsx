@@ -239,8 +239,8 @@ export default function App(): JSX.Element {
         </span>
         <div style={{ zIndex: 1000 } as any}>
           <Switch
-            checked={moveRoot}
-            onChange={({ target }) => setMoveRoot(target.checked)}
+            checked={!moveRoot}
+            onChange={({ target }) => setMoveRoot(!target.checked)}
             color={"default"}
             size={"medium"}
             inputProps={{
