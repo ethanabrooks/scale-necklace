@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./scales";
-import { getPatterns, hasAug2nd, hasDoubleHalfSteps } from "./scales";
+import { hasAug2nd, hasDoubleHalfSteps } from "./scales";
 import { Note, notes } from "./notes";
 import { start, Synth } from "tone";
 import * as d3 from "d3";
@@ -14,8 +14,9 @@ import {
   lowLightColor,
   modNotes,
   playingColor,
-  randomChoice,
+  prob,
   randomNumber,
+  randomSteps,
   rotate,
   State,
   Steps,
@@ -24,35 +25,22 @@ import {
 import { Typography } from "@material-ui/core";
 
 export default function App(): JSX.Element {
-  const patterns: Steps[] = React.useMemo(getPatterns, [getPatterns]);
   const [offset, setOffset] = React.useState<number>(0);
   const [root, setRoot] = React.useState<number>(0);
   const [moveRoot, setMoveRoot] = React.useState<boolean>(true);
   const [doubleHalfStepsProb, set2HalfStepsProb] = React.useState<number>(
-    (100 * patterns.filter(hasDoubleHalfSteps).length) / patterns.length
+    prob(hasDoubleHalfSteps)
   );
-  const [aug2ndProb, setAug2ndProb] = React.useState<number>(
-    (100 * patterns.filter(hasAug2nd).length) / patterns.length
+  const [aug2ndProb, setAug2ndProb] = React.useState<number>(prob(hasAug2nd));
+  const [stepsBetween, setStepsBetween] = React.useState<Steps>(
+    randomSteps(aug2ndProb, doubleHalfStepsProb)
   );
-
-  const randomSteps = () => {
-    const patternSubset = patterns
-      .filter(
-        Math.random() < aug2ndProb ? hasAug2nd : (s: Steps) => !hasAug2nd(s)
-      )
-      .filter(
-        Math.random() < doubleHalfStepsProb
-          ? hasDoubleHalfSteps
-          : (s: Steps) => !hasDoubleHalfSteps(s)
-      );
-    return randomChoice(patternSubset);
-  };
-  const [stepsBetween, setStepsBetween] = React.useState<Steps>(randomSteps());
-  const [state, setState] = useState<State>({ loaded: false });
+  const [state, setState] = React.useState<State>({ loaded: false });
   const [{ width, height }, setWindow] = React.useState<{
     width: number;
     height: number;
   }>({ width: window.innerWidth, height: window.innerHeight });
+  const synth = React.useMemo(() => new Synth(), []);
   const targetRoot = useNearestModulo(root, notes.length);
   const targetOffset = useNearestModulo(offset, notes.length);
   const { springRoot, springOffset } = useSpring({
@@ -61,6 +49,7 @@ export default function App(): JSX.Element {
     config: { tension: 200, friction: 120, mass: 10 },
   });
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
+  const octave: number = 3;
 
   React.useEffect(() => {
     const resizeListener = () =>
@@ -89,21 +78,13 @@ export default function App(): JSX.Element {
     };
   }, [moveRoot, setMoveRoot]);
 
-  useEffect(() => {
-    setState({
-      loaded: true,
-      synth: new Synth().toDestination(),
-      notesToPlay: [],
-    });
-  }, [setState]);
-
-  useEffect(() => {
+  React.useEffect(() => {
     if (state.loaded) {
       const [head, ...tail]: Steps = state.notesToPlay;
       if (playing) {
         let interval: number | null = null;
         const note = notes[head % notes.length];
-        state.synth.triggerAttack(
+        synth.triggerAttack(
           `${note.sharp}${head < notes.length ? octave : octave + 1}`
         );
         // @ts-ignore
@@ -111,10 +92,16 @@ export default function App(): JSX.Element {
           setState({ ...state, notesToPlay: tail });
         }, 300);
         return () => {
-          state.synth.triggerRelease();
+          synth.triggerRelease();
           if (interval) clearInterval(interval);
         };
       }
+    } else {
+      synth.toDestination();
+      setState({
+        loaded: true,
+        notesToPlay: [],
+      });
     }
   }, [state, playing]);
 
@@ -128,14 +115,10 @@ export default function App(): JSX.Element {
     .startAngle((i: number) => (i - 0.5) * arcSize)
     .endAngle((i: number) => (i + 0.5) * arcSize)
     .cornerRadius(containerSize);
-  const arcs = React.useMemo(() => notes.map((_, i) => arcGen(i) as string), [
-    notes,
-    arcGen,
-    arcSize,
-  ]);
-  const octave: number = 3;
+  const arcs = notes.map((_, i) => arcGen(i) as string);
   const fontSize = `${containerSize / 50}pt`;
   const fontStyle = { "--f": fontSize } as any;
+  const randomAdjacent = () => {};
   const setRandomRoot = () => {
     setRoot(randomNumber(notes.length));
     setOffset(0);
@@ -184,6 +167,9 @@ export default function App(): JSX.Element {
   );
   const noteNamesInfo = rotate(zip(noteNames, colors), root);
 
+  const setRandomScale = () => {
+    return setStepsBetween(randomSteps(aug2ndProb, doubleHalfStepsProb));
+  };
   return (
     <div
       className={"container"}
@@ -193,8 +179,11 @@ export default function App(): JSX.Element {
         <button style={fontStyle} onClick={setRandomRoot}>
           Randomize Root
         </button>
-        <button style={fontStyle} onClick={() => setStepsBetween(randomSteps)}>
+        <button style={fontStyle} onClick={setRandomScale}>
           Randomize Scale
+        </button>
+        <button style={fontStyle} onClick={setRandomScale}>
+          Random adjacent Scale
         </button>
         <button
           style={fontStyle}
@@ -243,8 +232,8 @@ export default function App(): JSX.Element {
               role={"button"}
               tabIndex={0}
               onClick={() => {
-                let newOffset = modNotes(offset + (absIndex - root));
-                setNotesToPlay([]);
+                const newOffset = modNotes(offset + (absIndex - root));
+                // setNotesToPlay([]);
                 if (moveRoot) {
                   setRoot(absIndex);
                 } else if (included) {

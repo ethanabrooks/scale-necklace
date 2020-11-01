@@ -85,6 +85,4 @@ export function hasAug2nd(scale: Steps): boolean {
   return scale.some((s) => s === 3);
 }
 
-export function getPatterns(): Steps[] {
-  return CScales(NUM_NOTES).map(getStepsC);
-}
+export const patterns = CScales(NUM_NOTES).map(getStepsC);

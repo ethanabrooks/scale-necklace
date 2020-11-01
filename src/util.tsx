@@ -1,6 +1,7 @@
 import React from "react";
 import { Synth } from "tone";
 import { notes } from "./notes";
+import { hasAug2nd, hasDoubleHalfSteps, patterns } from "./scales";
 
 export const highlightColor = getComputedStyle(
   document.documentElement
@@ -16,7 +17,6 @@ export type State =
   | { loaded: false }
   | {
       loaded: true;
-      synth: Synth;
       notesToPlay: Steps;
     };
 
@@ -71,4 +71,24 @@ export function useNearestModulo(pp: number, m: number): number {
   const qq = Math.round((q.current - pp) / m) * m + pp;
   q.current = qq;
   return qq;
+}
+
+export const randomSteps = (
+  aug2ndProb: number,
+  doubleHalfStepsProb: number
+) => {
+  const patternSubset = patterns
+    .filter(
+      Math.random() < aug2ndProb ? hasAug2nd : (s: Steps) => !hasAug2nd(s)
+    )
+    .filter(
+      Math.random() < doubleHalfStepsProb
+        ? hasDoubleHalfSteps
+        : (s: Steps) => !hasDoubleHalfSteps(s)
+    );
+  return randomChoice(patternSubset);
+};
+
+export function prob(predicate: (scale: Steps) => boolean) {
+  return (100 * patterns.filter(predicate).length) / patterns.length;
 }

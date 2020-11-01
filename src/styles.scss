@@ -75,7 +75,6 @@ body {
   mix-blend-mode: difference;
   transform: rotate(var(--az)) translate(var(--r)) rotate($negAz);
 }
-
 .svg {
   --az: calc(var(--r) / var(--m) * 1turn);
   left: 0;
