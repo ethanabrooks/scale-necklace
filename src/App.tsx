@@ -212,7 +212,7 @@ export default function App(): JSX.Element {
       style={{ "--s": `${containerSize}px`, "--m": notes.length } as any}
     >
       <div className={"buttons"}>
-        <button style={fontStyle} onClick={setRandomRoot}>
+        <button style={fontStyle} onClick={setRandomRoot} id={"randomizeRoot"}>
           Randomize Root
         </button>
         <button style={fontStyle} onClick={setRandomScale}>
@@ -242,18 +242,16 @@ export default function App(): JSX.Element {
         style={{ "--r": springOffset.interpolate((r: number) => -r) } as any}
       >
         {arcInfo.map(([[absIndex, included, color], d], i: number) => (
-          <svg
-            className={"svg"}
-            key={i}
-            tabIndex={absIndex}
-            style={{ "--c": color } as any}
-            aria-label={notes[absIndex].sharp}
-          >
+          <svg className={"svg"} key={i} style={{ "--c": color } as any}>
             <path
               className={"path"}
               stroke={color}
               d={d}
-              onClick={(e: React.MouseEvent<SVGPathElement>) => {
+              aria-labelledby={`note${absIndex}`}
+              role={"button"}
+              id={`circle${absIndex}`}
+              tabIndex={0}
+              onClick={() => {
                 let newOffset = modNotes(offset + (absIndex - root));
                 setNotesToPlay([]);
                 if (moveRoot) {
@@ -275,6 +273,7 @@ export default function App(): JSX.Element {
           {noteNamesInfo.map(([name, color], i) => (
             <span
               style={{ "--i": i, "--c": color, ...fontStyle } as any}
+              id={`note${root + i}`}
               key={i}
             >
               {name}
