@@ -77,28 +77,14 @@ function getStepsC(c: C): Steps {
   }
 }
 
-function hasDoubleHalfSteps(scale: Steps): boolean {
+export function hasDoubleHalfSteps(scale: Steps): boolean {
   return zip(scale, scale.slice(1)).some(([a, b]) => a === 1 && b === 1);
 }
 
-function hasAug2nd(scale: Steps): boolean {
+export function hasAug2nd(scale: Steps): boolean {
   return scale.some((s) => s === 3);
 }
 
-const allPatterns: Steps[] = CScales(NUM_NOTES).map(getStepsC);
-
-export const patterns = [
-  [
-    allPatterns.filter((p) => !hasDoubleHalfSteps(p) && !hasAug2nd(p)),
-    allPatterns.filter((p) => hasDoubleHalfSteps(p) && !hasAug2nd(p)),
-  ],
-  [
-    allPatterns.filter((p) => !hasDoubleHalfSteps(p) && hasAug2nd(p)),
-    allPatterns.filter((p) => hasDoubleHalfSteps(p) && hasAug2nd(p)),
-  ],
-];
-
-export const percentHasDoubleHalfSteps =
-  (100 * allPatterns.filter(hasDoubleHalfSteps).length) / allPatterns.length;
-export const percentHasAug2nd =
-  (100 * allPatterns.filter(hasAug2nd).length) / allPatterns.length;
+export function getPatterns(): Steps[] {
+  return CScales(NUM_NOTES).map(getStepsC);
+}

@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./scales";
-import {
-  patterns,
-  percentHasAug2nd,
-  percentHasDoubleHalfSteps,
-} from "./scales";
+import { getPatterns, hasAug2nd, hasDoubleHalfSteps } from "./scales";
 import { Note, notes } from "./notes";
 import { start, Synth } from "tone";
 import * as d3 from "d3";
@@ -28,18 +24,27 @@ import {
 import { Typography } from "@material-ui/core";
 
 export default function App(): JSX.Element {
+  const patterns: Steps[] = React.useMemo(getPatterns, [getPatterns]);
   const [offset, setOffset] = React.useState<number>(0);
   const [root, setRoot] = React.useState<number>(0);
   const [moveRoot, setMoveRoot] = React.useState<boolean>(true);
   const [doubleHalfStepsProb, set2HalfStepsProb] = React.useState<number>(
-    percentHasDoubleHalfSteps
+    (100 * patterns.filter(hasDoubleHalfSteps).length) / patterns.length
   );
-  const [aug2ndProb, setAug2ndProb] = React.useState<number>(percentHasAug2nd);
+  const [aug2ndProb, setAug2ndProb] = React.useState<number>(
+    (100 * patterns.filter(hasAug2nd).length) / patterns.length
+  );
 
   const randomSteps = () => {
-    const hasAug2nd = Math.random() < aug2ndProb ? 1 : 0;
-    const hasDoubleHalfSteps = Math.random() < doubleHalfStepsProb ? 1 : 0;
-    const patternSubset = patterns[hasAug2nd][hasDoubleHalfSteps];
+    const patternSubset = patterns
+      .filter(
+        Math.random() < aug2ndProb ? hasAug2nd : (s: Steps) => !hasAug2nd(s)
+      )
+      .filter(
+        Math.random() < doubleHalfStepsProb
+          ? hasDoubleHalfSteps
+          : (s: Steps) => !hasDoubleHalfSteps(s)
+      );
     return randomChoice(patternSubset);
   };
   const [stepsBetween, setStepsBetween] = React.useState<Steps>(randomSteps());
@@ -113,10 +118,23 @@ export default function App(): JSX.Element {
     }
   }, [state, playing]);
 
-  const octave: number = 3;
   const containerSize = Math.min(width - 30, height - 30);
-  const fontSize = `${containerSize / 50}pt`;
   const arcSize = (2 * Math.PI) / notes.length;
+  const arcGen = d3
+    .arc<number>()
+    .padAngle(0.1)
+    .innerRadius(containerSize / 2.9)
+    .outerRadius(containerSize / 2)
+    .startAngle((i: number) => (i - 0.5) * arcSize)
+    .endAngle((i: number) => (i + 0.5) * arcSize)
+    .cornerRadius(containerSize);
+  const arcs = React.useMemo(() => notes.map((_, i) => arcGen(i) as string), [
+    notes,
+    arcGen,
+    arcSize,
+  ]);
+  const octave: number = 3;
+  const fontSize = `${containerSize / 50}pt`;
   const fontStyle = { "--f": fontSize } as any;
   const setRandomRoot = () => {
     setRoot(randomNumber(notes.length));
@@ -149,15 +167,6 @@ export default function App(): JSX.Element {
     if (inc) return highlightColor;
     return lowLightColor;
   });
-  const arcGen = d3
-    .arc<number>()
-    .padAngle(0.1)
-    .innerRadius(containerSize / 2.9)
-    .outerRadius(containerSize / 2)
-    .startAngle((i: number) => (i - 0.5) * arcSize)
-    .endAngle((i: number) => (i + 0.5) * arcSize)
-    .cornerRadius(containerSize);
-  const arcs = notes.map((_, i) => arcGen(i) as string);
   const arcInfo: [[number, boolean, string], string][] = zip(
     rotate(
       zip(included, colors).map(([...x], i) => [i, ...x]),
