@@ -212,7 +212,7 @@ export default function App(): JSX.Element {
       style={{ "--s": `${containerSize}px`, "--m": notes.length } as any}
     >
       <div className={"buttons"}>
-        <button style={fontStyle} onClick={setRandomRoot} id={"randomizeRoot"}>
+        <button style={fontStyle} onClick={setRandomRoot}>
           Randomize Root
         </button>
         <button style={fontStyle} onClick={setRandomScale}>
@@ -249,7 +249,6 @@ export default function App(): JSX.Element {
               d={d}
               aria-labelledby={`note${absIndex}`}
               role={"button"}
-              id={`circle${absIndex}`}
               tabIndex={0}
               onClick={() => {
                 let newOffset = modNotes(offset + (absIndex - root));
