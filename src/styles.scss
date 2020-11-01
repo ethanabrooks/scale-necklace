@@ -19,10 +19,10 @@ body {
 }
 
 .buttons > * {
+  outline: none;
   font-size: var(--f);
   margin: 10px auto;
   border: none;
-  outline: none;
   color: var(--ll);
   background-color: var(--bg);
   border-radius: 0.12em;
@@ -44,11 +44,6 @@ body {
   left: 50%;
   height: 100%;
   margin: 1px;
-}
-
-.path {
-  stroke-width: 2;
-  transform: translate(100px, 100px);
 }
 
 .note-names {
@@ -87,11 +82,16 @@ body {
   top: 0;
   height: 200px;
   width: 200px;
-  outline: none;
   transform: translate(-100px, -100px) rotate(var(--az));
   position: absolute;
   overflow: visible;
   fill: var(--bg);
+}
+
+.path {
+  stroke-width: 2;
+  transform: translate(100px, 100px);
+  outline: none;
 }
 
 .path:hover {
