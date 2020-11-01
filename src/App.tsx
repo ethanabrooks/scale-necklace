@@ -196,7 +196,7 @@ export default function App(): JSX.Element {
         </button>
         <div style={{ zIndex: 1000 } as any}>
           <Typography style={{ ...fontStyle, color: "#999999" } as any}>
-            Try clicking on a note or shift-clicking on yellow note.
+            Click on a note or shift-click on a yellow note.
           </Typography>
           <Switch
             checked={!moveRoot}
@@ -208,16 +208,12 @@ export default function App(): JSX.Element {
               role: "switch",
             }}
           />
-          <Typography>
-            Probability of sampling scale with 2 consecutive half-steps
-          </Typography>
+          <Typography>Probability of consecutive half-steps</Typography>
           <Slider
             value={doubleHalfStepsProb}
             onChange={(_, newValue) => set2HalfStepsProb(newValue as number)}
           />
-          <Typography>
-            Probability of sampling scale with augmented 2nd
-          </Typography>
+          <Typography>Probability of augmented 2nd</Typography>
           <Slider
             value={aug2ndProb}
             onChange={(_, newValue) => setAug2ndProb(newValue as number)}
