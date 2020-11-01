@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/scale-necklace/static/css/main.5acff6f6.chunk.css",
-    "main.js": "/scale-necklace/static/js/main.48838291.chunk.js",
-    "main.js.map": "/scale-necklace/static/js/main.48838291.chunk.js.map",
+    "main.css": "/scale-necklace/static/css/main.d3eddeee.chunk.css",
+    "main.js": "/scale-necklace/static/js/main.e486647c.chunk.js",
+    "main.js.map": "/scale-necklace/static/js/main.e486647c.chunk.js.map",
     "runtime-main.js": "/scale-necklace/static/js/runtime-main.d832d7ef.js",
     "runtime-main.js.map": "/scale-necklace/static/js/runtime-main.d832d7ef.js.map",
-    "static/js/2.05a43918.chunk.js": "/scale-necklace/static/js/2.05a43918.chunk.js",
-    "static/js/2.05a43918.chunk.js.map": "/scale-necklace/static/js/2.05a43918.chunk.js.map",
+    "static/js/2.61d5d90b.chunk.js": "/scale-necklace/static/js/2.61d5d90b.chunk.js",
+    "static/js/2.61d5d90b.chunk.js.map": "/scale-necklace/static/js/2.61d5d90b.chunk.js.map",
     "static/js/3.f656fac9.chunk.js": "/scale-necklace/static/js/3.f656fac9.chunk.js",
     "static/js/3.f656fac9.chunk.js.map": "/scale-necklace/static/js/3.f656fac9.chunk.js.map",
     "index.html": "/scale-necklace/index.html",
-    "static/css/main.5acff6f6.chunk.css.map": "/scale-necklace/static/css/main.5acff6f6.chunk.css.map",
-    "static/js/2.05a43918.chunk.js.LICENSE.txt": "/scale-necklace/static/js/2.05a43918.chunk.js.LICENSE.txt"
+    "static/css/main.d3eddeee.chunk.css.map": "/scale-necklace/static/css/main.d3eddeee.chunk.css.map",
+    "static/js/2.61d5d90b.chunk.js.LICENSE.txt": "/scale-necklace/static/js/2.61d5d90b.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.d832d7ef.js",
-    "static/js/2.05a43918.chunk.js",
-    "static/css/main.5acff6f6.chunk.css",
-    "static/js/main.48838291.chunk.js"
+    "static/js/2.61d5d90b.chunk.js",
+    "static/css/main.d3eddeee.chunk.css",
+    "static/js/main.e486647c.chunk.js"
   ]
 }
