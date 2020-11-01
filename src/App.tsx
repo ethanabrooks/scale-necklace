@@ -224,13 +224,18 @@ export default function App(): JSX.Element {
         <span style={{ ...fontStyle, color: "#999999" } as any}>
           Try clicking on a note or shift-clicking on yellow note.
         </span>
-        <Switch
-          checked={moveRoot}
-          onChange={({ target }) => setMoveRoot(target.checked)}
-          color={"default"}
-          size={"medium"}
-          inputProps={{ "aria-label": "toggle movement mode", role: "switch" }}
-        />
+        <div style={{ zIndex: 1000 } as any}>
+          <Switch
+            checked={moveRoot}
+            onChange={({ target }) => setMoveRoot(target.checked)}
+            color={"default"}
+            size={"medium"}
+            inputProps={{
+              "aria-label": "toggle movement mode",
+              role: "switch",
+            }}
+          />
+        </div>
       </div>
       <animated.div
         className={"necklace"}
