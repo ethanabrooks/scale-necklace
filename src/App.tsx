@@ -132,6 +132,9 @@ export default function App(): JSX.Element {
     }
   }, [state, playing]);
 
+  window.addEventListener("keypress", ({ key }) => {
+    if (key === "Enter") setMoveRoot(!moveRoot);
+  });
   window.addEventListener("keydown", ({ key }) => {
     if (key === "Shift") setMoveRoot(false);
   });
