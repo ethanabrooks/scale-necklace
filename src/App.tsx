@@ -7,6 +7,7 @@ import * as d3 from "d3";
 import "./styles.scss";
 import { animated, useSpring } from "react-spring";
 import { zip } from "fp-ts/Array";
+import Switch from "@material-ui/core/Switch";
 
 const highlightColor = getComputedStyle(
   document.documentElement
@@ -80,6 +81,7 @@ export default function App(): JSX.Element {
   const [stepsBetween, setStepsBetween] = React.useState<Scale>(scales[0]);
   const [offset, setOffset] = React.useState<number>(0);
   const [root, setRoot] = React.useState<number>(0);
+  const [moveRoot, setMoveRoot] = React.useState<boolean>(true);
   const [state, setState] = useState<State>({ loaded: false });
   const [{ width, height }, setWindow] = React.useState<{
     width: number;
@@ -129,6 +131,13 @@ export default function App(): JSX.Element {
       }
     }
   }, [state, playing]);
+
+  window.addEventListener("keydown", ({ key }) => {
+    if (key === "Shift") setMoveRoot(false);
+  });
+  window.addEventListener("keyup", ({ key }) => {
+    if (key === "Shift") setMoveRoot(true);
+  });
 
   const octave: number = 3;
   const containerSize = Math.min(width - 30, height - 30);
@@ -215,6 +224,13 @@ export default function App(): JSX.Element {
         <span style={{ ...fontStyle, color: "#999999" } as any}>
           Try clicking on a note or shift-clicking on yellow note.
         </span>
+        <Switch
+          checked={moveRoot}
+          onChange={({ target }) => setMoveRoot(target.checked)}
+          color={"default"}
+          size={"medium"}
+          inputProps={{ "aria-label": "toggle movement mode", role: "switch" }}
+        />
       </div>
       <animated.div
         className={"necklace"}
@@ -226,6 +242,7 @@ export default function App(): JSX.Element {
             key={i}
             tabIndex={absIndex}
             style={{ "--c": color } as any}
+            aria-label={notes[absIndex].sharp}
           >
             <path
               className={"path"}
@@ -234,15 +251,13 @@ export default function App(): JSX.Element {
               onClick={(e: React.MouseEvent<SVGPathElement>) => {
                 let newOffset = modNotes(offset + (absIndex - root));
                 setNotesToPlay([]);
-                if (e.shiftKey) {
-                  if (included) {
-                    setOffset(newOffset);
-                    setStepsBetween(
-                      rotate(stepsBetween, modIndices.indexOf(absIndex))
-                    );
-                  }
-                } else {
+                if (moveRoot) {
                   setRoot(absIndex);
+                } else if (included) {
+                  setOffset(newOffset);
+                  setStepsBetween(
+                    rotate(stepsBetween, modIndices.indexOf(absIndex))
+                  );
                 }
               }}
             />
