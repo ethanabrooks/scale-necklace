@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import "./scales";
 import { hasAug2nd, hasDoubleHalfSteps } from "./scales";
 import { Note, notes } from "./notes";
@@ -7,11 +7,9 @@ import * as d3 from "d3";
 import "./styles.scss";
 import { animated, useSpring } from "react-spring";
 import { zip } from "fp-ts/Array";
-import Switch from "@material-ui/core/Switch";
-import Slider from "@material-ui/core/Slider";
 import {
   highlightColor,
-  lowLightColor,
+  foregroundColor,
   modNotes,
   playingColor,
   prob,
@@ -21,14 +19,49 @@ import {
   State,
   Steps,
   useNearestModulo,
+  lowlightColor,
 } from "./util";
-import { Typography } from "@material-ui/core";
+
+const Slider: React.FC<{
+  value: number;
+  setValue: Dispatch<SetStateAction<number>>;
+}> = ({ value, setValue }) => {
+  return (
+    <input
+      type="range"
+      className={"slider"}
+      min={0}
+      max={100}
+      value={value}
+      onChange={({ target }) => {
+        setValue(+target.value);
+      }}
+    />
+  );
+};
+
+const Switch: React.FC<{
+  value: boolean;
+  setValue: Dispatch<SetStateAction<boolean>>;
+}> = ({ value, setValue }) => (
+  <label className="switch">
+    <input
+      type="checkbox"
+      onClick={() => setValue(!value)}
+      defaultChecked={!value}
+    />
+    <span className="slide" />
+  </label>
+);
 
 export default function App(): JSX.Element {
-  const [offset, setOffset] = React.useState<number>(0);
+  const [offset, setOffset]: [
+    number,
+    React.Dispatch<React.SetStateAction<number>>
+  ] = React.useState<number>(0);
   const [root, setRoot] = React.useState<number>(0);
   const [moveRoot, setMoveRoot] = React.useState<boolean>(true);
-  const [doubleHalfStepsProb, set2HalfStepsProb] = React.useState<number>(
+  const [doubleHalfStepsProb, setDoubleHalfStepsProb] = React.useState<number>(
     prob(hasDoubleHalfSteps)
   );
   const [aug2ndProb, setAug2ndProb] = React.useState<number>(prob(hasAug2nd));
@@ -48,6 +81,7 @@ export default function App(): JSX.Element {
     springOffset: targetOffset,
     config: { tension: 200, friction: 120, mass: 10 },
   });
+
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
   const octave: number = 3;
 
@@ -148,7 +182,7 @@ export default function App(): JSX.Element {
     )
       return playingColor;
     if (inc) return highlightColor;
-    return lowLightColor;
+    return foregroundColor;
   });
   const arcInfo: [[number, boolean, string], string][] = zip(
     rotate(
@@ -192,31 +226,14 @@ export default function App(): JSX.Element {
         >
           {playing ? "Pause" : "Play"}
         </button>
-        <div style={{ zIndex: 1000 } as any}>
-          <Typography style={{ ...fontStyle, color: "#999999" } as any}>
-            Click on a note or shift-click on a yellow note.
-          </Typography>
-          <Switch
-            checked={!moveRoot}
-            onChange={({ target }) => setMoveRoot(!target.checked)}
-            color={"default"}
-            size={"medium"}
-            inputProps={{
-              "aria-label": "toggle movement mode",
-              role: "switch",
-            }}
-          />
-          <Typography>Probability of consecutive half-steps</Typography>
-          <Slider
-            value={doubleHalfStepsProb}
-            onChange={(_, newValue) => set2HalfStepsProb(newValue as number)}
-          />
-          <Typography>Probability of augmented 2nd</Typography>
-          <Slider
-            value={aug2ndProb}
-            onChange={(_, newValue) => setAug2ndProb(newValue as number)}
-          />
-        </div>
+        <span style={{ ...fontStyle, color: lowlightColor } as any}>
+          Click on a note or shift-click on a yellow note.
+        </span>
+        <Switch value={moveRoot} setValue={setMoveRoot} />
+        <span>Probability of consecutive half-steps</span>
+        <Slider value={doubleHalfStepsProb} setValue={setDoubleHalfStepsProb} />
+        <span>Probability of augmented 2nd</span>
+        <Slider value={aug2ndProb} setValue={setAug2ndProb} />
       </div>
       <animated.div
         className={"necklace"}

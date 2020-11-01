@@ -1,12 +1,14 @@
 import React from "react";
-import { Synth } from "tone";
 import { notes } from "./notes";
 import { hasAug2nd, hasDoubleHalfSteps, patterns } from "./scales";
 
 export const highlightColor = getComputedStyle(
   document.documentElement
 ).getPropertyValue("--hl");
-export const lowLightColor = getComputedStyle(
+export const foregroundColor = getComputedStyle(
+  document.documentElement
+).getPropertyValue("--fg");
+export const lowlightColor = getComputedStyle(
   document.documentElement
 ).getPropertyValue("--ll");
 export const playingColor = getComputedStyle(
@@ -86,7 +88,8 @@ export const randomSteps = (
         ? hasDoubleHalfSteps
         : (s: Steps) => !hasDoubleHalfSteps(s)
     );
-  return randomChoice(patternSubset);
+  const steps = randomChoice(patternSubset);
+  return rotate(steps, randomNumber(steps.length));
 };
 
 export function prob(predicate: (scale: Steps) => boolean) {

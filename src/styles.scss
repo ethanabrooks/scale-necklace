@@ -1,7 +1,11 @@
+$nobDiam: 13px;
+$toggleTransition: 0.2s;
+
 :root {
   --bg: #222222;
-  --ll: #e5e5e5;
+  --fg: #e5e5e5;
   --hl: #fca311;
+  --ll: #999999;
   --pl: #ff4136;
 }
 
@@ -23,7 +27,7 @@ body {
   font-size: var(--f);
   margin: 10px auto;
   border: none;
-  color: var(--ll);
+  color: var(--fg);
   background-color: var(--bg);
   border-radius: 0.12em;
   z-index: 1000;
@@ -31,7 +35,7 @@ body {
 
 .buttons button:hover {
   color: var(--bg);
-  background-color: var(--ll);
+  background-color: var(--fg);
 }
 
 .buttons button:active {
@@ -96,3 +100,83 @@ body {
 .path:hover {
   fill: var(--c);
 }
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 8px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slide {
+  position: absolute;
+  cursor: pointer;
+  top: 1px;
+  left: -3px;
+  right: -3px;
+  bottom: 0;
+  background-color: var(--ll);
+  -webkit-transition: $toggleTransition;
+  transition: $toggleTransition;
+  border-radius: 20px;
+}
+
+.slide:before {
+  position: absolute;
+  content: "";
+  height: $nobDiam;
+  width: $nobDiam;
+  bottom: -3px;
+  background-color: var(--fg);
+  -webkit-transition: $toggleTransition;
+  transition: $toggleTransition;
+  border-radius: 50%;
+}
+
+//input:checked + .slide {
+//  background-color: var(--fg);
+//}
+
+//input:focus + .slider {
+//box-shadow: 0 0 1px;
+//}
+
+input:checked + .slide:before {
+  -webkit-transform: translateX($nobDiam);
+  -ms-transform: translateX($nobDiam);
+  transform: translateX($nobDiam);
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100px;
+  height: 2px;
+  background: var(--ll);
+  outline: none;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: $nobDiam;
+  height: $nobDiam;
+  border-radius: 50%;
+  background: var(--fg);
+  cursor: pointer;
+}
+
+//.slider::-moz-range-thumb {
+//  width: 25px;
+//  height: 25px;
+//  border-radius: 50%;
+//  background: var(--hl);
+//  cursor: pointer;
+//}
