@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./scales";
-import { scales } from "./scales";
+import {
+  patterns,
+  percentHasAug2nd,
+  percentHasDoubleHalfSteps,
+} from "./scales";
 import { Note, notes } from "./notes";
 import { start, Synth } from "tone";
 import * as d3 from "d3";
@@ -8,23 +12,37 @@ import "./styles.scss";
 import { animated, useSpring } from "react-spring";
 import { zip } from "fp-ts/Array";
 import Switch from "@material-ui/core/Switch";
+import Slider from "@material-ui/core/Slider";
 import {
   highlightColor,
   lowLightColor,
   modNotes,
   playingColor,
+  randomChoice,
   randomNumber,
   rotate,
-  Scale,
   State,
+  Steps,
   useNearestModulo,
 } from "./util";
+import { Typography } from "@material-ui/core";
 
 export default function App(): JSX.Element {
-  const [stepsBetween, setStepsBetween] = React.useState<Scale>(scales[0]);
   const [offset, setOffset] = React.useState<number>(0);
   const [root, setRoot] = React.useState<number>(0);
   const [moveRoot, setMoveRoot] = React.useState<boolean>(true);
+  const [doubleHalfStepsProb, set2HalfStepsProb] = React.useState<number>(
+    percentHasDoubleHalfSteps
+  );
+  const [aug2ndProb, setAug2ndProb] = React.useState<number>(percentHasAug2nd);
+
+  const randomSteps = () => {
+    const hasAug2nd = Math.random() < aug2ndProb ? 1 : 0;
+    const hasDoubleHalfSteps = Math.random() < doubleHalfStepsProb ? 1 : 0;
+    const patternSubset = patterns[hasAug2nd][hasDoubleHalfSteps];
+    return randomChoice(patternSubset);
+  };
+  const [stepsBetween, setStepsBetween] = React.useState<Steps>(randomSteps());
   const [state, setState] = useState<State>({ loaded: false });
   const [{ width, height }, setWindow] = React.useState<{
     width: number;
@@ -76,7 +94,7 @@ export default function App(): JSX.Element {
 
   useEffect(() => {
     if (state.loaded) {
-      const [head, ...tail]: Scale = state.notesToPlay;
+      const [head, ...tail]: Steps = state.notesToPlay;
       if (playing) {
         let interval: number | null = null;
         const note = notes[head % notes.length];
@@ -105,12 +123,7 @@ export default function App(): JSX.Element {
     setOffset(0);
     setNotesToPlay([]);
   };
-  let setRandomScale = () => {
-    const newScale = scales[randomNumber(scales.length)];
-    setStepsBetween(rotate(newScale, randomNumber(newScale.length)));
-    setNotesToPlay([]);
-  };
-  const setNotesToPlay = (notes: Scale) => {
+  const setNotesToPlay = (notes: Steps) => {
     if (state.loaded) {
       if (playing) {
         setState({ ...state, notesToPlay: [] });
@@ -120,8 +133,8 @@ export default function App(): JSX.Element {
     }
   };
 
-  const absIndices: Scale = stepsBetween.reduce(
-    (soFar: Scale, n: number) => soFar.concat(soFar[soFar.length - 1] + n),
+  const absIndices: Steps = stepsBetween.reduce(
+    (soFar: Steps, n: number) => soFar.concat(soFar[soFar.length - 1] + n),
     [root]
   );
   const modIndices = absIndices.map((i) => i % notes.length);
@@ -171,7 +184,7 @@ export default function App(): JSX.Element {
         <button style={fontStyle} onClick={setRandomRoot}>
           Randomize Root
         </button>
-        <button style={fontStyle} onClick={setRandomScale}>
+        <button style={fontStyle} onClick={() => setStepsBetween(randomSteps)}>
           Randomize Scale
         </button>
         <button
@@ -181,10 +194,10 @@ export default function App(): JSX.Element {
         >
           {playing ? "Pause" : "Play"}
         </button>
-        <span style={{ ...fontStyle, color: "#999999" } as any}>
-          Try clicking on a note or shift-clicking on yellow note.
-        </span>
         <div style={{ zIndex: 1000 } as any}>
+          <Typography style={{ ...fontStyle, color: "#999999" } as any}>
+            Try clicking on a note or shift-clicking on yellow note.
+          </Typography>
           <Switch
             checked={!moveRoot}
             onChange={({ target }) => setMoveRoot(!target.checked)}
@@ -194,6 +207,20 @@ export default function App(): JSX.Element {
               "aria-label": "toggle movement mode",
               role: "switch",
             }}
+          />
+          <Typography>
+            Probability of sampling scale with 2 consecutive half-steps
+          </Typography>
+          <Slider
+            value={doubleHalfStepsProb}
+            onChange={(_, newValue) => set2HalfStepsProb(newValue as number)}
+          />
+          <Typography>
+            Probability of sampling scale with augmented 2nd
+          </Typography>
+          <Slider
+            value={aug2ndProb}
+            onChange={(_, newValue) => setAug2ndProb(newValue as number)}
           />
         </div>
       </div>

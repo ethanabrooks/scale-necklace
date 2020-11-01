@@ -11,17 +11,21 @@ export const lowLightColor = getComputedStyle(
 export const playingColor = getComputedStyle(
   document.documentElement
 ).getPropertyValue("--pl");
-export type Scale = number[];
+export type Steps = number[];
 export type State =
   | { loaded: false }
   | {
       loaded: true;
       synth: Synth;
-      notesToPlay: Scale;
+      notesToPlay: Steps;
     };
 
 export function randomNumber(n: number): number {
   return Math.floor(Math.random() * n);
+}
+
+export function randomChoice<X>(array: X[]): X {
+  return array[randomNumber(array.length)];
 }
 
 export function rotate<X>(array: X[], start: number) {
