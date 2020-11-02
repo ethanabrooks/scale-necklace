@@ -85,8 +85,8 @@ export const randomSteps = (
   patterns: Steps[],
   aug2ndProb: number,
   doubleHalfStepsProb: number
-) => {
-  const patternSubset = patterns
+): Steps | null => {
+  const patternSubset: Steps[] = patterns
     .filter(
       Math.random() < aug2ndProb ? hasAug2nd : (s: Steps) => !hasAug2nd(s)
     )
@@ -95,8 +95,10 @@ export const randomSteps = (
         ? hasDoubleHalfSteps
         : (s: Steps) => !hasDoubleHalfSteps(s)
     );
-  assert(patternSubset.length > 0);
-  return randomChoice(patternSubset);
+  if (patternSubset.length > 0) {
+    return randomChoice(patternSubset);
+  }
+  return null;
 };
 
 export function prob(predicate: (scale: Steps) => boolean) {

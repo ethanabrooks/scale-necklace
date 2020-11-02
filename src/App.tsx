@@ -65,7 +65,7 @@ export default function App(): JSX.Element {
   );
   const [aug2ndProb, setAug2ndProb] = React.useState<number>(prob(hasAug2nd));
   const [stepsBetween, setStepsBetween] = React.useState<Steps>(
-    randomSteps(patterns, aug2ndProb, doubleHalfStepsProb)
+    randomSteps(patterns, aug2ndProb, doubleHalfStepsProb) as Steps
   );
   const [{ width, height }, setWindow] = React.useState<{
     width: number;
@@ -212,16 +212,23 @@ export default function App(): JSX.Element {
   const noteNamesInfo = rotate(zip(noteNames, colors), root);
 
   const setRandomScale = () => {
-    return setStepsBetween(
-      randomSteps(patterns, aug2ndProb, doubleHalfStepsProb)
-    );
+    const steps = randomSteps(patterns, aug2ndProb, doubleHalfStepsProb);
+    if (steps === null) {
+      alert("No valid scale");
+    } else {
+      setStepsBetween(steps);
+    }
   };
 
   const setRandomAdjacentScale = () => {
     const adjacent = adjacentTo(stepsBetween);
-    return setStepsBetween(
-      randomSteps(adjacent, aug2ndProb, doubleHalfStepsProb)
-    );
+    const steps = randomSteps(adjacent, aug2ndProb, doubleHalfStepsProb);
+    if (steps === null) {
+      alert("No valid adjacent scale");
+      console.log(stepsBetween);
+    } else {
+      return setStepsBetween(steps);
+    }
   };
   return (
     <div
