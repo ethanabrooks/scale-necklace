@@ -17,6 +17,7 @@ import {
   randomSteps,
   rotate,
   State,
+  Action,
   Steps,
   useNearestModulo,
   Indices,
@@ -70,7 +71,6 @@ export default function App(): JSX.Element {
   const [stepsBetween, setStepsBetween] = React.useState<Steps>(
     randomSteps(aug2ndProb, doubleHalfStepsProb)
   );
-  const [state, setState] = React.useState<State>({ loaded: false });
   const [{ width, height }, setWindow] = React.useState<{
     width: number;
     height: number;
@@ -84,7 +84,52 @@ export default function App(): JSX.Element {
     config: { tension: 200, friction: 120, mass: 10 },
   });
 
+  const [state, dispatch] = React.useReducer(
+    (state: State, action: Action): State => {
+      if (state.loaded) {
+        if (action.type == "play") {
+          return { ...state, notesToPlay: action.notes };
+        } else if (action.type == "nextNote") {
+          const [_, ...notesToPlay] = state.notesToPlay;
+          return { ...state, notesToPlay };
+        } else if (action.type == "reset") {
+          return { ...state, notesToPlay: [] };
+        } else {
+          throw 1;
+        }
+      }
+      return { loaded: true, notesToPlay: [] };
+    },
+    {
+      loaded: false,
+    }
+  );
+
+  React.useEffect(() => {
+    if (state.loaded) {
+      if (playing) {
+        const [head]: Indices = state.notesToPlay;
+        let interval: number | null = null;
+        const note = notes[head % notes.length];
+        synth.triggerAttack(
+          `${note.sharp}${head < notes.length ? octave : octave + 1}`
+        );
+        // @ts-ignore
+        interval = setInterval(() => {
+          dispatch({ type: "nextNote" });
+        }, 500);
+        return () => {
+          synth.triggerRelease();
+          if (interval) clearInterval(interval);
+        };
+      }
+    } else {
+      synth.toDestination();
+      dispatch({ type: "reset" });
+    }
+  }, [state, synth]);
   const playing: boolean = state.loaded && state.notesToPlay.length > 0;
+
   const octave: number = 3;
 
   React.useEffect(() => {
@@ -114,34 +159,6 @@ export default function App(): JSX.Element {
     };
   }, []);
 
-  React.useEffect(() => {
-    // TODO: reducer
-    if (state.loaded) {
-      const [head, ...tail]: Indices = state.notesToPlay;
-      if (playing) {
-        let interval: number | null = null;
-        const note = notes[head % notes.length];
-        synth.triggerAttack(
-          `${note.sharp}${head < notes.length ? octave : octave + 1}`
-        );
-        // @ts-ignore
-        interval = setInterval(() => {
-          setState((s) => ({ ...s, notesToPlay: tail }));
-        }, 300);
-        return () => {
-          synth.triggerRelease();
-          if (interval) clearInterval(interval);
-        };
-      }
-    } else {
-      synth.toDestination();
-      setState({
-        loaded: true,
-        notesToPlay: [],
-      });
-    }
-  }, [state, playing, synth]);
-
   const containerSize = Math.min(width - 30, height - 30);
   const arcSize = (2 * Math.PI) / notes.length;
   const arcGen = d3
@@ -161,9 +178,9 @@ export default function App(): JSX.Element {
   const setNotesToPlay = (notes: Indices) => {
     if (state.loaded) {
       if (playing) {
-        setState({ ...state, notesToPlay: [] });
+        dispatch({ type: "reset" });
       } else {
-        start().then(() => setState({ ...state, notesToPlay: notes }));
+        start().then(() => dispatch({ type: "play", notes }));
       }
     }
   };

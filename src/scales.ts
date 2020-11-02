@@ -106,18 +106,11 @@ function isAdjacentHelper(
     const [r11, r12, ...r1] = rotated1;
     const [r21, r22, ...r2] = rotated2;
     let isAdjacent;
-    if (r11 === r22 && r12 === r21) {
-      isAdjacent = arrayEqual(r1, r2);
-      // if (isAdjacent) console.log(r1, r2);
-    } // sharpened/flattened
+    if (r11 === r22 && r12 === r21) isAdjacent = arrayEqual(r1, r2); // sharpened/flattened
     if (r11 + r12 === r21) {
       isAdjacent = arrayEqual(r1, [r22].concat(r2));
-      // if (isAdjacent) console.log(r1, [r2].concat(r2));
     } // split
-    if (r21 + r22 === r11) {
-      isAdjacent = arrayEqual(r2, [r12].concat(r1));
-      // if (isAdjacent) console.log(r1, [r2].concat(r2));
-    } // merge
+    if (r21 + r22 === r11) isAdjacent = arrayEqual(r2, [r12].concat(r1)); // merge
     if (isAdjacent) return true;
   }
   return isAdjacentHelper(t1, t2, rotate(rotated1, 1), rotate(rotated2, 1));

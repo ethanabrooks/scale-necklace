@@ -16,13 +16,11 @@ export const playingColor = getComputedStyle(
 ).getPropertyValue("--pl");
 export type Steps = number[];
 export type Indices = number[];
-export type State =
-  | { loaded: false }
-  | {
-      loaded: true;
-      notesToPlay: Steps;
-    };
-
+export type State = { loaded: false } | { loaded: true; notesToPlay: Steps };
+export type Action =
+  | { type: "reset" }
+  | { type: "nextNote" }
+  | { type: "play"; notes: Indices };
 export function randomNumber(n: number): number {
   return Math.floor(Math.random() * n);
 }
