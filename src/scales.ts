@@ -130,23 +130,23 @@ export function adjacentTo(scale: Steps): Steps[] {
   return patterns.filter((scale2) => isAdjacent(scale, scale2));
 }
 
-function dbg(scale1: Steps, scale2: Steps) {
-  const rotated1 = rotate(scale1, 1);
-  const rotated2 = rotate(scale2, 1);
-  console.log(
-    scale1,
-    scale2,
-    rotated1,
-    rotated2,
-    isAdjacentHelper(scale1, scale2, rotated1, rotated2)
-  );
-  // console.log(
-  //   scale2,
-  //   scale1,
-  //   rotated2,
-  //   rotated1,
-  //   isAdjacentHelper(scale2, scale1, rotated2, rotated1)
-  // );
-}
+// function dbg(scale1: Steps, scale2: Steps) {
+//   const rotated1 = rotate(scale1, 1);
+//   const rotated2 = rotate(scale2, 1);
+//   console.log(
+//     scale1,
+//     scale2,
+//     rotated1,
+//     rotated2,
+//     isAdjacentHelper(scale1, scale2, rotated1, rotated2)
+//   );
+//   // console.log(
+//   //   scale2,
+//   //   scale1,
+//   //   rotated2,
+//   //   rotated1,
+//   //   isAdjacentHelper(scale2, scale1, rotated2, rotated1)
+//   // );
+// }
 
 // dbg([1, 3, 1, 1, 2, 3, 1], [1, 3, 1, 1, 2, 2, 2]);

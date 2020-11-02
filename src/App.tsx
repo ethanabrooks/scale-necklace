@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import "./scales";
 import { adjacentTo, hasAug2nd, hasDoubleHalfSteps, patterns } from "./scales";
 import { Note, notes } from "./notes";
@@ -8,8 +8,11 @@ import "./styles.scss";
 import { animated, useSpring } from "react-spring";
 import { zip } from "fp-ts/Array";
 import {
-  highlightColor,
+  Action,
+  cumSum,
   foregroundColor,
+  highlightColor,
+  Indices,
   modNotes,
   playingColor,
   prob,
@@ -17,45 +20,10 @@ import {
   randomSteps,
   rotate,
   State,
-  Action,
   Steps,
   useNearestModulo,
-  Indices,
-  cumSum,
 } from "./util";
-
-const Slider: React.FC<{
-  value: number;
-  setValue: Dispatch<SetStateAction<number>>;
-}> = ({ value, setValue }) => {
-  return (
-    <input
-      type="range"
-      className={"slider"}
-      min={0}
-      max={100}
-      value={value}
-      onChange={({ target }) => {
-        setValue(+target.value);
-      }}
-    />
-  );
-};
-
-const Switch: React.FC<{
-  value: boolean;
-  setValue: Dispatch<SetStateAction<boolean>>;
-}> = ({ value, setValue }) => (
-  <label className="switch">
-    <input
-      type="checkbox"
-      onClick={() => setValue(!value)}
-      defaultChecked={!value}
-      checked={!value}
-    />
-    <span className="slide" />
-  </label>
-);
+import { Slider, Switch } from "./components";
 
 export default function App(): JSX.Element {
   const [offset, setOffset]: [
@@ -87,15 +55,15 @@ export default function App(): JSX.Element {
   const [state, dispatch] = React.useReducer(
     (state: State, action: Action): State => {
       if (state.loaded) {
-        if (action.type == "play") {
+        if (action.type === "play") {
           return { ...state, notesToPlay: action.notes };
-        } else if (action.type == "nextNote") {
-          const [_, ...notesToPlay] = state.notesToPlay;
+        } else if (action.type === "nextNote") {
+          const [, ...notesToPlay] = state.notesToPlay;
           return { ...state, notesToPlay };
-        } else if (action.type == "reset") {
+        } else if (action.type === "reset") {
           return { ...state, notesToPlay: [] };
         } else {
-          throw 1;
+          throw new Error("Invalid action.type");
         }
       }
       return { loaded: true, notesToPlay: [] };
@@ -104,6 +72,9 @@ export default function App(): JSX.Element {
       loaded: false,
     }
   );
+
+  const playing: boolean = state.loaded && state.notesToPlay.length > 0;
+  const octave: number = 3;
 
   React.useEffect(() => {
     if (state.loaded) {
@@ -127,10 +98,7 @@ export default function App(): JSX.Element {
       synth.toDestination();
       dispatch({ type: "reset" });
     }
-  }, [state, synth]);
-  const playing: boolean = state.loaded && state.notesToPlay.length > 0;
-
-  const octave: number = 3;
+  }, [state, synth, playing]);
 
   React.useEffect(() => {
     const resizeListener = () =>
@@ -157,7 +125,7 @@ export default function App(): JSX.Element {
       window.removeEventListener("keydown", keyDownListener);
       window.removeEventListener("keyup", keyUpListener);
     };
-  }, []);
+  }, [setMoveRoot]);
 
   const containerSize = Math.min(width - 30, height - 30);
   const arcSize = (2 * Math.PI) / notes.length;

@@ -1,7 +1,6 @@
 import React from "react";
 import { notes } from "./notes";
 import { hasAug2nd, hasDoubleHalfSteps, patterns } from "./scales";
-import assert from "assert";
 
 export const highlightColor = getComputedStyle(
   document.documentElement
