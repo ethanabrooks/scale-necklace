@@ -95,8 +95,7 @@ export const randomSteps = (
         ? hasDoubleHalfSteps
         : (s: Steps) => !hasDoubleHalfSteps(s)
     );
-  const steps = randomChoice(patternSubset);
-  return rotate(steps, randomNumber(steps.length));
+  return randomChoice(patternSubset);
 };
 
 export function prob(predicate: (scale: Steps) => boolean) {

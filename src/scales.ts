@@ -96,52 +96,64 @@ function isAdjacentHelper(
   rotated1: Steps,
   rotated2: Steps
 ): boolean {
+  // console.log(check1, check2, rotated1, rotated2);
   if (check1.length === 0 || check2.length === 0) return false; // no steps in common
   const [h1, ...t1] = check1;
-  const [h2] = check2;
+  const [h2, ...t2] = check2;
   assert(h1 === rotated1[rotated1.length - 1]);
   assert(h2 === rotated2[rotated2.length - 1]);
   if (h1 === h2) {
     const [r11, r12, ...r1] = rotated1;
     const [r21, r22, ...r2] = rotated2;
     let isAdjacent;
-    if (r11 === r22 && r12 === r21) isAdjacent = arrayEqual(r1, r2); // sharpened/flattened
+    if (r11 === r22 && r12 === r21) {
+      isAdjacent = arrayEqual(r1, r2);
+      // if (isAdjacent) console.log(r1, r2);
+    } // sharpened/flattened
     if (r11 + r12 === r21) {
       isAdjacent = arrayEqual(r1, [r22].concat(r2));
+      // if (isAdjacent) console.log(r1, [r2].concat(r2));
     } // split
     if (r21 + r22 === r11) {
       isAdjacent = arrayEqual(r2, [r12].concat(r1));
+      // if (isAdjacent) console.log(r1, [r2].concat(r2));
     } // merge
     if (isAdjacent) return true;
   }
-  return isAdjacentHelper(t1, check2, rotate(rotated1, 1), rotated2);
+  return isAdjacentHelper(t1, t2, rotate(rotated1, 1), rotate(rotated2, 1));
 }
 
 function isAdjacent(scale1: Steps, scale2: Steps) {
   return isAdjacentHelper(scale1, scale2, rotate(scale1, 1), rotate(scale2, 1));
 }
 
+export const patterns: Steps[] = flatten(
+  CScales(NUM_NOTES)
+    .map(getStepsC)
+    .map((p) => p.map((_, i) => rotate(p, i)))
+);
+
 export function adjacentTo(scale: Steps): Steps[] {
   return patterns.filter((scale2) => isAdjacent(scale, scale2));
 }
 
-export const patterns = CScales(NUM_NOTES).map(getStepsC);
+function dbg(scale1: Steps, scale2: Steps) {
+  const rotated1 = rotate(scale1, 1);
+  const rotated2 = rotate(scale2, 1);
+  console.log(
+    scale1,
+    scale2,
+    rotated1,
+    rotated2,
+    isAdjacentHelper(scale1, scale2, rotated1, rotated2)
+  );
+  // console.log(
+  //   scale2,
+  //   scale1,
+  //   rotated2,
+  //   rotated1,
+  //   isAdjacentHelper(scale2, scale1, rotated2, rotated1)
+  // );
+}
 
-// function dbg(scale1: Steps, scale2: Steps) {
-//   const rotated1 = rotate(scale1, 1);
-//   const rotated2 = rotate(scale2, 1);
-//   console.log(
-//     scale1,
-//     scale2,
-//     rotated1,
-//     rotated2,
-//     f(scale1, scale2, rotated1, rotated2)
-//   );
-//   console.log(
-//     scale2,
-//     scale1,
-//     rotated2,
-//     rotated1,
-//     f(scale2, scale1, rotated2, rotated1)
-//   );
-// }
+// dbg([2, 3, 2, 1, 1, 2, 1], [1, 3, 1, 2, 3, 2]);

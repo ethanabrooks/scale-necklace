@@ -204,6 +204,7 @@ export default function App(): JSX.Element {
 
   const setRandomAdjacentScale = () => {
     const array = adjacentTo(stepsBetween);
+    console.log(stepsBetween);
     console.log(array);
     return setStepsBetween(randomChoice(array));
   };
