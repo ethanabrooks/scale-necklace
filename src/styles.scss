@@ -35,7 +35,7 @@ body {
 
 .buttons > * {
   outline: none;
-  margin: 10px auto;
+  margin: calc(var(--s) / 60) auto;
   border: none;
   background-color: var(--bg);
   border-radius: 0.12em;
