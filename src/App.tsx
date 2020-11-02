@@ -22,7 +22,6 @@ import {
   useNearestModulo,
   Indices,
   cumSum,
-  randomChoice,
 } from "./util";
 
 const Slider: React.FC<{
