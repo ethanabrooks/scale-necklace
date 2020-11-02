@@ -94,13 +94,13 @@ export default function App(): JSX.Element {
     return () => {
       window.removeEventListener("resize", resizeListener);
     };
-  }, [setWindow]);
+  }, []);
 
   React.useEffect(() => {
     const keyDownListener = ({ key }: { key: string }) => {
       if (key === "Shift") setMoveRoot(false);
       if (key === "Enter") {
-        setMoveRoot(!moveRoot);
+        setMoveRoot((m) => !m);
       }
     };
     const keyUpListener = ({ key }: { key: string }) => {
@@ -112,11 +112,11 @@ export default function App(): JSX.Element {
       window.removeEventListener("keydown", keyDownListener);
       window.removeEventListener("keyup", keyUpListener);
     };
-  }, [moveRoot, setMoveRoot]);
+  }, []);
 
   React.useEffect(() => {
     if (state.loaded) {
-      const [head, ...tail]: Steps = state.notesToPlay;
+      const [head, ...tail]: Indices = state.notesToPlay;
       if (playing) {
         let interval: number | null = null;
         const note = notes[head % notes.length];
@@ -125,7 +125,7 @@ export default function App(): JSX.Element {
         );
         // @ts-ignore
         interval = setInterval(() => {
-          setState({ ...state, notesToPlay: tail });
+          setState((s) => ({ ...s, notesToPlay: tail }));
         }, 300);
         return () => {
           synth.triggerRelease();
@@ -139,7 +139,7 @@ export default function App(): JSX.Element {
         notesToPlay: [],
       });
     }
-  }, [state, playing]);
+  }, [playing]);
 
   const containerSize = Math.min(width - 30, height - 30);
   const arcSize = (2 * Math.PI) / notes.length;
@@ -158,7 +158,7 @@ export default function App(): JSX.Element {
     setOffset(0);
     setNotesToPlay([]);
   };
-  const setNotesToPlay = (notes: Steps) => {
+  const setNotesToPlay = (notes: Indices) => {
     if (state.loaded) {
       if (playing) {
         setState({ ...state, notesToPlay: [] });
@@ -168,10 +168,7 @@ export default function App(): JSX.Element {
     }
   };
 
-  const absIndices: Steps = stepsBetween.reduce(
-    (soFar: Steps, n: number) => soFar.concat(soFar[soFar.length - 1] + n),
-    [root]
-  );
+  const absIndices: Indices = cumSum(stepsBetween, root);
   const modIndices = absIndices.map((i) => i % notes.length);
   const included = notes.map((_, i) => modIndices.includes(i));
   const colors = included.map((inc, i) => {
