@@ -1,6 +1,7 @@
 import React from "react";
 import { notes } from "./notes";
 import { hasAug2nd, hasDoubleHalfSteps, patterns } from "./scales";
+import assert from "assert";
 
 export const highlightColor = getComputedStyle(
   document.documentElement
@@ -81,6 +82,7 @@ export function useNearestModulo(pp: number, m: number): number {
 }
 
 export const randomSteps = (
+  patterns: Steps[],
   aug2ndProb: number,
   doubleHalfStepsProb: number
 ) => {
@@ -93,6 +95,7 @@ export const randomSteps = (
         ? hasDoubleHalfSteps
         : (s: Steps) => !hasDoubleHalfSteps(s)
     );
+  assert(patternSubset.length > 0);
   return randomChoice(patternSubset);
 };
 

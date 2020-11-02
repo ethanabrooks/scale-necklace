@@ -79,7 +79,7 @@ function getStepsC(c: C): Steps {
 }
 
 export function hasDoubleHalfSteps(scale: Steps): boolean {
-  return zip(scale, scale.slice(1)).some(([a, b]) => a === 1 && b === 1);
+  return zip(scale, rotate(scale, 1)).some(([a, b]) => a === 1 && b === 1);
 }
 
 export function hasAug2nd(scale: Steps): boolean {

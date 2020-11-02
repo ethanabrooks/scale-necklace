@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import "./scales";
-import { adjacentTo, hasAug2nd, hasDoubleHalfSteps } from "./scales";
+import { adjacentTo, hasAug2nd, hasDoubleHalfSteps, patterns } from "./scales";
 import { Note, notes } from "./notes";
 import { start, Synth } from "tone";
 import * as d3 from "d3";
@@ -69,7 +69,7 @@ export default function App(): JSX.Element {
   );
   const [aug2ndProb, setAug2ndProb] = React.useState<number>(prob(hasAug2nd));
   const [stepsBetween, setStepsBetween] = React.useState<Steps>(
-    randomSteps(aug2ndProb, doubleHalfStepsProb)
+    randomSteps(patterns, aug2ndProb, doubleHalfStepsProb)
   );
   const [{ width, height }, setWindow] = React.useState<{
     width: number;
@@ -216,14 +216,16 @@ export default function App(): JSX.Element {
   const noteNamesInfo = rotate(zip(noteNames, colors), root);
 
   const setRandomScale = () => {
-    return setStepsBetween(randomSteps(aug2ndProb, doubleHalfStepsProb));
+    return setStepsBetween(
+      randomSteps(patterns, aug2ndProb, doubleHalfStepsProb)
+    );
   };
 
   const setRandomAdjacentScale = () => {
-    const array = adjacentTo(stepsBetween);
-    console.log(stepsBetween);
-    console.log(array);
-    return setStepsBetween(randomChoice(array));
+    const adjacent = adjacentTo(stepsBetween);
+    return setStepsBetween(
+      randomSteps(adjacent, aug2ndProb, doubleHalfStepsProb)
+    );
   };
   return (
     <div
