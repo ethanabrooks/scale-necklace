@@ -48,11 +48,7 @@ const Switch: React.FC<{
   setValue: Dispatch<SetStateAction<boolean>>;
 }> = ({ value, setValue }) => (
   <label className="switch">
-    <input
-      type="checkbox"
-      onClick={() => setValue(!value)}
-      defaultChecked={!value}
-    />
+    <input type="checkbox" onClick={() => setValue(!value)} checked={!value} />
     <span className="slide" />
   </label>
 );
