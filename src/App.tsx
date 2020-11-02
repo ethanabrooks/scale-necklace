@@ -20,6 +20,8 @@ import {
   Steps,
   useNearestModulo,
   lowlightColor,
+  Indices,
+  cumSum,
 } from "./util";
 
 const Slider: React.FC<{

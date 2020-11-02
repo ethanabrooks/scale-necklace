@@ -15,6 +15,7 @@ export const playingColor = getComputedStyle(
   document.documentElement
 ).getPropertyValue("--pl");
 export type Steps = number[];
+export type Indices = number[];
 export type State =
   | { loaded: false }
   | {
@@ -43,6 +44,12 @@ export function modNotes(a: number) {
   return mod(a, notes.length);
 }
 
+export function cumSum(array: number[], start = 0) {
+  return array.reduce(
+    (soFar: Indices, n: number) => soFar.concat(soFar[soFar.length - 1] + n),
+    [start]
+  );
+}
 // useNearestModulo returns a value minimizing the distance traveled around a
 // circle. It always satisfies useNearestModulo(P, M) % M = P.
 //
