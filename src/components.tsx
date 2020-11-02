@@ -10,6 +10,7 @@ export const Slider: React.FC<{
       className={"slider"}
       min={0}
       max={100}
+      step={10}
       value={value}
       onChange={({ target }) => {
         setValue(+target.value);
