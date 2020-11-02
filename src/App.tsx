@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import "./scales";
-import { hasAug2nd, hasDoubleHalfSteps } from "./scales";
+import { adjacentTo, hasAug2nd, hasDoubleHalfSteps } from "./scales";
 import { Note, notes } from "./notes";
 import { start, Synth } from "tone";
 import * as d3 from "d3";
@@ -201,6 +201,12 @@ export default function App(): JSX.Element {
   const setRandomScale = () => {
     return setStepsBetween(randomSteps(aug2ndProb, doubleHalfStepsProb));
   };
+
+  const setRandomAdjacentScale = () => {
+    const array = adjacentTo(stepsBetween);
+    console.log(array);
+    return setStepsBetween(randomChoice(array));
+  };
   return (
     <div
       className={"container"}
@@ -213,7 +219,7 @@ export default function App(): JSX.Element {
         <button className={"button"} onClick={setRandomScale}>
           Randomize Scale
         </button>
-        <button className={"button"} onClick={setRandomScale}>
+        <button className={"button"} onClick={setRandomAdjacentScale}>
           Random adjacent Scale
         </button>
         <button
