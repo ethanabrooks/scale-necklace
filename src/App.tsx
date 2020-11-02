@@ -186,7 +186,7 @@ export default function App(): JSX.Element {
   const setRandomScale = () => {
     const steps = randomSteps(patterns, aug2ndProb, doubleHalfStepsProb);
     if (steps === null) {
-      alert("No valid scale");
+      alert("No valid scale.");
     } else {
       setStepsBetween(steps);
     }
@@ -196,7 +196,7 @@ export default function App(): JSX.Element {
     const adjacent = adjacentTo(stepsBetween);
     const steps = randomSteps(adjacent, aug2ndProb, doubleHalfStepsProb);
     if (steps === null) {
-      alert("No valid adjacent scale");
+      alert("No adjacent scale possible.");
       console.log(stepsBetween);
     } else {
       return setStepsBetween(steps);
