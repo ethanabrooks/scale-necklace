@@ -96,7 +96,6 @@ function isAdjacentHelper(
   rotated1: Steps,
   rotated2: Steps
 ): boolean {
-  // console.log(check1, check2, rotated1, rotated2);
   if (check1.length === 0 || check2.length === 0) return false; // no steps in common
   const [h1, ...t1] = check1;
   const [h2, ...t2] = check2;
@@ -106,7 +105,8 @@ function isAdjacentHelper(
     const [r11, r12, ...r1] = rotated1;
     const [r21, r22, ...r2] = rotated2;
     let isAdjacent;
-    if (r11 === r22 && r12 === r21) isAdjacent = arrayEqual(r1, r2); // sharpened/flattened
+
+    if (r11 !== r12 && r11 + r12 === r21 + r22) isAdjacent = arrayEqual(r1, r2); // sharpened/flattened
     if (r11 + r12 === r21) {
       isAdjacent = arrayEqual(r1, [r22].concat(r2));
     } // split
@@ -149,4 +149,4 @@ function dbg(scale1: Steps, scale2: Steps) {
   // );
 }
 
-// dbg([2, 3, 2, 1, 1, 2, 1], [1, 3, 1, 2, 3, 2]);
+// dbg([1, 3, 1, 1, 2, 3, 1], [1, 3, 1, 1, 2, 2, 2]);
