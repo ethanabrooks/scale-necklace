@@ -1,6 +1,7 @@
 import { flatten, zip } from "fp-ts/lib/Array";
 import { NUM_NOTES } from "./notes";
-import { Steps } from "./util";
+import { rotate, Steps } from "./util";
+import assert from "assert";
 
 type AScale = { head: [1]; tail: B } | { head: [1, 1]; tail: B };
 type BScale =

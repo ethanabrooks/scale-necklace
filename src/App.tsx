@@ -19,9 +19,9 @@ import {
   State,
   Steps,
   useNearestModulo,
-  lowlightColor,
   Indices,
   cumSum,
+  randomChoice,
 } from "./util";
 
 const Slider: React.FC<{
@@ -115,6 +115,7 @@ export default function App(): JSX.Element {
   }, []);
 
   React.useEffect(() => {
+    // TODO: reducer
     if (state.loaded) {
       const [head, ...tail]: Indices = state.notesToPlay;
       if (playing) {
@@ -139,7 +140,7 @@ export default function App(): JSX.Element {
         notesToPlay: [],
       });
     }
-  }, [playing]);
+  }, [state, playing, synth]);
 
   const containerSize = Math.min(width - 30, height - 30);
   const arcSize = (2 * Math.PI) / notes.length;
@@ -152,7 +153,6 @@ export default function App(): JSX.Element {
     .endAngle((i: number) => (i + 0.5) * arcSize)
     .cornerRadius(containerSize);
   const arcs = notes.map((_, i) => arcGen(i) as string);
-  const randomAdjacent = () => {};
   const setRandomRoot = () => {
     setRoot(randomNumber(notes.length));
     setOffset(0);
