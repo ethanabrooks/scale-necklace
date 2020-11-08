@@ -87,10 +87,10 @@ export const randomSteps = (
 ): Steps | null => {
   const patternSubset: Steps[] = patterns
     .filter(
-      Math.random() < aug2ndProb ? hasAug2nd : (s: Steps) => !hasAug2nd(s)
+      100 * Math.random() < aug2ndProb ? hasAug2nd : (s: Steps) => !hasAug2nd(s)
     )
     .filter(
-      Math.random() < doubleHalfStepsProb
+      100 * Math.random() < doubleHalfStepsProb
         ? hasDoubleHalfSteps
         : (s: Steps) => !hasDoubleHalfSteps(s)
     );
