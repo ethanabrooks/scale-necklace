@@ -2,16 +2,8 @@ $nobDiam: 13px;
 $toggleTransition: 0.2s;
 $smallFont: calc(var(--s) / 40);
 
-:root {
-  --bg: #222222;
-  --fg: #e5e5e5;
-  --hl: #fca311;
-  --ll: #999999;
-  --pl: #ff4136;
-}
-
 body {
-  background-color: var(--bg);
+  background-color: #222222;
 }
 
 .static {

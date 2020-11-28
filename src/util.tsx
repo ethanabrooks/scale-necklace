@@ -2,18 +2,11 @@ import React from "react";
 import { notes } from "./notes";
 import { hasAug2nd, hasDoubleHalfSteps, patterns } from "./scales";
 
-export const highlightColor = getComputedStyle(
-  document.documentElement
-).getPropertyValue("--hl");
-export const foregroundColor = getComputedStyle(
-  document.documentElement
-).getPropertyValue("--fg");
-export const lowlightColor = getComputedStyle(
-  document.documentElement
-).getPropertyValue("--ll");
-export const playingColor = getComputedStyle(
-  document.documentElement
-).getPropertyValue("--pl");
+export const backgroundColor = "#222222";
+export const highlightColor = "#fca311";
+export const foregroundColor = "#e5e5e5";
+export const lowlightColor = "#999999";
+export const playingColor = "#ff4136";
 export type Steps = number[];
 export type Indices = number[];
 export type State = { loaded: false } | { loaded: true; notesToPlay: Steps };

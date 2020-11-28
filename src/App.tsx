@@ -9,10 +9,12 @@ import { animated, useSpring } from "react-spring";
 import { zip } from "fp-ts/Array";
 import {
   Action,
+  backgroundColor,
   cumSum,
   foregroundColor,
   highlightColor,
   Indices,
+  lowlightColor,
   modNotes,
   playingColor,
   prob,
@@ -205,7 +207,17 @@ export default function App(): JSX.Element {
   return (
     <div
       className={"container"}
-      style={{ "--s": `${containerSize}px`, "--m": notes.length } as any}
+      style={
+        {
+          "--s": `${containerSize}px`,
+          "--m": notes.length,
+          "--bg": backgroundColor,
+          "--fg": foregroundColor,
+          "--hl": highlightColor,
+          "--ll": lowlightColor,
+          "--pl": playingColor,
+        } as any
+      }
     >
       <div className={"buttons"}>
         <button className={"button"} onClick={setRandomRoot}>
