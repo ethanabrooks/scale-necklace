@@ -78,19 +78,40 @@ export const randomSteps = (
   aug2ndProb: number,
   doubleHalfStepsProb: number
 ): Steps | null => {
-  const patternSubset: Steps[] = patterns
-    .filter(
-      100 * Math.random() < aug2ndProb ? hasAug2nd : (s: Steps) => !hasAug2nd(s)
-    )
-    .filter(
-      100 * Math.random() < doubleHalfStepsProb
-        ? hasDoubleHalfSteps
-        : (s: Steps) => !hasDoubleHalfSteps(s)
-    );
-  if (patternSubset.length > 0) {
-    return randomChoice(patternSubset);
+  const aug2ndPatterns = patterns.filter(hasAug2nd);
+  const noAug2ndPatterns = patterns.filter((s) => !hasAug2nd(s));
+  let patternSubset: Steps[];
+  const useAug2nd =
+    (100 * Math.random() < aug2ndProb || noAug2ndPatterns.length == 0) &&
+    aug2ndPatterns.length > 0;
+  if (useAug2nd) {
+    if (aug2ndProb == 0) {
+      alert("No adjacent scale without augmented seconds.");
+    }
+    patternSubset = aug2ndPatterns;
+  } else if (noAug2ndPatterns.length > 0) {
+    patternSubset = noAug2ndPatterns;
+  } else {
+    return null;
   }
-  return null;
+  const doubleHalfStepPatterns = patternSubset.filter(hasDoubleHalfSteps);
+  const noDoubleHalfStepPatterns = patternSubset.filter(
+    (s) => !hasDoubleHalfSteps(s)
+  );
+  if (
+    (100 * Math.random() < doubleHalfStepsProb ||
+      noDoubleHalfStepPatterns.length == 0) &&
+    doubleHalfStepPatterns.length > 0
+  ) {
+    if (doubleHalfStepsProb == 0) {
+      alert("No adjacent scale without double half steps.");
+    }
+    return randomChoice(doubleHalfStepPatterns);
+  } else if (noDoubleHalfStepPatterns.length > 0) {
+    return randomChoice(noDoubleHalfStepPatterns);
+  } else {
+    return null;
+  }
 };
 
 export function prob(predicate: (scale: Steps) => boolean) {
