@@ -235,7 +235,7 @@ export default function App(): JSX.Element {
         } as any
       }
     >
-      <div className={"buttons row"}>
+      <div className={"buttons row absolute"}>
         <button
           className={"button"}
           onClick={() => setScaleChoice(scaleChoice - 1)}
