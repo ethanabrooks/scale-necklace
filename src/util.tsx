@@ -82,10 +82,10 @@ export const randomSteps = (
   const noAug2ndPatterns = patterns.filter((s) => !hasAug2nd(s));
   let patternSubset: Steps[];
   const useAug2nd =
-    (100 * Math.random() < aug2ndProb || noAug2ndPatterns.length == 0) &&
+    (100 * Math.random() < aug2ndProb || noAug2ndPatterns.length === 0) &&
     aug2ndPatterns.length > 0;
   if (useAug2nd) {
-    if (aug2ndProb == 0) {
+    if (aug2ndProb === 0) {
       alert("No adjacent scale without augmented seconds.");
     }
     patternSubset = aug2ndPatterns;
@@ -100,10 +100,10 @@ export const randomSteps = (
   );
   if (
     (100 * Math.random() < doubleHalfStepsProb ||
-      noDoubleHalfStepPatterns.length == 0) &&
+      noDoubleHalfStepPatterns.length === 0) &&
     doubleHalfStepPatterns.length > 0
   ) {
-    if (doubleHalfStepsProb == 0) {
+    if (doubleHalfStepsProb === 0) {
       alert("No adjacent scale without double half steps.");
     }
     return randomChoice(doubleHalfStepPatterns);

@@ -27,26 +27,31 @@ import {
 } from "./util";
 import { Slider, Switch } from "./components";
 
+type Scale = { root: number; steps: Steps };
+
 export default function App(): JSX.Element {
   const [offset, setOffset]: [
     number,
     React.Dispatch<React.SetStateAction<number>>
   ] = React.useState<number>(0);
-  const [root, setRoot] = React.useState<number>(0);
+  const [scale, setScale] = React.useState<Scale>({
+    root: 0,
+    steps: patterns[0],
+  });
   const [moveRoot, setMoveRoot] = React.useState<boolean>(true);
   const [doubleHalfStepsProb, setDoubleHalfStepsProb] = React.useState<number>(
     prob(hasDoubleHalfSteps)
   );
   const [aug2ndProb, setAug2ndProb] = React.useState<number>(prob(hasAug2nd));
-  const [stepsBetween, setStepsBetween] = React.useState<Steps>(
-    randomSteps(patterns, aug2ndProb, doubleHalfStepsProb) as Steps
-  );
+  // const [stepsBetween, setStepsBetween] = React.useState<Steps>(
+  //   randomSteps(patterns, aug2ndProb, doubleHalfStepsProb) as Steps
+  // );
   const [{ width, height }, setWindow] = React.useState<{
     width: number;
     height: number;
   }>({ width: window.innerWidth, height: window.innerHeight });
   const synth = React.useMemo(() => new Synth(), []);
-  const targetRoot = useNearestModulo(root, notes.length);
+  const targetRoot = useNearestModulo(scale.root, notes.length);
   const targetOffset = useNearestModulo(offset, notes.length);
   const { springRoot, springOffset } = useSpring({
     springRoot: targetRoot,
@@ -141,7 +146,8 @@ export default function App(): JSX.Element {
     .cornerRadius(containerSize);
   const arcs = notes.map((_, i) => arcGen(i) as string);
   const setRandomRoot = () => {
-    setRoot(randomNumber(notes.length));
+    const root = randomNumber(notes.length);
+    setScale({ ...scale, root });
     setOffset(0);
     setNotesToPlay([]);
   };
@@ -155,7 +161,7 @@ export default function App(): JSX.Element {
     }
   };
 
-  const absIndices: Indices = cumSum(stepsBetween, root);
+  const absIndices: Indices = cumSum(scale.steps, scale.root);
   const modIndices = absIndices.map((i) => i % notes.length);
   const included = notes.map((_, i) => modIndices.includes(i));
   const colors = included.map((inc, i) => {
@@ -171,7 +177,7 @@ export default function App(): JSX.Element {
   const arcInfo: [[number, boolean, string], string][] = zip(
     rotate(
       zip(included, colors).map(([...x], i) => [i, ...x]),
-      root - offset
+      scale.root - offset
     ),
     arcs
   );
@@ -183,25 +189,25 @@ export default function App(): JSX.Element {
           .replace(/(\w)#/, "$1♯")
           .replace(/(\w)b/, "$1♭")
   );
-  const noteNamesInfo = rotate(zip(noteNames, colors), root);
+  const noteNamesInfo = rotate(zip(noteNames, colors), scale.root);
 
   const setRandomScale = () => {
     const steps = randomSteps(patterns, aug2ndProb, doubleHalfStepsProb);
     if (steps === null) {
       alert("No valid scale.");
     } else {
-      setStepsBetween(steps);
+      setScale({ ...scale, steps });
     }
   };
 
   const setRandomAdjacentScale = () => {
-    const adjacent = adjacentTo(stepsBetween);
+    const adjacent = adjacentTo(scale.steps);
     const steps = randomSteps(adjacent, aug2ndProb, doubleHalfStepsProb);
     if (steps === null) {
       alert("No adjacent scale possible.");
-      console.log(stepsBetween);
+      console.log(scale.steps);
     } else {
-      return setStepsBetween(steps);
+      return setScale({ ...scale, steps });
     }
   };
   return (
@@ -259,15 +265,20 @@ export default function App(): JSX.Element {
               role={"button"}
               tabIndex={0}
               onClick={() => {
-                const newOffset = modNotes(offset + (absIndex - root));
+                const newOffset = modNotes(offset + (absIndex - scale.root));
                 // setNotesToPlay([]);
                 if (moveRoot) {
-                  setRoot(absIndex);
+                  setScale({ ...scale, root: absIndex });
                 } else if (included) {
                   setOffset(newOffset);
-                  setStepsBetween(
-                    rotate(stepsBetween, modIndices.indexOf(absIndex))
+                  const steps = rotate(
+                    scale.steps,
+                    modIndices.indexOf(absIndex)
                   );
+                  setScale({
+                    ...scale,
+                    steps,
+                  });
                 }
               }}
             />
@@ -275,12 +286,14 @@ export default function App(): JSX.Element {
         ))}
         <animated.div
           className={"note-names"}
-          style={{ "--a": springRoot.interpolate((r) => root - r) } as any}
+          style={
+            { "--a": springRoot.interpolate((r) => scale.root - r) } as any
+          }
         >
           {noteNamesInfo.map(([name, color], i) => (
             <span
               style={{ "--i": i, "--c": color } as any}
-              id={`note${root + i}`}
+              id={`note${scale.root + i}`}
               key={i}
             >
               {name}
