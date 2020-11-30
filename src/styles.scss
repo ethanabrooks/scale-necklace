@@ -16,11 +16,32 @@ body {
   font-size: calc(var(--s) / 30);
 }
 
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.bg-yellow {
+  background-color: darkorange;
+}
+
+.height30 {
+  height: 30px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
 .buttons {
+}
+
+.column {
+  display: flex;
   position: absolute;
   height: 100%;
   width: 100%;
-  display: flex;
   flex-direction: column;
   justify-content: center;
 }
@@ -34,12 +55,16 @@ body {
   z-index: 1000;
 }
 
-.buttons button:hover {
+.buttons button:disabled {
+  color: var(--bg);
+}
+
+.buttons button:hover:enabled {
   color: var(--bg);
   background-color: var(--fg);
 }
 
-.buttons button:active {
+.buttons button:active:enabled {
   background-color: var(--hl);
 }
 

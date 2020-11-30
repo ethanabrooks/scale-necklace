@@ -235,7 +235,23 @@ export default function App(): JSX.Element {
         } as any
       }
     >
-      <div className={"buttons"}>
+      <div className={"buttons row"}>
+        <button
+          className={"button"}
+          onClick={() => setScaleChoice(scaleChoice - 1)}
+          disabled={scaleChoice === 0}
+        >
+          ⇦
+        </button>
+        <button
+          className={"button"}
+          onClick={() => setScaleChoice(scaleChoice + 1)}
+          disabled={scaleChoice === scaleHistory.length - 1}
+        >
+          ⇨
+        </button>
+      </div>
+      <div className={"buttons column flex"}>
         <button className={"button"} onClick={setRandomRoot}>
           Randomize Root
         </button>
