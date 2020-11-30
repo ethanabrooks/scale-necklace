@@ -259,7 +259,7 @@ export default function App(): JSX.Element {
           Randomize Scale
         </button>
         <button className={"button"} onClick={setRandomAdjacentScale}>
-          Random adjacent Scale
+          Random Adjacent Scale
         </button>
         <button
           className={"button"}
