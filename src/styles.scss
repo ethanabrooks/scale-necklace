@@ -1,63 +1,145 @@
 $nobDiam: 13px;
 $toggleTransition: 0.2s;
 $smallFont: calc(var(--containerSize) / 40);
-$necklaceRadius: calc(var(--containerSize) / 4);
+$necklaceRadius: calc(var(--containerSize) / 3);
 $pearlDiameter: calc(var(--containerSize) / 10);
 $backgroundColor: #222222;
+
+.debug {
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  background-color: greenyellow;
+}
 
 body {
   background-color: $backgroundColor;
 }
-
+.absolute {
+  position: absolute;
+}
+.background-fill {
+  background-color: $backgroundColor;
+}
+.bg-green {
+  background-color: green;
+}
+.bg-yellow {
+  background-color: yellow;
+}
+.border-color {
+  border: solid 2px var(--color);
+}
+.button {
+  color: var(--fg);
+  font-size: calc(var(--s) / 30);
+  outline: none;
+  margin: calc(var(--s) / 80) auto;
+  border: none;
+  background-color: $backgroundColor;
+  border-radius: 0.32em;
+  z-index: 1000;
+}
+.button:disabled {
+  color: $backgroundColor;
+}
+.button:hover:enabled {
+  color: $backgroundColor;
+  background-color: var(--fg);
+}
+.button:active:enabled {
+  background-color: var(--hl);
+}
+.center-text {
+  text-align: center;
+}
+.column {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+}
 .container {
   position: relative;
 }
-
-.window-center {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 100px;
+.height-50-percent {
+  height: 50%;
+}
+.height-70-percent {
+  height: 70%;
+}
+.height-100-percent {
+  height: 100%;
+}
+.height-100 {
   height: 100px;
-  transform: translate(-50%, -50%);
-  background-color: #61dafb;
 }
-
+.invisible {
+  color: rgba(0, 0, 0, 0);
+}
+.necklace-size {
+  height: $necklaceRadius;
+  width: $necklaceRadius;
+}
 .offset-angle {
-  --radius: 100px;
   position: absolute;
-  transform: rotate(calc(var(--turn) * 1turn)) translate($necklaceRadius)
-    rotate(calc(var(--turn) * -1turn));
+  transform: // translate($necklaceRadius, $necklaceRadius)
+    translate(-50%, -50%) rotate(calc(var(--turn) * 1turn))
+    translate($necklaceRadius) rotate(calc(var(--turn) * -1turn));
+  //transform: rotate(calc(var(--turn) * 1turn)) translate($necklaceRadius)
 }
-
+.pad-within-10 {
+}
+.pad-within-10 * {
+  padding: 10px;
+}
 .pearl-shape {
   border-radius: 50%;
   height: $pearlDiameter;
   width: $pearlDiameter;
 }
-
-.text-color-c {
-  color: var(--c);
+.low-light-color {
+  color: var(--ll);
+}
+.text-color {
+  color: var(--color);
+}
+.width-50-percent {
+  width: 50%;
+}
+.width-70-percent {
+  width: 70%;
+}
+.width-100-percent {
+  width: 100%;
+}
+.width-100 {
+  width: 100px;
+}
+.translate-50-50 {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.dumb {
+  top: 50%;
+  left: 50%;
+}
+.fixed {
+  position: fixed;
+}
+.center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-.border-color-c {
-  border: solid 2px var(--c);
-}
-
-.background-fill {
-  background-color: $backgroundColor;
-}
-
-//
-//.static {
-//  color: var(--ll);
-//  font-size: $smallFont;
+//.window-center * {
+//top: 50%;
+//right: 100%;
 //}
 //
-//.button {
-//  color: var(--fg);
-//  font-size: calc(var(--s) / 30);
-//}
 //
 //.flex-row {
 //  display: flex;
@@ -72,45 +154,15 @@ body {
 //  height: 30px;
 //}
 //
-//.row {
-//  display: flex;
-//  flex-direction: row;
-//}
 //
 //.absolute {
 //  position: absolute;
 //}
 //
-//.column {
-//  display: flex;
-//  position: absolute;
-//  height: 100%;
-//  width: 100%;
-//  flex-direction: column;
-//  justify-content: center;
-//}
 //
 //.buttons > * {
-//  outline: none;
-//  margin: calc(var(--s) / 80) auto;
-//  border: none;
-//  background-color: var(--bg);
-//  border-radius: 0.12em;
-//  z-index: 1000;
 //}
 //
-//.buttons button:disabled {
-//  color: var(--bg);
-//}
-//
-//.buttons button:hover:enabled {
-//  color: var(--bg);
-//  background-color: var(--fg);
-//}
-//
-//.buttons button:active:enabled {
-//  background-color: var(--hl);
-//}
 //
 //.necklace {
 //  position: absolute;
@@ -143,7 +195,6 @@ body {
 //  --az: calc((var(--ai) / var(--m) * 1turn) - 0.25turn);
 //  $negAz: calc(-1 * var(--az));
 //  position: absolute;
-//  margin: calc(-0.5 * var(--d));
 //  line-height: var(--d);
 //  mix-blend-mode: difference;
 //  transform: rotate(var(--az)) translate(var(--r)) rotate($negAz);
@@ -160,9 +211,6 @@ body {
 //  pointer-events: none;
 //}
 //
-//.center-text {
-//  text-align: center;
-//}
 //
 //
 //.small-font {
