@@ -9,7 +9,6 @@ import { animated, useSpring } from "react-spring";
 import { zip } from "fp-ts/Array";
 import {
   Action,
-  backgroundColor,
   cumSum,
   foregroundColor,
   highlightColor,
@@ -225,9 +224,8 @@ export default function App(): JSX.Element {
       className={"container"}
       style={
         {
-          "--s": `${containerSize}px`,
+          "--containerSize": `${containerSize}px`,
           "--m": notes.length,
-          "--bg": backgroundColor,
           "--fg": foregroundColor,
           "--hl": highlightColor,
           "--ll": lowlightColor,
@@ -235,89 +233,123 @@ export default function App(): JSX.Element {
         } as any
       }
     >
-      <div className={"buttons row absolute"}>
-        <button
-          className={"button"}
-          onClick={() => setScaleChoice(scaleChoice - 1)}
-          disabled={scaleChoice === 0}
-        >
-          ⇦
-        </button>
-        <button
-          className={"button"}
-          onClick={() => setScaleChoice(scaleChoice + 1)}
-          disabled={scaleChoice === scaleHistory.length - 1}
-        >
-          ⇨
-        </button>
-      </div>
-      <div className={"buttons column flex"}>
-        <button className={"button"} onClick={setRandomRoot}>
-          Randomize Root
-        </button>
-        <button className={"button"} onClick={setRandomScale}>
-          Randomize Scale
-        </button>
-        <button className={"button"} onClick={setRandomAdjacentScale}>
-          Random Adjacent Scale
-        </button>
-        <button
-          className={"button"}
-          onClick={() => setNotesToPlay(absIndices)}
-          aria-pressed={playing}
-        >
-          {playing ? "Pause" : "Play"}
-        </button>
-        <span className={"static"}>
-          Click on a note or shift-click on a yellow note.
-        </span>
-        <Switch value={moveRoot} setValue={setMoveRoot} />
-        <span className={"static"}>Probability of consecutive half-steps</span>
-        <Slider value={doubleHalfStepsProb} setValue={setDoubleHalfStepsProb} />
-        <span className={"static"}>Probability of augmented 2nd</span>
-        <Slider value={aug2ndProb} setValue={setAug2ndProb} />
-      </div>
+      {/*<div className={"absolute invisible"} tabIndex={0}>*/}
+      {/*  {modIndices.map((i) => noteNames[i]).join(",")}*/}
+      {/*</div>*/}
+      {/*<div className={"buttons row absolute"}>*/}
+      {/*  <button*/}
+      {/*    className={"button"}*/}
+      {/*    onClick={() => setScaleChoice(scaleChoice - 1)}*/}
+      {/*    disabled={scaleChoice === 0}*/}
+      {/*  >*/}
+      {/*    ⇦*/}
+      {/*  </button>*/}
+      {/*  <button*/}
+      {/*    className={"button"}*/}
+      {/*    onClick={() => setScaleChoice(scaleChoice + 1)}*/}
+      {/*    disabled={scaleChoice === scaleHistory.length - 1}*/}
+      {/*  >*/}
+      {/*    ⇨*/}
+      {/*  </button>*/}
+      {/*</div>*/}
+      {/*<div className={"buttons column flex"}>*/}
+      {/*  <button className={"button"} onClick={setRandomRoot}>*/}
+      {/*    Randomize Root*/}
+      {/*  </button>*/}
+      {/*  <button className={"button"} onClick={setRandomScale}>*/}
+      {/*    Randomize Scale*/}
+      {/*  </button>*/}
+      {/*  <button className={"button"} onClick={setRandomAdjacentScale}>*/}
+      {/*    Random Adjacent Scale*/}
+      {/*  </button>*/}
+      {/*  <button*/}
+      {/*    className={"button"}*/}
+      {/*    onClick={() => setNotesToPlay(absIndices)}*/}
+      {/*    aria-pressed={playing}*/}
+      {/*  >*/}
+      {/*    {playing ? "Pause" : "Play"}*/}
+      {/*  </button>*/}
+      {/*  <span className={"static"}>*/}
+      {/*    Click on a note or shift-click on a yellow note.*/}
+      {/*  </span>*/}
+      {/*  <Switch value={moveRoot} setValue={setMoveRoot} />*/}
+      {/*  <span className={"static"}>Probability of consecutive half-steps</span>*/}
+      {/*  <Slider value={doubleHalfStepsProb} setValue={setDoubleHalfStepsProb} />*/}
+      {/*  <span className={"static"}>Probability of augmented 2nd</span>*/}
+      {/*  <Slider value={aug2ndProb} setValue={setAug2ndProb} />*/}
+      {/*</div>*/}
       <animated.div
-        className={"necklace"}
+        className={"window-center"}
         style={{ "--r": springOffset.interpolate((r: number) => -r) } as any}
       >
         {arcInfo.map(([[absIndex, included, color], d], i: number) => (
-          <svg className={"svg"} key={i} style={{ "--c": color } as any}>
-            <path
-              className={"path"}
-              stroke={color}
-              d={d}
-              aria-labelledby={`note${absIndex}`}
-              role={"button"}
-              tabIndex={0}
-              onClick={() => {
-                const newOffset = modNotes(offset + (absIndex - root));
-                // setNotesToPlay([]);
-                if (moveRoot) {
-                  setScale({ ...scale, root: absIndex });
-                } else if (included) {
-                  setOffset(newOffset);
-                  const steps = rotate(steps1, modIndices.indexOf(absIndex));
-                  setScale({ ...scale, steps });
-                }
-              }}
-            />
-          </svg>
+          <button
+            className={
+              "offset-angle pearl-shape color-c border-color-c text-color-c background-fill"
+            }
+            // className={
+            //   "pearl round border-color-c color-c width-100 height-100 transparent-fill"
+            // }
+            style={
+              {
+                "--c": color,
+                "--i": i,
+                "--turn": (root - i) / noteNames.length,
+              } as any
+            }
+            onClick={() => {
+              const newOffset = modNotes(offset + (absIndex - root));
+              // setNotesToPlay([]);
+              if (moveRoot) {
+                setScale({ ...scale, root: absIndex });
+              } else if (included) {
+                setOffset(newOffset);
+                const steps = rotate(steps1, modIndices.indexOf(absIndex));
+                setScale({ ...scale, steps });
+              }
+            }}
+          >
+            {noteNames[absIndex]}
+          </button>
+          // <svg className={"svg"} key={i} style={{ "--c": color } as any}>
+          //   <path
+          //     className={"path"}
+          //     stroke={color}
+          //     d={d}
+          //     aria-labelledby={`note${absIndex}`}
+          //     role={"button"}
+          //     tabIndex={0}
+          //     onClick={() => {
+          //       const newOffset = modNotes(offset + (absIndex - root));
+          //       // setNotesToPlay([]);
+          //       if (moveRoot) {
+          //         setScale({ ...scale, root: absIndex });
+          //       } else if (included) {
+          //         setOffset(newOffset);
+          //         const steps = rotate(steps1, modIndices.indexOf(absIndex));
+          //         setScale({ ...scale, steps });
+          //       }
+          //     }}
+          //   />
+          // </svg>
         ))}
-        <animated.div
-          className={"note-names"}
-          style={{ "--a": springRoot.interpolate((r) => root - r) } as any}
-        >
-          {noteNamesInfo.map(([name, color], i) => (
-            <span
-              style={{ "--i": i, "--c": color } as any}
-              id={`note${root + i}`}
-              key={i}
-            >
-              {name}
-            </span>
-          ))}
-        </animated.div>
+        {/*<animated.div*/}
+        {/*  className={*/}
+        {/*    "necklace width-d height-d small-font center-text no-pointer-events"*/}
+        {/*  }*/}
+        {/*  style={{ "--a": springRoot.interpolate((r) => root - r) } as any}*/}
+        {/*>*/}
+        {/*  {noteNamesInfo.map(([name, color], i) => (*/}
+        {/*    <span*/}
+        {/*      className={"color-c pearl"}*/}
+        {/*      style={{ "--i": i, "--c": color } as any}*/}
+        {/*      id={`note${root + i}`}*/}
+        {/*      key={i}*/}
+        {/*    >*/}
+        {/*      {name}*/}
+        {/*    </span>*/}
+        {/*  ))}*/}
+        {/*</animated.div>*/}
       </animated.div>
     </div>
   );

@@ -2,7 +2,6 @@ import React from "react";
 import { notes } from "./notes";
 import { hasAug2nd, hasDoubleHalfSteps, patterns } from "./scales";
 
-export const backgroundColor = "#222222";
 export const highlightColor = "#fca311";
 export const foregroundColor = "#e5e5e5";
 export const lowlightColor = "#999999";
