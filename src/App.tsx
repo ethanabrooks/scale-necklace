@@ -221,6 +221,11 @@ export default function App(): JSX.Element {
   };
   const centerButtonClassName =
     "button font-size-large z-1000 no-border curved-radius";
+
+  function turn(i: number) {
+    return (r: number) => (i + root - r) / noteNames.length - 1 / 4;
+  }
+
   return (
     <div
       className={"relative"}
@@ -235,7 +240,7 @@ export default function App(): JSX.Element {
         } as any
       }
     >
-      <div className={"absolute invisible"} tabIndex={0}>
+      <div className={"absolute z-1000"} tabIndex={0}>
         {modIndices.map((i) => noteNames[i]).join(",")}
       </div>
       <div className={"absolute"}>
@@ -300,9 +305,7 @@ export default function App(): JSX.Element {
               style={
                 {
                   "--color": color,
-                  "--turn": springRoot.interpolate(
-                    (r) => (i + root - r) / noteNames.length
-                  ),
+                  "--turn": springRoot.interpolate(turn(i)),
                 } as any
               }
               onClick={() => {
@@ -326,9 +329,7 @@ export default function App(): JSX.Element {
                 }
                 style={
                   {
-                    "--turn": springRoot.interpolate(
-                      (r) => (i + root - r) / noteNames.length
-                    ),
+                    "--turn": springRoot.interpolate(turn(i)),
                     "--color": color,
                   } as any
                 }
