@@ -223,7 +223,7 @@ export default function App(): JSX.Element {
     "button font-size-large z-1000 no-border curved-radius";
 
   function turn(i: number) {
-    return (r: number) => (i + root - r) / noteNames.length - 1 / 4;
+    return (r: number) => (r - i) / noteNames.length - 1 / 4;
   }
 
   return (
@@ -305,7 +305,7 @@ export default function App(): JSX.Element {
               style={
                 {
                   "--color": color,
-                  "--turn": springRoot.interpolate(turn(i)),
+                  "--turn": springOffset.interpolate(turn(i)),
                 } as any
               }
               onClick={() => {
@@ -329,7 +329,7 @@ export default function App(): JSX.Element {
                 }
                 style={
                   {
-                    "--turn": springRoot.interpolate(turn(i)),
+                    "--turn": springRoot.interpolate(turn(i + root)),
                     "--color": color,
                   } as any
                 }
