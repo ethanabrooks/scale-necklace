@@ -7,7 +7,8 @@ export const Slider: React.FC<{
   return (
     <input
       type="range"
-      className={"slider"}
+      style={{ "--width": 100 } as any}
+      className={"slide"}
       min={0}
       max={100}
       step={10}
@@ -22,8 +23,13 @@ export const Switch: React.FC<{
   value: boolean;
   setValue: Dispatch<SetStateAction<boolean>>;
 }> = ({ value, setValue }) => (
-  <label className="switch">
-    <input type="checkbox" onChange={() => setValue(!value)} checked={!value} />
-    <span className="slide" />
+  <label className="relative">
+    <input
+      className={"invisible"}
+      type="checkbox"
+      onChange={() => setValue(!value)}
+      checked={!value}
+    />
+    <span className="slide switch absolute center" />
   </label>
 );

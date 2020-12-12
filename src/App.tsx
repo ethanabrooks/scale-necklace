@@ -219,9 +219,10 @@ export default function App(): JSX.Element {
       setScale({ ...scale, steps });
     }
   };
+  const centerButtonClassName = "button z-1000 no-border curved-radius";
   return (
     <div
-      className={"container"}
+      className={"relative"}
       style={
         {
           "--containerSize": `${containerSize}px`,
@@ -238,14 +239,14 @@ export default function App(): JSX.Element {
       </div>
       <div className={"absolute"}>
         <button
-          className={"button"}
+          className={centerButtonClassName}
           onClick={() => setScaleChoice(scaleChoice - 1)}
           disabled={scaleChoice === 0}
         >
           ⇦
         </button>
         <button
-          className={"button"}
+          className={centerButtonClassName}
           onClick={() => setScaleChoice(scaleChoice + 1)}
           disabled={scaleChoice === scaleHistory.length - 1}
         >
@@ -254,17 +255,20 @@ export default function App(): JSX.Element {
       </div>
       <div className={"fixed center necklace-size"}>
         <div className={"column flex center-text pad-within-10 absolute"}>
-          <button className={"button"} onClick={setRandomRoot}>
+          <button className={centerButtonClassName} onClick={setRandomRoot}>
             Randomize Root
           </button>
-          <button className={"button"} onClick={setRandomScale}>
+          <button className={centerButtonClassName} onClick={setRandomScale}>
             Randomize Scale
           </button>
-          <button className={"button"} onClick={setRandomAdjacentScale}>
+          <button
+            className={centerButtonClassName}
+            onClick={setRandomAdjacentScale}
+          >
             Random Adjacent Scale
           </button>
           <button
-            className={"button"}
+            className={centerButtonClassName}
             onClick={() => setNotesToPlay(absIndices)}
             aria-pressed={playing}
           >
@@ -288,22 +292,16 @@ export default function App(): JSX.Element {
         </div>
       </div>
       <div className={"fixed center"}>
-        <animated.div
-          className={"absolute width-100-percent height-100-percent"}
-          style={{ "--r": springOffset.interpolate((r: number) => -r) } as any}
-        >
+        <div className={"absolute width-100-percent height-100-percent"}>
           {arcInfo.map(([[absIndex, included, color], d], i: number) => (
-            <button
-              className={
-                "offset-angle pearl-shape color border-color text-color background-fill"
-              }
-              // className={
-              //   "offset-angle window-center pearl-shape color border-color text-color background-fill"
-              // }
+            <animated.button
+              className={"offset-angle pearl-shape button border-color"}
               style={
                 {
                   "--color": color,
-                  "--turn": (root - i) / noteNames.length,
+                  "--turn": springRoot.interpolate(
+                    (r) => (i + root - r) / noteNames.length
+                  ),
                 } as any
               }
               onClick={() => {
@@ -317,49 +315,30 @@ export default function App(): JSX.Element {
                   setScale({ ...scale, steps });
                 }
               }}
-            >
-              {noteNames[absIndex]}
-            </button>
-            // <svg className={"svg"} key={i} style={{ "--c": color } as any}>
-            //   <path
-            //     className={"path"}
-            //     stroke={color}
-            //     d={d}
-            //     aria-labelledby={`note${absIndex}`}
-            //     role={"button"}
-            //     tabIndex={0}
-            //     onClick={() => {
-            //       const newOffset = modNotes(offset + (absIndex - root));
-            //       // setNotesToPlay([]);
-            //       if (moveRoot) {
-            //         setScale({ ...scale, root: absIndex });
-            //       } else if (included) {
-            //         setOffset(newOffset);
-            //         const steps = rotate(steps1, modIndices.indexOf(absIndex));
-            //         setScale({ ...scale, steps });
-            //       }
-            //     }}
-            //   />
-            // </svg>
+            />
           ))}
-          {/*<animated.div*/}
-          {/*  className={*/}
-          {/*    "necklace width-d height-d small-font center-text no-pointer-events"*/}
-          {/*  }*/}
-          {/*  style={{ "--a": springRoot.interpolate((r) => root - r) } as any}*/}
-          {/*>*/}
-          {/*  {noteNamesInfo.map(([name, color], i) => (*/}
-          {/*    <span*/}
-          {/*      className={"color-c pearl"}*/}
-          {/*      style={{ "--i": i, "--c": color } as any}*/}
-          {/*      id={`note${root + i}`}*/}
-          {/*      key={i}*/}
-          {/*    >*/}
-          {/*      {name}*/}
-          {/*    </span>*/}
-          {/*  ))}*/}
-          {/*</animated.div>*/}
-        </animated.div>
+          <div className={"absolute width-100-percent height-100-percent"}>
+            {noteNamesInfo.map(([name, color], i) => (
+              <animated.span
+                className={
+                  "offset-angle text-color diff-blend-mode no-pointer-events"
+                }
+                style={
+                  {
+                    "--turn": springRoot.interpolate(
+                      (r) => (i + root - r) / noteNames.length
+                    ),
+                    "--color": color,
+                  } as any
+                }
+                id={`note${root + i}`}
+                key={i}
+              >
+                {name}
+              </animated.span>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
