@@ -1,4 +1,4 @@
-$nobDiam: 15px;
+$nobDiam: 10px;
 $toggleTransition: 0.2s;
 $smallFont: calc(var(--containerSize) / 40);
 $necklaceRadius: calc(var(--containerSize) / 3);
@@ -33,9 +33,6 @@ body {
 .curved-radius {
   border-radius: 0.5em;
 }
-.z-1000 {
-  z-index: 1000;
-}
 .no-border {
   border: none;
 }
@@ -68,10 +65,13 @@ body {
   height: 100%;
   width: 100%;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
 }
 .diff-blend-mode {
   mix-blend-mode: difference;
+}
+.font-size-large {
+  font-size: large;
 }
 .fixed {
   position: fixed;
@@ -112,11 +112,6 @@ body {
   transform: translate(-50%, -50%) rotate(calc((var(--turn) * 1turn)))
     translate($necklaceRadius) rotate(calc(var(--turn) * -1turn));
 }
-.pad-within-10 {
-}
-.pad-within-10 * {
-  padding: 10px;
-}
 .pearl-shape {
   border-radius: 50%;
   height: $pearlDiameter;
@@ -143,11 +138,15 @@ body {
 .width-100 {
   width: 100px;
 }
+.z-1000 {
+  z-index: 1000;
+}
+
 .slide {
   -webkit-appearance: none;
   cursor: pointer;
   outline: none;
-  height: 0;
+  height: 2px;
   width: var(--width, $nobDiam);
   background-color: var(--ll);
   -webkit-transition: $toggleTransition;

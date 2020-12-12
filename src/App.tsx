@@ -219,7 +219,8 @@ export default function App(): JSX.Element {
       setScale({ ...scale, steps });
     }
   };
-  const centerButtonClassName = "button z-1000 no-border curved-radius";
+  const centerButtonClassName =
+    "button font-size-large z-1000 no-border curved-radius";
   return (
     <div
       className={"relative"}
@@ -254,7 +255,7 @@ export default function App(): JSX.Element {
         </button>
       </div>
       <div className={"fixed center necklace-size"}>
-        <div className={"column flex center-text pad-within-10 absolute"}>
+        <div className={"column center-text absolute"}>
           <button className={centerButtonClassName} onClick={setRandomRoot}>
             Randomize Root
           </button>
