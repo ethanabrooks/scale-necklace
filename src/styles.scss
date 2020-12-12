@@ -4,6 +4,7 @@ $smallFont: calc(var(--containerSize) / 40);
 $pearlRadius: calc(var(--containerSize) / 13);
 $pearlDiameter: calc(#{$pearlRadius} * 2);
 $necklaceRadius: calc(var(--containerSize) / 2 - #{$pearlRadius});
+$necklaceDiameter: calc(#{$necklaceRadius} * 2);
 $backgroundColor: #222222;
 $largeFont: calc(var(--containerSize) / 30);
 $mediumFont: calc(var(--containerSize) / 40);
@@ -132,7 +133,7 @@ body {
   position: fixed;
 }
 .height-necklace {
-  height: $necklaceRadius;
+  height: calc(#{$necklaceDiameter} - 2 * #{$pearlDiameter});
 }
 .height-8 {
   height: 8px;

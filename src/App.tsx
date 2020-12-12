@@ -326,7 +326,7 @@ export default function App(): JSX.Element {
             {noteNamesInfo.map(([name, color], i) => (
               <animated.span
                 className={
-                  "offset-angle text-color diff-blend-mode no-pointer-events"
+                  "offset-angle text-color diff-blend-mode no-pointer-events medium-font"
                 }
                 style={
                   {
