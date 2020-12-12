@@ -127,7 +127,7 @@ export default function App(): JSX.Element {
   React.useEffect(() => {
     const keyDownListener = ({ key }: { key: string }) => {
       if (key === "Shift") setMoveRoot(false);
-      if (key === "Enter") {
+      if (key === "m") {
         setMoveRoot((m) => !m);
       }
     };
@@ -241,8 +241,13 @@ export default function App(): JSX.Element {
         } as any
       }
     >
-      <div className={"absolute z-1000"} tabIndex={0}>
-        {modIndices.map((i) => noteNames[i]).join(",")}
+      <div
+        id="noteSequence"
+        aria-live={"assertive"}
+        className={"absolute z-1000 invisible"}
+        tabIndex={0}
+      >
+        {modIndices.map((i) => noteNames[i].split("/")[0]).join(",")}
       </div>
       <div className={"absolute"}>
         <button
@@ -302,7 +307,9 @@ export default function App(): JSX.Element {
         <div className={"absolute width-100-percent height-100-percent"}>
           {arcInfo.map(([[absIndex, included, color], d], i: number) => (
             <animated.button
+              aria-controls="noteSequence"
               className={"offset-angle pearl-shape button border-color"}
+              aria-label={noteNames[absIndex]}
               style={
                 {
                   "--color": color,
