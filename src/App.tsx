@@ -220,13 +220,13 @@ export default function App(): JSX.Element {
     }
   };
   const centerButtonClassName =
-    "button font-size-xx-large z-1000 no-border curved-radius";
+    "button large-font z-1000 no-border curved-radius auto-margin";
+  const staticTextClassName = "low-light-color medium-font auto-margin";
 
   function turn(i: number) {
     return (r: number) => (r - i) / noteNames.length - 1 / 4;
   }
 
-  const staticTextClassName = "low-light-color font-size-x-large";
   return (
     <div
       className={"relative"}
@@ -260,8 +260,8 @@ export default function App(): JSX.Element {
           ⇨
         </button>
       </div>
-      <div className={"fixed center height-necklace width-necklace"}>
-        <div className={"column center-text absolute"}>
+      <div className={"fixed center height-necklace width-100-percent"}>
+        <div className={"column space-around center-text absolute"}>
           <button className={centerButtonClassName} onClick={setRandomRoot}>
             Randomize Root
           </button>

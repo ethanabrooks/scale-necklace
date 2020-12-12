@@ -5,6 +5,8 @@ $pearlRadius: calc(var(--containerSize) / 13);
 $pearlDiameter: calc(#{$pearlRadius} * 2);
 $necklaceRadius: calc(var(--containerSize) / 2 - #{$pearlRadius});
 $backgroundColor: #222222;
+$largeFont: calc(var(--containerSize) / 30);
+$mediumFont: calc(var(--containerSize) / 40);
 
 .debug {
   transform: translate(-50%, -50%);
@@ -80,7 +82,7 @@ body {
   border: solid 2px var(--color);
 }
 .curved-radius {
-  border-radius: 0.5em;
+  border-radius: 0.2em;
 }
 .no-border {
   border: none;
@@ -90,6 +92,7 @@ body {
   outline: none;
   background-color: $backgroundColor;
 }
+
 .button:disabled {
   color: $backgroundColor;
 }
@@ -119,14 +122,11 @@ body {
 .diff-blend-mode {
   mix-blend-mode: difference;
 }
-.font-size-large {
-  font-size: large;
+.medium-font {
+  font-size: $mediumFont;
 }
-.font-size-x-large {
-  font-size: x-large;
-}
-.font-size-xx-large {
-  font-size: xx-large;
+.large-font {
+  font-size: $largeFont;
 }
 .fixed {
   position: fixed;
@@ -160,6 +160,9 @@ body {
 }
 .low-light-color {
   color: var(--ll);
+}
+.auto-margin {
+  margin: 1px auto;
 }
 .no-pointer-events {
   pointer-events: none;
