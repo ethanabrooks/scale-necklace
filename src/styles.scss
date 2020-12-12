@@ -1,8 +1,9 @@
 $nobDiam: 10px;
 $toggleTransition: 0.2s;
 $smallFont: calc(var(--containerSize) / 40);
-$necklaceRadius: calc(var(--containerSize) / 3);
-$pearlDiameter: calc(var(--containerSize) / 10);
+$pearlRadius: calc(var(--containerSize) / 13);
+$pearlDiameter: calc(#{$pearlRadius} * 2);
+$necklaceRadius: calc(var(--containerSize) / 2 - #{$pearlRadius});
 $backgroundColor: #222222;
 
 .debug {
@@ -10,6 +11,54 @@ $backgroundColor: #222222;
   width: 40px;
   height: 40px;
   background-color: greenyellow;
+}
+
+.slide {
+  -webkit-appearance: none;
+  cursor: pointer;
+  outline: none;
+  height: 2px;
+  width: $nobDiam;
+  background-color: var(--ll);
+  -webkit-transition: $toggleTransition;
+  transition: $toggleTransition;
+  border-radius: $nobDiam;
+}
+.switch:before {
+  position: absolute;
+  content: "";
+  height: $nobDiam;
+  width: $nobDiam;
+  top: 50%;
+  transform: translate(-100%, -50%);
+  background-color: var(--fg);
+  -webkit-transition: $toggleTransition;
+  transition: $toggleTransition;
+  border-radius: 50%;
+}
+
+input:checked + .switch:before {
+  -webkit-transform: translateX($nobDiam);
+  -ms-transform: translateX($nobDiam);
+  transform: translateY(-50%);
+}
+
+.slide::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: $nobDiam;
+  height: $nobDiam;
+  border-radius: 50%;
+  background: var(--fg);
+  cursor: pointer;
+}
+
+.slide::-moz-range-thumb {
+  width: $nobDiam;
+  height: $nobDiam;
+  border-radius: 50%;
+  background: var(--hl);
+  cursor: pointer;
 }
 
 body {
@@ -73,8 +122,17 @@ body {
 .font-size-large {
   font-size: large;
 }
+.font-size-x-large {
+  font-size: x-large;
+}
+.font-size-xx-large {
+  font-size: xx-large;
+}
 .fixed {
   position: fixed;
+}
+.height-necklace {
+  height: $necklaceRadius;
 }
 .height-8 {
   height: 8px;
@@ -84,6 +142,9 @@ body {
 }
 .height-70-percent {
   height: 70%;
+}
+.height-80-percent {
+  height: 80%;
 }
 .height-100-percent {
   height: 100%;
@@ -99,10 +160,6 @@ body {
 }
 .low-light-color {
   color: var(--ll);
-}
-.necklace-size {
-  height: $necklaceRadius;
-  width: $necklaceRadius;
 }
 .no-pointer-events {
   pointer-events: none;
@@ -123,8 +180,14 @@ body {
 .text-color {
   color: var(--color);
 }
+.width-necklace {
+  width: $necklaceRadius;
+}
 .width-20 {
   width: 20px;
+}
+.width-30-percent {
+  width: 30%;
 }
 .width-50-percent {
   width: 50%;
@@ -140,52 +203,4 @@ body {
 }
 .z-1000 {
   z-index: 1000;
-}
-
-.slide {
-  -webkit-appearance: none;
-  cursor: pointer;
-  outline: none;
-  height: 2px;
-  width: var(--width, $nobDiam);
-  background-color: var(--ll);
-  -webkit-transition: $toggleTransition;
-  transition: $toggleTransition;
-  border-radius: $nobDiam;
-}
-.switch:before {
-  position: absolute;
-  content: "";
-  height: $nobDiam;
-  width: $nobDiam;
-  top: 50%;
-  transform: translate(-100%, -50%);
-  background-color: var(--fg);
-  -webkit-transition: $toggleTransition;
-  transition: $toggleTransition;
-  border-radius: 50%;
-}
-
-input:checked + .switch:before {
-  -webkit-transform: translateX($nobDiam);
-  -ms-transform: translateX($nobDiam);
-  transform: translateY(-50%);
-}
-
-.slide::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: $nobDiam;
-  height: $nobDiam;
-  border-radius: 50%;
-  background: var(--fg);
-  cursor: pointer;
-}
-
-.slide::-moz-range-thumb {
-  width: $nobDiam;
-  height: $nobDiam;
-  border-radius: 50%;
-  background: var(--hl);
-  cursor: pointer;
 }

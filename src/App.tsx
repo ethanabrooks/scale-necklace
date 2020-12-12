@@ -220,12 +220,13 @@ export default function App(): JSX.Element {
     }
   };
   const centerButtonClassName =
-    "button font-size-large z-1000 no-border curved-radius";
+    "button font-size-xx-large z-1000 no-border curved-radius";
 
   function turn(i: number) {
     return (r: number) => (r - i) / noteNames.length - 1 / 4;
   }
 
+  const staticTextClassName = "low-light-color font-size-x-large";
   return (
     <div
       className={"relative"}
@@ -259,7 +260,7 @@ export default function App(): JSX.Element {
           ⇨
         </button>
       </div>
-      <div className={"fixed center necklace-size"}>
+      <div className={"fixed center height-necklace width-necklace"}>
         <div className={"column center-text absolute"}>
           <button className={centerButtonClassName} onClick={setRandomRoot}>
             Randomize Root
@@ -280,18 +281,18 @@ export default function App(): JSX.Element {
           >
             {playing ? "Pause" : "Play"}
           </button>
-          <span className={"low-light-color"}>
+          <span className={staticTextClassName}>
             Click on a note or shift-click on a yellow note.
           </span>
           <Switch value={moveRoot} setValue={setMoveRoot} />
-          <span className={"low-light-color"}>
+          <span className={staticTextClassName}>
             Probability of consecutive half-steps
           </span>
           <Slider
             value={doubleHalfStepsProb}
             setValue={setDoubleHalfStepsProb}
           />
-          <span className={"low-light-color"}>
+          <span className={staticTextClassName}>
             Probability of augmented 2nd
           </span>
           <Slider value={aug2ndProb} setValue={setAug2ndProb} />

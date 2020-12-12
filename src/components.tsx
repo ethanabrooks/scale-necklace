@@ -3,12 +3,11 @@ import React, { Dispatch, SetStateAction } from "react";
 export const Slider: React.FC<{
   value: number;
   setValue: Dispatch<SetStateAction<number>>;
-}> = ({ value, setValue }) => {
-  return (
+}> = ({ value, setValue }) => (
+  <label className="relative">
     <input
       type="range"
-      style={{ "--width": 100 } as any}
-      className={"slide"}
+      className={"width-100 slide center absolute"}
       min={0}
       max={100}
       step={10}
@@ -17,8 +16,8 @@ export const Slider: React.FC<{
         setValue(+target.value);
       }}
     />
-  );
-};
+  </label>
+);
 export const Switch: React.FC<{
   value: boolean;
   setValue: Dispatch<SetStateAction<boolean>>;
