@@ -224,7 +224,7 @@ export default function App(): JSX.Element {
   const staticTextClassName = "low-light-color medium-font auto-margin";
 
   function turn(i: number) {
-    return (r: number) => (r - i) / noteNames.length - 1 / 4;
+    return (r: number) => (i - r) / noteNames.length - 1 / 4;
   }
 
   return (
