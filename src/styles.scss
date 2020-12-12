@@ -1,4 +1,4 @@
-$nobDiam: 10px;
+$nobDiam: 15px;
 $toggleTransition: 0.2s;
 $smallFont: calc(var(--containerSize) / 40);
 $pearlRadius: calc(var(--containerSize) / 13);
@@ -20,7 +20,7 @@ $mediumFont: calc(var(--containerSize) / 40);
   -webkit-appearance: none;
   cursor: pointer;
   outline: none;
-  height: 2px;
+  height: 3px;
   width: $nobDiam;
   background-color: var(--ll);
   -webkit-transition: $toggleTransition;
