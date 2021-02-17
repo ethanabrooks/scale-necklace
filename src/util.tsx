@@ -26,7 +26,7 @@ export function rotate<X>(array: X[], start: number) {
   return array.slice(modStart).concat(array.slice(0, modStart));
 }
 
-function mod(a: number, b: number) {
+export function mod(a: number, b: number) {
   return ((a % b) + b) % b;
 }
 

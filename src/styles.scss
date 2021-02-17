@@ -32,11 +32,12 @@ $mediumFont: 2vh;
   justify-content: center;
   flex-direction: column;
   text-align: center;
-  transition: transform 2s;
+  transition: transform 1s;
 }
 
-.rotate {
-  transform: rotate(calc(((var(--turn) + 0.25) * 1turn)));
+.reverse-rotate {
+  transition: transform 1s;
+  transform: rotate(calc((var(--turn) * -1turn)));
 }
 .justify-content-center {
   justify-content: center;
@@ -50,7 +51,7 @@ $mediumFont: 2vh;
 .offset-angle {
   position: absolute;
   transform: translateX(-50%) translateY(-$necklaceRadius)
-    rotate(calc(((var(--turn) + 0.25) * -1turn)));
+    rotate(calc((var(--turn) * 1turn)));
   transform-origin: center $necklaceRadius;
   //transform: translateY(-50%) translateX(-50%)
   //  rotate(calc((var(--turn) * 1turn))) translateY($necklaceRadius)
@@ -200,7 +201,7 @@ body {
 .relative {
   position: relative;
 }
-.text-color {
+.color {
   color: var(--color);
 }
 

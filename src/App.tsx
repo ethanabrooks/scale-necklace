@@ -13,6 +13,7 @@ import {
   highlightColor,
   Indices,
   lowlightColor,
+  mod,
   modNotes,
   playingColor,
   prob,
@@ -40,6 +41,7 @@ export default function App(): JSX.Element {
     setScaleChoice(scaleHistory.length);
     setScaleHistory(scaleHistory.concat(scale));
   }
+  console.log(root, scale.steps);
   const [moveRoot, setMoveRoot] = React.useState<boolean>(true);
   const [doubleHalfStepsProb, setDoubleHalfStepsProb] = React.useState<number>(
     prob(hasDoubleHalfSteps)
@@ -129,17 +131,6 @@ export default function App(): JSX.Element {
     };
   }, [setMoveRoot]);
 
-  const containerSize = Math.min(width / 2, height / 2);
-  const arcSize = (2 * Math.PI) / notes.length;
-  const arcGen = d3
-    .arc<number>()
-    .padAngle(0.1)
-    .innerRadius(containerSize / 2.9)
-    .outerRadius(containerSize / 2)
-    .startAngle((i: number) => (i - 0.5) * arcSize)
-    .endAngle((i: number) => (i + 0.5) * arcSize)
-    .cornerRadius(containerSize);
-  const arcs = notes.map((_, i) => arcGen(i) as string);
   const setRandomRoot = () => {
     const root = randomNumber(notes.length);
     setScale({ ...scale, root });
@@ -155,37 +146,6 @@ export default function App(): JSX.Element {
     }
   };
 
-  const steps1 = scale.steps;
-  const absIndices: Indices = cumSum(steps1, root);
-  const modIndices = absIndices.map((i) => i % notes.length);
-  const included = notes.map((_, i) => modIndices.includes(i));
-  const colors = included.map((inc, i) => {
-    if (
-      state.loaded &&
-      state.notesToPlay.length > 0 &&
-      modNotes(state.notesToPlay[0]) === i
-    )
-      return playingColor;
-    if (inc) return highlightColor;
-    return foregroundColor;
-  });
-  const arcInfo: [[number, boolean, string], string][] = zip(
-    rotate(
-      zip(included, colors).map(([...x], i) => [i, ...x]),
-      root
-    ),
-    arcs
-  );
-
-  const noteNames = notes.map((note: Note) =>
-    note.sharp === note.flat
-      ? note.sharp
-      : `${note.sharp}/${note.flat}`
-          .replace(/(\w)#/, "$1♯")
-          .replace(/(\w)b/, "$1♭")
-  );
-  const noteNamesInfo = rotate(zip(noteNames, colors), root);
-
   const setRandomScale = () => {
     const steps = randomSteps(patterns, aug2ndProb, doubleHalfStepsProb);
     if (steps === null) {
@@ -195,12 +155,18 @@ export default function App(): JSX.Element {
     }
   };
 
+  const getName = ({ sharp, flat }: Note) => {
+    const sharpName = sharp.replace(/(\w)#/, "$1♯");
+    const flatName = flat.replace(/(\w)b/, "$1♭");
+    return sharpName === flatName ? sharpName : `${sharpName} / ${flatName}`;
+  };
+  const noteNames = notes.map(getName);
+
   const setRandomAdjacentScale = () => {
-    const adjacent = adjacentTo(steps1);
+    const adjacent = adjacentTo(scale.steps);
     const steps = randomSteps(adjacent, aug2ndProb, doubleHalfStepsProb);
     if (steps === null) {
       alert("No adjacent scale possible.");
-      console.log(steps1);
     } else {
       setScale({ ...scale, steps });
     }
@@ -210,18 +176,21 @@ export default function App(): JSX.Element {
   const staticTextClassName = "low-light-color medium-font auto-margin";
 
   function getTurn(i: number) {
-    return i / noteNames.length - 1 / 4;
+    return i / notes.length;
   }
-  const scaleIndices = new Set(cumSum(scale.steps, scale.root));
-  let allIndices = Array.from(Array(NUM_NOTES).keys());
-  const getColor = (i: number) => {
+  const modNotes = (scale: number[]) => scale.map((i) => mod(i, notes.length));
+  const relIndices = modNotes(cumSum(scale.steps, 0));
+  const absIndices = modNotes(cumSum(scale.steps, scale.root));
+  console.log(absIndices);
+  console.log(relIndices);
+  const getColor = (i: number, indices: number[]) => {
     if (
       state.loaded &&
       state.notesToPlay.length > 0 &&
-      modNotes(state.notesToPlay[0]) === i
+      mod(state.notesToPlay[0], notes.length) === i
     )
       return playingColor;
-    if (scaleIndices.has(i)) return highlightColor;
+    if (indices.includes(i)) return highlightColor;
     return foregroundColor;
   };
 
@@ -249,7 +218,7 @@ export default function App(): JSX.Element {
         className={"absolute z-1000 invisible"}
         tabIndex={0}
       >
-        {modIndices.map((i) => noteNames[i].split("/")[0]).join(",")}
+        {absIndices.map((i) => noteNames[i]).join(",")}
       </div>
       <div className={"absolute"}>
         <button
@@ -340,28 +309,23 @@ export default function App(): JSX.Element {
               aria-label={noteNames[i]}
               style={
                 {
-                  "--color": getColor(i),
-                  "--turn": getTurn(i),
+                  "--color": getColor(i, relIndices),
+                  "--turn": i / notes.length,
                 } as any
               }
               onClick={() => {
-                if (moveRoot) {
+                if (moveRoot && absIndices.includes(i)) {
                   setScale({ ...scale, root: i });
-                } else if (included) {
-                  const steps = rotate(steps1, modIndices.indexOf(i));
-                  setScale({ ...scale, steps });
                 }
               }}
             />
           );
         })}
         {notes.map((note: Note, i: number) => {
-          let turn = getTurn(i + root);
-
           let classNames = [
             "droplet",
             "offset-angle",
-            "text-color",
+            "color",
             "medium-font",
             "center",
             "invert-on-hover",
@@ -369,18 +333,23 @@ export default function App(): JSX.Element {
           if (!moveRoot) {
             classNames = classNames.concat(classNames, ["no-pointer-events"]);
           }
-          const sharpName = note.sharp.replace(/(\w)#/, "$1♯");
-          const flatName = note.flat.replace(/(\w)b/, "$1♭");
+          let turn = (i - root) / notes.length;
           return (
             <div
               className={classNames.join(" ")}
-              style={{ "--turn": turn, "--color": getColor(i) } as any}
-              id={`note${root + i}`}
+              style={
+                { "--turn": turn, "--color": getColor(i, absIndices) } as any
+              }
+              id={`note${i}`}
               key={i}
-              onClick={() => setScale({ ...scale, root: root + i })}
+              onClick={() => setScale({ ...scale, root: i })}
             >
-              <div style={{ "--turn": turn } as any} className={"rotate"}>
-                {`${sharpName} / ${flatName}`}
+              <div
+                style={{ "--turn": turn } as any}
+                className={"reverse-rotate"}
+              >
+                {/*{getName(note)}*/}
+                {i}
               </div>
             </div>
           );
