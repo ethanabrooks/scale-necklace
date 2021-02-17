@@ -45,9 +45,6 @@ export default function App(): JSX.Element {
     prob(hasDoubleHalfSteps)
   );
   const [aug2ndProb, setAug2ndProb] = React.useState<number>(prob(hasAug2nd));
-  // const [stepsBetween, setStepsBetween] = React.useState<Steps>(
-  //   randomSteps(patterns, aug2ndProb, doubleHalfStepsProb) as Steps
-  // );
   const synth = React.useMemo(() => new Synth(), []);
 
   const [state, dispatch] = React.useReducer(
@@ -298,6 +295,7 @@ export default function App(): JSX.Element {
               aria-controls="noteSequence"
               className={classNames.join(" ")}
               aria-label={rotate(noteNames, stepsOffset)[i]}
+              key={i}
               style={
                 {
                   "--color": getColor(i, relIndices),
