@@ -246,6 +246,31 @@ export default function App(): JSX.Element {
         </hgroup>
       </header>
       <div
+        id="noteSequence"
+        aria-live={"assertive"}
+        className={"absolute z-1000 invisible"}
+        tabIndex={0}
+      >
+        {modIndices.map((i) => noteNames[i].split("/")[0]).join(",")}
+      </div>
+      <div className={"absolute"}>
+        <button
+          className={centerButtonClassName}
+          onClick={() => setScaleChoice(scaleChoice - 1)}
+          disabled={scaleChoice === 0}
+        >
+          ⇦
+        </button>
+        <button
+          className={centerButtonClassName}
+          onClick={() => setScaleChoice(scaleChoice + 1)}
+          disabled={scaleChoice === scaleHistory.length - 1}
+        >
+          ⇨
+        </button>
+      </div>
+
+      <div
         className={
           "relative width-100-percent flex-column justify-content-center full-height"
         }
