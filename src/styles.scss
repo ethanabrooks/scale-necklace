@@ -1,8 +1,9 @@
 $nobDiam: 15px;
 $toggleTransition: 0.2s;
 $dropDiameter: 13vh;
-$necklaceRadius: calc(min(20vw, 25vh));
-$insideNecklaceHeight: calc(2 * #{$necklaceRadius});
+//$necklaceRadius: calc(min(35vw, 40vh));
+$necklaceRadius: 30vw;
+$insideNecklaceHeight: calc(2 * #{$necklaceRadius} - 2 * #{$dropDiameter});
 $backgroundColor: #222222;
 $largeFont: 2.5vh;
 $mediumFont: 2vh;
@@ -31,6 +32,9 @@ $mediumFont: 2vh;
   transition: transform 1s;
 }
 
+.rotate {
+  transform: rotate(calc((var(--turn) * 1turn)));
+}
 .justify-content-center {
   justify-content: center;
 }
@@ -42,9 +46,12 @@ $mediumFont: 2vh;
 
 .offset-angle {
   position: absolute;
-  transform: translateY(-50%) translateX(-50%)
-    rotate(calc((var(--turn) * 1turn))) translateY($necklaceRadius)
-    translateX($necklaceRadius) rotate(calc((var(--turn) * -1turn)));
+  transform: translateX(-50%) translateY(-$necklaceRadius)
+    rotate(calc((var(--turn) * -1turn)));
+  transform-origin: center $necklaceRadius;
+  //transform: translateY(-50%) translateX(-50%)
+  //  rotate(calc((var(--turn) * 1turn))) translateY($necklaceRadius)
+  //  translateX($necklaceRadius) rotate(calc((var(--turn) * -1turn)));
 }
 
 .debug {

@@ -5,7 +5,7 @@ import { Note, notes } from "./notes";
 import { start, Synth } from "tone";
 import * as d3 from "d3";
 import "./styles.scss";
-import { animated, useSpring } from "react-spring";
+import { animated } from "react-spring";
 import { zip } from "fp-ts/Array";
 import {
   Action,
@@ -29,10 +29,6 @@ import { Slider, Switch } from "./components";
 type Scale = { root: number; steps: Steps };
 
 export default function App(): JSX.Element {
-  const [offset, setOffset]: [
-    number,
-    React.Dispatch<React.SetStateAction<number>>
-  ] = React.useState<number>(0);
   const [scaleHistory, setScaleHistory] = React.useState<Scale[]>([
     {
       root: 0,
@@ -60,12 +56,6 @@ export default function App(): JSX.Element {
   }>({ width: window.innerWidth, height: window.innerHeight });
   const synth = React.useMemo(() => new Synth(), []);
   const targetRoot = useNearestModulo(root, notes.length);
-  const targetOffset = useNearestModulo(offset, notes.length);
-  const { springRoot, springOffset } = useSpring({
-    springRoot: targetRoot,
-    springOffset: targetOffset,
-    config: { tension: 200, friction: 120, mass: 10 },
-  });
 
   const [state, dispatch] = React.useReducer(
     (state: State, action: Action): State => {
@@ -156,7 +146,6 @@ export default function App(): JSX.Element {
   const setRandomRoot = () => {
     const root = randomNumber(notes.length);
     setScale({ ...scale, root });
-    setOffset(0);
     setNotesToPlay([]);
   };
   const setNotesToPlay = (notes: Indices) => {
@@ -186,7 +175,7 @@ export default function App(): JSX.Element {
   const arcInfo: [[number, boolean, string], string][] = zip(
     rotate(
       zip(included, colors).map(([...x], i) => [i, ...x]),
-      root - offset
+      root
     ),
     arcs
   );
@@ -224,7 +213,7 @@ export default function App(): JSX.Element {
   const staticTextClassName = "low-light-color medium-font auto-margin";
 
   function turn(i: number) {
-    return (r: number) => (i - r) / noteNames.length - 1 / 4;
+    return i / noteNames.length - 1 / 4;
   }
 
   return (
@@ -332,37 +321,59 @@ export default function App(): JSX.Element {
             style={
               {
                 "--color": color,
-                "--turn": springOffset.interpolate(turn(i)),
+                "--turn": turn(i),
               } as any
             }
             onClick={() => {
-              const newOffset = modNotes(offset + (absIndex - root));
               // setNotesToPlay([]);
               if (moveRoot) {
                 setScale({ ...scale, root: absIndex });
               } else if (included) {
-                setOffset(newOffset);
                 const steps = rotate(steps1, modIndices.indexOf(absIndex));
                 setScale({ ...scale, steps });
               }
             }}
           />
         ))}
-        {noteNamesInfo.map(([name, color], i) => (
-          <animated.span
-            className="droplet offset-angle text-color medium-font center invert-on-hover"
-            style={
-              {
-                "--turn": springRoot.interpolate(turn(i + root)),
-                "--color": color,
-              } as any
-            }
-            id={`note${root + i}`}
-            key={i}
-          >
-            {name}
-          </animated.span>
-        ))}
+        {noteNamesInfo.map(([name, color], i) => {
+          let t = turn(i + root);
+          let classNames = [
+            "droplet",
+            "offset-angle",
+            "text-color",
+            "medium-font",
+            "center",
+            "invert-on-hover",
+          ];
+          if (t > 0.5) {
+            classNames = classNames.concat(classNames, ["flip"]);
+          }
+
+          return (
+            <div
+              className={classNames.join(" ")}
+              style={
+                {
+                  "--turn": t,
+                  "--color": color,
+                } as any
+              }
+              id={`note${root + i}`}
+              key={i}
+            >
+              <div
+                style={
+                  {
+                    "--turn": t,
+                  } as any
+                }
+                className={"rotate"}
+              >
+                {name}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
