@@ -228,7 +228,7 @@ export default function App(): JSX.Element {
   }
 
   return (
-    <div className={"box"}>
+    <div className={"flex-column full-height"}>
       <header id="masthead" className="site-header" role="banner">
         <hgroup>
           <h1 className="site-title">
@@ -246,9 +246,11 @@ export default function App(): JSX.Element {
         </hgroup>
       </header>
       <div
+        className={
+          "relative width-100-percent flex-column justify-content-center full-height"
+        }
         style={
           {
-            "--containerSize": `${containerSize}px`,
             "--m": notes.length,
             "--fg": foregroundColor,
             "--hl": highlightColor,
@@ -257,6 +259,42 @@ export default function App(): JSX.Element {
           } as any
         }
       >
+        <div className={"height-necklace flex-column space-around center-text"}>
+          <button className={centerButtonClassName} onClick={setRandomRoot}>
+            Randomize Root
+          </button>
+          <button className={centerButtonClassName} onClick={setRandomScale}>
+            Randomize Scale
+          </button>
+          <button
+            className={centerButtonClassName}
+            onClick={setRandomAdjacentScale}
+          >
+            Random Adjacent Scale
+          </button>
+          <button
+            className={centerButtonClassName}
+            onClick={() => setNotesToPlay(absIndices)}
+            aria-pressed={playing}
+          >
+            {playing ? "Pause" : "Play"}
+          </button>
+          <span className={staticTextClassName}>
+            Click on a note or shift-click on a yellow note.
+          </span>
+          <Switch value={moveRoot} setValue={setMoveRoot} />
+          <span className={staticTextClassName}>
+            Probability of consecutive half-steps
+          </span>
+          <Slider
+            value={doubleHalfStepsProb}
+            setValue={setDoubleHalfStepsProb}
+          />
+          <span className={staticTextClassName}>
+            Probability of augmented 2nd
+          </span>
+          <Slider value={aug2ndProb} setValue={setAug2ndProb} />
+        </div>
         {arcInfo.map(([[absIndex, included, color], d], i: number) => (
           <animated.button
             aria-controls="noteSequence"

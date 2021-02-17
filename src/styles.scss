@@ -1,13 +1,13 @@
 $nobDiam: 15px;
 $toggleTransition: 0.2s;
-$smallFont: calc(var(--containerSize) / 40);
-$pearlRadius: calc(var(--containerSize) / 13);
-$pearlDiameter: calc(#{$pearlRadius} * 2);
-$necklaceRadius: calc(var(--containerSize) / 2 - #{$pearlRadius});
-$necklaceDiameter: calc(#{$necklaceRadius} * 2);
+$smallFont: 40vh;
+$dropRadius: 50vh;
+$dropDiameter: 10vh;
+$necklaceRadius: 20vh;
+$necklaceDiameter: 40vh;
 $backgroundColor: #222222;
-$largeFont: calc(var(--containerSize) / 30);
-$mediumFont: calc(var(--containerSize) / 40);
+$largeFont: 2.5vh;
+$mediumFont: 2vh;
 
 .bg {
   background: $backgroundColor;
@@ -35,10 +35,10 @@ $mediumFont: calc(var(--containerSize) / 40);
   transform-origin: left top;
   transition: transform 1s;
   width: 100px;
+}
 
-  //&:hover {
-  //  background: greenyellow;
-  //}
+.justify-content-center {
+  justify-content: center;
 }
 
 .invert-on-hover:hover {
@@ -55,7 +55,6 @@ $mediumFont: calc(var(--containerSize) / 40);
 
 .debug {
   width: 100%;
-  height: 40px;
   background-color: greenyellow;
 }
 
@@ -157,12 +156,9 @@ body {
 .center-text {
   text-align: center;
 }
-.column {
+.flex-column {
   display: flex;
-  height: 100%;
-  width: 100%;
   flex-direction: column;
-  justify-content: space-between;
 }
 .diff-blend-mode {
   mix-blend-mode: difference;
@@ -177,25 +173,10 @@ body {
   position: fixed;
 }
 .height-necklace {
-  height: calc(#{$necklaceDiameter} - 2 * #{$pearlDiameter});
+  height: $necklaceDiameter;
 }
-.height-8 {
-  height: 8px;
-}
-.height-50-percent {
-  height: 50%;
-}
-.height-70-percent {
-  height: 70%;
-}
-.height-80-percent {
-  height: 80%;
-}
-.height-100-percent {
-  height: 100%;
-}
-.height-100 {
-  height: 100px;
+.full-height {
+  height: 100vh;
 }
 .invisible {
   color: rgba(0, 0, 0, 0);
@@ -212,11 +193,6 @@ body {
 .no-pointer-events {
   pointer-events: none;
 }
-.pearl-shape {
-  border-radius: 50%;
-  height: $pearlDiameter;
-  width: $pearlDiameter;
-}
 .relative {
   position: relative;
 }
@@ -227,23 +203,8 @@ body {
 .width-necklace {
   width: $necklaceRadius;
 }
-.width-20 {
-  width: 20px;
-}
-.width-30-percent {
-  width: 30%;
-}
-.width-50-percent {
-  width: 50%;
-}
-.width-70-percent {
-  width: 70%;
-}
 .width-100-percent {
   width: 100%;
-}
-.width-100 {
-  width: 100px;
 }
 .z-1000 {
   z-index: 1000;
