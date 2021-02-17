@@ -257,6 +257,30 @@ export default function App(): JSX.Element {
           } as any
         }
       >
+        {arcInfo.map(([[absIndex, included, color], d], i: number) => (
+          <animated.button
+            aria-controls="noteSequence"
+            className={"droplet center offset-angle button border-color"}
+            aria-label={noteNames[absIndex]}
+            style={
+              {
+                "--color": color,
+                "--turn": springOffset.interpolate(turn(i)),
+              } as any
+            }
+            onClick={() => {
+              const newOffset = modNotes(offset + (absIndex - root));
+              // setNotesToPlay([]);
+              if (moveRoot) {
+                setScale({ ...scale, root: absIndex });
+              } else if (included) {
+                setOffset(newOffset);
+                const steps = rotate(steps1, modIndices.indexOf(absIndex));
+                setScale({ ...scale, steps });
+              }
+            }}
+          />
+        ))}
         {noteNamesInfo.map(([name, color], i) => (
           <animated.span
             className="droplet offset-angle text-color medium-font center invert-on-hover"
