@@ -1,11 +1,9 @@
 import React from "react";
 import "./scales";
 import { adjacentTo, hasAug2nd, hasDoubleHalfSteps, patterns } from "./scales";
-import { Note, notes, NUM_NOTES } from "./notes";
+import { Note, notes } from "./notes";
 import { start, Synth } from "tone";
-import * as d3 from "d3";
 import "./styles.scss";
-import { zip } from "fp-ts/Array";
 import {
   Action,
   cumSum,
@@ -14,7 +12,6 @@ import {
   Indices,
   lowlightColor,
   mod,
-  modNotes,
   playingColor,
   prob,
   randomNumber,
@@ -25,12 +22,13 @@ import {
 } from "./util";
 import { Slider, Switch } from "./components";
 
-type Scale = { root: number; steps: Steps };
+type Scale = { root: number; steps: Steps; rootStep: number };
 
 export default function App(): JSX.Element {
   const [scaleHistory, setScaleHistory] = React.useState<Scale[]>([
     {
       root: 0,
+      rootStep: 0,
       steps: patterns[0],
     },
   ]);
@@ -41,7 +39,7 @@ export default function App(): JSX.Element {
     setScaleChoice(scaleHistory.length);
     setScaleHistory(scaleHistory.concat(scale));
   }
-  console.log(root, scale.steps);
+  console.log(scale);
   const [moveRoot, setMoveRoot] = React.useState<boolean>(true);
   const [doubleHalfStepsProb, setDoubleHalfStepsProb] = React.useState<number>(
     prob(hasDoubleHalfSteps)
@@ -50,10 +48,6 @@ export default function App(): JSX.Element {
   // const [stepsBetween, setStepsBetween] = React.useState<Steps>(
   //   randomSteps(patterns, aug2ndProb, doubleHalfStepsProb) as Steps
   // );
-  const [{ width, height }, setWindow] = React.useState<{
-    width: number;
-    height: number;
-  }>({ width: window.innerWidth, height: window.innerHeight });
   const synth = React.useMemo(() => new Synth(), []);
 
   const [state, dispatch] = React.useReducer(
@@ -103,15 +97,7 @@ export default function App(): JSX.Element {
       dispatch({ type: "reset" });
     }
   }, [state, synth, playing]);
-
-  React.useEffect(() => {
-    const resizeListener = () =>
-      setWindow({ width: window.innerWidth, height: window.innerHeight });
-    window.addEventListener("resize", resizeListener);
-    return () => {
-      window.removeEventListener("resize", resizeListener);
-    };
-  }, []);
+  console.log(scale);
 
   React.useEffect(() => {
     const keyDownListener = ({ key }: { key: string }) => {
@@ -175,14 +161,15 @@ export default function App(): JSX.Element {
     "button large-font z-1000 no-border curved-radius auto-margin";
   const staticTextClassName = "low-light-color medium-font auto-margin";
 
-  function getTurn(i: number) {
-    return i / notes.length;
-  }
   const modNotes = (scale: number[]) => scale.map((i) => mod(i, notes.length));
-  const relIndices = modNotes(cumSum(scale.steps, 0));
-  const absIndices = modNotes(cumSum(scale.steps, scale.root));
-  console.log(absIndices);
-  console.log(relIndices);
+  const steps = rotate(scale.steps, scale.rootStep);
+  const absIndices = modNotes(cumSum(steps, scale.root));
+  const relIndices = modNotes(cumSum(scale.steps));
+  const stepsOffset =
+    scale.rootStep === 0
+      ? 0
+      : scale.steps.slice(0, scale.rootStep).reduce((sum, n) => sum + n);
+
   const getColor = (i: number, indices: number[]) => {
     if (
       state.loaded &&
@@ -193,6 +180,7 @@ export default function App(): JSX.Element {
     if (indices.includes(i)) return highlightColor;
     return foregroundColor;
   };
+  console.log(scale.root, scale.steps);
 
   return (
     <div className={"flex-column full-height"}>
@@ -302,20 +290,26 @@ export default function App(): JSX.Element {
           if (moveRoot) {
             classNames = classNames.concat(classNames, ["no-pointer-events"]);
           }
+
+          const j = mod(i - stepsOffset, notes.length);
+          console.log(i, j);
           return (
             <button
               aria-controls="noteSequence"
               className={classNames.join(" ")}
-              aria-label={noteNames[i]}
+              aria-label={rotate(noteNames, stepsOffset)[i]}
               style={
                 {
                   "--color": getColor(i, relIndices),
-                  "--turn": i / notes.length,
+                  "--turn": j / notes.length,
                 } as any
               }
               onClick={() => {
-                if (moveRoot && absIndices.includes(i)) {
-                  setScale({ ...scale, root: i });
+                if (!moveRoot && absIndices.includes(j)) {
+                  setScale({
+                    ...scale,
+                    rootStep: relIndices.indexOf(i),
+                  });
                 }
               }}
             />
@@ -334,6 +328,9 @@ export default function App(): JSX.Element {
             classNames = classNames.concat(classNames, ["no-pointer-events"]);
           }
           let turn = (i - root) / notes.length;
+          if (i === 0) {
+            console.log(turn);
+          }
           return (
             <div
               className={classNames.join(" ")}
