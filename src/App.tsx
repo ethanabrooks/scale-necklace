@@ -226,25 +226,43 @@ export default function App(): JSX.Element {
   function turn(i: number) {
     return (r: number) => (i - r) / noteNames.length - 1 / 4;
   }
-  //   style={
-  //   {
-  //     "--containerSize": `${containerSize}px`,
-  //       "--m": notes.length,
-  //       "--fg": foregroundColor,
-  //       "--hl": highlightColor,
-  //       "--ll": lowlightColor,
-  //       "--pl": playingColor,
-  //   } as any
-  // }
-  //
 
-  console.log(Array.from(Array(10).keys()));
   return (
     <div>
-      <div className="c center" />
-      {Array.from(Array(10).keys()).map((i) => (
-        <div className="droplet center" style={{ "--turn": i / 10 } as any} />
-      ))}
+      <header id="masthead" className="site-header" role="banner">
+        <hgroup>
+          <h1 className="site-title">
+            <a
+              href="/"
+              title="Violin Lessons Lancaster PA   .  Decades of Teaching Experience"
+              rel="home"
+            >
+              Violin Lessons Lancaster PA . Decades of Teaching Experience
+            </a>
+          </h1>
+          <h2 className="site-description">
+            Christopher Brooks, 717.291.9123, kenorjazz@gmail.com
+          </h2>
+        </hgroup>
+      </header>
+      <div
+        className={"relativeb bg"}
+        style={
+          {
+            "--containerSize": `${containerSize}px`,
+            "--m": notes.length,
+            "--fg": foregroundColor,
+            "--hl": highlightColor,
+            "--ll": lowlightColor,
+            "--pl": playingColor,
+          } as any
+        }
+      >
+        <div className="c center" />
+        {Array.from(Array(10).keys()).map((i) => (
+          <div className="droplet center" style={{ "--turn": i / 10 } as any} />
+        ))}
+      </div>
     </div>
   );
 }
