@@ -26,8 +26,6 @@ $mediumFont: calc(var(--containerSize) / 40);
 }
 
 .droplet {
-  position: absolute;
-  background: skyblue;
   border-radius: 50%;
   height: 100px;
   display: flex;
@@ -36,18 +34,27 @@ $mediumFont: calc(var(--containerSize) / 40);
   text-align: center;
   transform-origin: left top;
   transition: transform 1s;
-  transform: rotate(calc((var(--turn) * 1turn))) translateY($necklaceRadius)
-    translateX($necklaceRadius) rotate(calc((var(--turn) * -1turn)));
   width: 100px;
 
-  &:hover {
-    background: greenyellow;
-  }
+  //&:hover {
+  //  background: greenyellow;
+  //}
+}
+
+.invert-on-hover:hover {
+  color: $backgroundColor;
+  background-color: var(--color);
+}
+
+.offset-angle {
+  position: absolute;
+  transform: translateY(-50%) translateX(-50%)
+    rotate(calc((var(--turn) * 1turn))) translateY($necklaceRadius)
+    translateX($necklaceRadius) rotate(calc((var(--turn) * -1turn)));
 }
 
 .debug {
-  transform: translate(-50%, -50%);
-  width: 40px;
+  width: 100%;
   height: 40px;
   background-color: greenyellow;
 }
@@ -205,11 +212,6 @@ body {
 .no-pointer-events {
   pointer-events: none;
 }
-.offset-angle {
-  position: absolute;
-  transform: translate(-50%, -50%) rotate(calc((var(--turn) * 1turn)))
-    translate($necklaceRadius) rotate(calc(var(--turn) * -1turn));
-}
 .pearl-shape {
   border-radius: 50%;
   height: $pearlDiameter;
@@ -221,6 +223,7 @@ body {
 .text-color {
   color: var(--color);
 }
+
 .width-necklace {
   width: $necklaceRadius;
 }

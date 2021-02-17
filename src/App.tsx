@@ -228,7 +228,7 @@ export default function App(): JSX.Element {
   }
 
   return (
-    <div>
+    <div className={"box"}>
       <header id="masthead" className="site-header" role="banner">
         <hgroup>
           <h1 className="site-title">
@@ -246,7 +246,6 @@ export default function App(): JSX.Element {
         </hgroup>
       </header>
       <div
-        className={"relativeb bg"}
         style={
           {
             "--containerSize": `${containerSize}px`,
@@ -258,29 +257,9 @@ export default function App(): JSX.Element {
           } as any
         }
       >
-        {/*  <div className={"absolute width-100-percent height-100-percent"}>*/}
-        {/*    {noteNamesInfo.map(([name, color], i) => (*/}
-        {/*      <animated.span*/}
-        {/*        className={*/}
-        {/*          "offset-angle text-color diff-blend-mode no-pointer-events medium-font"*/}
-        {/*        }*/}
-        {/*        style={*/}
-        {/*          {*/}
-        {/*            "--turn": springRoot.interpolate(turn(i + root)),*/}
-        {/*            "--color": color,*/}
-        {/*          } as any*/}
-        {/*        }*/}
-        {/*        id={`note${root + i}`}*/}
-        {/*        key={i}*/}
-        {/*      >*/}
-        {/*        {name}*/}
-        {/*      </animated.span>*/}
-        {/*    ))}*/}
-        {/*  </div>*/}
-        <div className="c center" />
         {noteNamesInfo.map(([name, color], i) => (
           <animated.span
-            className="droplet center"
+            className="droplet offset-angle text-color medium-font center invert-on-hover"
             style={
               {
                 "--turn": i / noteNamesInfo.length,
