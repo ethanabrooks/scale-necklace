@@ -5,7 +5,6 @@ import { Note, notes } from "./notes";
 import { start, Synth } from "tone";
 import * as d3 from "d3";
 import "./styles.scss";
-import { animated } from "react-spring";
 import { zip } from "fp-ts/Array";
 import {
   Action,
@@ -215,6 +214,7 @@ export default function App(): JSX.Element {
   function turn(i: number) {
     return i / noteNames.length - 1 / 4;
   }
+  console.log(scale);
 
   return (
     <div className={"flex-column full-height"}>
@@ -313,30 +313,43 @@ export default function App(): JSX.Element {
           </span>
           <Slider value={aug2ndProb} setValue={setAug2ndProb} />
         </div>
-        {arcInfo.map(([[absIndex, included, color], d], i: number) => (
-          <animated.button
-            aria-controls="noteSequence"
-            className={"droplet center offset-angle button border-color"}
-            aria-label={noteNames[absIndex]}
-            style={
-              {
-                "--color": color,
-                "--turn": turn(i),
-              } as any
-            }
-            onClick={() => {
-              // setNotesToPlay([]);
-              if (moveRoot) {
-                setScale({ ...scale, root: absIndex });
-              } else if (included) {
-                const steps = rotate(steps1, modIndices.indexOf(absIndex));
-                setScale({ ...scale, steps });
+        {arcInfo.map(([[absIndex, included, color], d], i: number) => {
+          let classNames = [
+            "droplet",
+            "center",
+            "offset-angle",
+            "button",
+            "border-color",
+          ];
+          if (moveRoot) {
+            classNames = classNames.concat(classNames, ["no-pointer-events"]);
+          }
+          return (
+            <button
+              aria-controls="noteSequence"
+              className={classNames.join(" ")}
+              aria-label={noteNames[absIndex]}
+              style={
+                {
+                  "--color": color,
+                  "--turn": turn(i),
+                } as any
               }
-            }}
-          />
-        ))}
+              onClick={() => {
+                // setNotesToPlay([]);
+                if (moveRoot) {
+                  setScale({ ...scale, root: absIndex });
+                } else if (included) {
+                  const steps = rotate(steps1, modIndices.indexOf(absIndex));
+                  setScale({ ...scale, steps });
+                }
+              }}
+            />
+          );
+        })}
         {noteNamesInfo.map(([name, color], i) => {
           let t = turn(i + root);
+
           let classNames = [
             "droplet",
             "offset-angle",
@@ -345,30 +358,18 @@ export default function App(): JSX.Element {
             "center",
             "invert-on-hover",
           ];
-          if (t > 0.5) {
-            classNames = classNames.concat(classNames, ["flip"]);
+          if (!moveRoot) {
+            classNames = classNames.concat(classNames, ["no-pointer-events"]);
           }
-
           return (
             <div
               className={classNames.join(" ")}
-              style={
-                {
-                  "--turn": t,
-                  "--color": color,
-                } as any
-              }
+              style={{ "--turn": t, "--color": color } as any}
               id={`note${root + i}`}
               key={i}
+              onClick={() => setScale({ ...scale, root: root + i })}
             >
-              <div
-                style={
-                  {
-                    "--turn": t,
-                  } as any
-                }
-                className={"rotate"}
-              >
+              <div style={{ "--turn": t } as any} className={"rotate"}>
                 {name}
               </div>
             </div>
