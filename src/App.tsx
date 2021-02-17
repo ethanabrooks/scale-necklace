@@ -288,7 +288,6 @@ export default function App(): JSX.Element {
             classNames = classNames.concat(classNames, ["no-pointer-events"]);
           }
 
-          const j = mod(i - stepsOffset, notes.length);
           return (
             <button
               aria-controls="noteSequence"
@@ -297,7 +296,7 @@ export default function App(): JSX.Element {
               style={
                 {
                   "--color": getColor(i, relIndices),
-                  "--turn": j / notes.length,
+                  "--turn": mod(i - stepsOffset, notes.length) / notes.length,
                 } as any
               }
               onClick={() => {
