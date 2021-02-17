@@ -135,7 +135,7 @@ export default function App(): JSX.Element {
     if (steps === null) {
       alert("No valid scale.");
     } else {
-      setScale({ ...scale, steps });
+      setScale({ ...scale, rootStep: 0, steps });
     }
   };
 
@@ -301,7 +301,7 @@ export default function App(): JSX.Element {
                 } as any
               }
               onClick={() => {
-                if (!moveRoot && absIndices.includes(j)) {
+                if (!moveRoot && relIndices.includes(i)) {
                   setScale({
                     ...scale,
                     rootStep: relIndices.indexOf(i),
