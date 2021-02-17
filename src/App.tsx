@@ -259,7 +259,11 @@ export default function App(): JSX.Element {
           } as any
         }
       >
-        <div className={"height-necklace flex-column space-around center-text"}>
+        <div
+          className={
+            "inside-necklace-height flex-column space-evenly center-text"
+          }
+        >
           <button className={centerButtonClassName} onClick={setRandomRoot}>
             Randomize Root
           </button>

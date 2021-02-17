@@ -1,40 +1,34 @@
 $nobDiam: 15px;
 $toggleTransition: 0.2s;
-$smallFont: 40vh;
-$dropRadius: 50vh;
-$dropDiameter: 10vh;
-$necklaceRadius: 20vh;
-$necklaceDiameter: 40vh;
+$dropDiameter: 13vh;
+$necklaceRadius: calc(min(20vw, 25vh));
+$insideNecklaceHeight: calc(2 * #{$necklaceRadius});
 $backgroundColor: #222222;
 $largeFont: 2.5vh;
 $mediumFont: 2vh;
 
-.bg {
-  background: $backgroundColor;
-  height: 100px;
-  width: 100px;
-  margin: 150px auto;
+.space-evenly {
+  justify-content: space-evenly;
 }
 
-.c {
-  position: absolute;
-  background: yellow;
-  border-radius: 50%;
-  height: 10px;
-  margin: auto;
-  width: 10px;
+.space-around {
+  justify-content: space-around;
+}
+
+.space-between {
+  justify-content: space-between;
 }
 
 .droplet {
   border-radius: 50%;
-  height: 100px;
+  height: $dropDiameter;
+  width: $dropDiameter;
   display: flex;
   justify-content: center;
   flex-direction: column;
   text-align: center;
   transform-origin: left top;
   transition: transform 1s;
-  width: 100px;
 }
 
 .justify-content-center {
@@ -172,8 +166,8 @@ body {
 .fixed {
   position: fixed;
 }
-.height-necklace {
-  height: $necklaceDiameter;
+.inside-necklace-height {
+  height: $insideNecklaceHeight;
 }
 .full-height {
   height: 100vh;
