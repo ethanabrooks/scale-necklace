@@ -19,6 +19,7 @@ import {
   rotate,
   State,
   Steps,
+  useNearestModulo,
 } from "./util";
 import { Slider, Switch } from "./components";
 
@@ -179,6 +180,9 @@ export default function App(): JSX.Element {
     return foregroundColor;
   };
 
+  const turnSteps = useNearestModulo(-stepsOffset / notes.length, 1);
+  const turnNotes = useNearestModulo(-root / notes.length, 1);
+
   return (
     <div className={"flex-column full-height"}>
       <header id="masthead" className="site-header" role="banner">
@@ -288,6 +292,7 @@ export default function App(): JSX.Element {
             classNames = classNames.concat(classNames, ["no-pointer-events"]);
           }
 
+          const turn = turnSteps + i / notes.length;
           return (
             <button
               aria-controls="noteSequence"
@@ -296,7 +301,7 @@ export default function App(): JSX.Element {
               style={
                 {
                   "--color": getColor(i, relIndices),
-                  "--turn": mod(i - stepsOffset, notes.length) / notes.length,
+                  "--turn": turn,
                 } as any
               }
               onClick={() => {
@@ -322,7 +327,7 @@ export default function App(): JSX.Element {
           if (!moveRoot) {
             classNames = classNames.concat(classNames, ["no-pointer-events"]);
           }
-          let turn = (i - root) / notes.length;
+          let turn = turnNotes + i / notes.length;
           return (
             <div
               className={classNames.join(" ")}
