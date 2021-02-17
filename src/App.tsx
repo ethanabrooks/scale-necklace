@@ -39,7 +39,6 @@ export default function App(): JSX.Element {
     setScaleChoice(scaleHistory.length);
     setScaleHistory(scaleHistory.concat(scale));
   }
-  console.log(scale);
   const [moveRoot, setMoveRoot] = React.useState<boolean>(true);
   const [doubleHalfStepsProb, setDoubleHalfStepsProb] = React.useState<number>(
     prob(hasDoubleHalfSteps)
@@ -97,7 +96,6 @@ export default function App(): JSX.Element {
       dispatch({ type: "reset" });
     }
   }, [state, synth, playing]);
-  console.log(scale);
 
   React.useEffect(() => {
     const keyDownListener = ({ key }: { key: string }) => {
@@ -180,7 +178,6 @@ export default function App(): JSX.Element {
     if (indices.includes(i)) return highlightColor;
     return foregroundColor;
   };
-  console.log(scale.root, scale.steps);
 
   return (
     <div className={"flex-column full-height"}>
@@ -292,7 +289,6 @@ export default function App(): JSX.Element {
           }
 
           const j = mod(i - stepsOffset, notes.length);
-          console.log(i, j);
           return (
             <button
               aria-controls="noteSequence"
@@ -328,9 +324,6 @@ export default function App(): JSX.Element {
             classNames = classNames.concat(classNames, ["no-pointer-events"]);
           }
           let turn = (i - root) / notes.length;
-          if (i === 0) {
-            console.log(turn);
-          }
           return (
             <div
               className={classNames.join(" ")}
