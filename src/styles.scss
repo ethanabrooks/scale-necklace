@@ -9,6 +9,45 @@ $backgroundColor: #222222;
 $largeFont: calc(var(--containerSize) / 30);
 $mediumFont: calc(var(--containerSize) / 40);
 
+.c {
+  position: absolute;
+  background: yellow;
+  border-radius: 50%;
+  height: 10px;
+  margin: auto;
+  width: 10px;
+}
+
+.droplet1 {
+  position: absolute;
+  background: skyblue;
+  border-radius: 5px 50%;
+  height: 100px;
+  transform-origin: left top;
+  transition: transform 1s;
+  transform: rotate(10deg) translateY(-0%) translateX(50%);
+  width: 100px;
+
+  &:hover {
+    background: greenyellow;
+  }
+}
+
+.droplet2 {
+  position: absolute;
+  background: skyblue;
+  border-radius: 5px 50%;
+  height: 100px;
+  transform-origin: left top;
+  transition: transform 1s;
+  width: 100px;
+  transform: rotate(0deg) translateY(-0%) translateX(50%);
+
+  &:hover {
+    background: greenyellow;
+  }
+}
+
 .debug {
   transform: translate(-50%, -50%);
   width: 40px;
@@ -108,7 +147,7 @@ body {
 .center {
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  //transform: translate(-50%, -50%);
 }
 .center-text {
   text-align: center;

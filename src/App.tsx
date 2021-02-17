@@ -228,128 +228,13 @@ export default function App(): JSX.Element {
   }
 
   return (
-    <div
-      className={"relative"}
-      style={
-        {
-          "--containerSize": `${containerSize}px`,
-          "--m": notes.length,
-          "--fg": foregroundColor,
-          "--hl": highlightColor,
-          "--ll": lowlightColor,
-          "--pl": playingColor,
-        } as any
-      }
-    >
-      <div
-        id="noteSequence"
-        aria-live={"assertive"}
-        className={"absolute z-1000 invisible"}
-        tabIndex={0}
-      >
-        {modIndices.map((i) => noteNames[i].split("/")[0]).join(",")}
-      </div>
-      <div className={"absolute"}>
-        <button
-          className={centerButtonClassName}
-          onClick={() => setScaleChoice(scaleChoice - 1)}
-          disabled={scaleChoice === 0}
-        >
-          ⇦
-        </button>
-        <button
-          className={centerButtonClassName}
-          onClick={() => setScaleChoice(scaleChoice + 1)}
-          disabled={scaleChoice === scaleHistory.length - 1}
-        >
-          ⇨
-        </button>
-      </div>
-      <div className={"fixed center height-necklace width-100-percent"}>
-        <div className={"column space-around center-text absolute"}>
-          <button className={centerButtonClassName} onClick={setRandomRoot}>
-            Randomize Root
-          </button>
-          <button className={centerButtonClassName} onClick={setRandomScale}>
-            Randomize Scale
-          </button>
-          <button
-            className={centerButtonClassName}
-            onClick={setRandomAdjacentScale}
-          >
-            Random Adjacent Scale
-          </button>
-          <button
-            className={centerButtonClassName}
-            onClick={() => setNotesToPlay(absIndices)}
-            aria-pressed={playing}
-          >
-            {playing ? "Pause" : "Play"}
-          </button>
-          <span className={staticTextClassName}>
-            Click on a note or shift-click on a yellow note.
-          </span>
-          <Switch value={moveRoot} setValue={setMoveRoot} />
-          <span className={staticTextClassName}>
-            Probability of consecutive half-steps
-          </span>
-          <Slider
-            value={doubleHalfStepsProb}
-            setValue={setDoubleHalfStepsProb}
-          />
-          <span className={staticTextClassName}>
-            Probability of augmented 2nd
-          </span>
-          <Slider value={aug2ndProb} setValue={setAug2ndProb} />
-        </div>
-      </div>
-      <div className={"fixed center"}>
-        <div className={"absolute width-100-percent height-100-percent"}>
-          {arcInfo.map(([[absIndex, included, color], d], i: number) => (
-            <animated.button
-              aria-controls="noteSequence"
-              className={"offset-angle pearl-shape button border-color"}
-              aria-label={noteNames[absIndex]}
-              style={
-                {
-                  "--color": color,
-                  "--turn": springOffset.interpolate(turn(i)),
-                } as any
-              }
-              onClick={() => {
-                const newOffset = modNotes(offset + (absIndex - root));
-                // setNotesToPlay([]);
-                if (moveRoot) {
-                  setScale({ ...scale, root: absIndex });
-                } else if (included) {
-                  setOffset(newOffset);
-                  const steps = rotate(steps1, modIndices.indexOf(absIndex));
-                  setScale({ ...scale, steps });
-                }
-              }}
-            />
-          ))}
-          <div className={"absolute width-100-percent height-100-percent"}>
-            {noteNamesInfo.map(([name, color], i) => (
-              <animated.span
-                className={
-                  "offset-angle text-color diff-blend-mode no-pointer-events medium-font"
-                }
-                style={
-                  {
-                    "--turn": springRoot.interpolate(turn(i + root)),
-                    "--color": color,
-                  } as any
-                }
-                id={`note${root + i}`}
-                key={i}
-              >
-                {name}
-              </animated.span>
-            ))}
-          </div>
-        </div>
-      </div>
+    <div>
+      <div className="c center" />
+      {/*{Array.from(Array(n).keys())*/}
+
+      {/*}*/}
+      <div className="droplet1 center" style={"--angle"} />
+      <div className="droplet2 center" />
     </div>
   );
 }
