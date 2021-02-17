@@ -18,30 +18,16 @@ $mediumFont: calc(var(--containerSize) / 40);
   width: 10px;
 }
 
-.droplet1 {
+.droplet {
   position: absolute;
   background: skyblue;
   border-radius: 5px 50%;
   height: 100px;
   transform-origin: left top;
   transition: transform 1s;
-  transform: rotate(10deg) translateY(-0%) translateX(50%);
+  transform: rotate(calc((var(--turn) * 1turn))) translateY(100%)
+    translateX(100%);
   width: 100px;
-
-  &:hover {
-    background: greenyellow;
-  }
-}
-
-.droplet2 {
-  position: absolute;
-  background: skyblue;
-  border-radius: 5px 50%;
-  height: 100px;
-  transform-origin: left top;
-  transition: transform 1s;
-  width: 100px;
-  transform: rotate(0deg) translateY(-0%) translateX(50%);
 
   &:hover {
     background: greenyellow;
