@@ -182,7 +182,18 @@ export default function App(): JSX.Element {
   const turnNotes = useNearestModulo(-root / notes.length, 1);
 
   return (
-    <div className={"flex-column full-height"}>
+    <div
+      className={"flex-column full-height"}
+      style={
+        {
+          "--m": notes.length,
+          "--fg": foregroundColor,
+          "--hl": highlightColor,
+          "--ll": lowlightColor,
+          "--pl": playingColor,
+        } as any
+      }
+    >
       <header id="masthead" className="site-header" role="banner">
         <hgroup>
           <h1 className="site-title">
@@ -228,19 +239,10 @@ export default function App(): JSX.Element {
         className={
           "relative width-100-percent flex-column justify-content-center full-height"
         }
-        style={
-          {
-            "--m": notes.length,
-            "--fg": foregroundColor,
-            "--hl": highlightColor,
-            "--ll": lowlightColor,
-            "--pl": playingColor,
-          } as any
-        }
       >
         <div
           className={
-            "inside-necklace-height flex-column space-evenly center-text"
+            "inside-necklace-height flex-column space-evenly center-text z-1000"
           }
         >
           <button className={centerButtonClassName} onClick={setRandomRoot}>
@@ -341,8 +343,7 @@ export default function App(): JSX.Element {
                 style={{ "--turn": turn } as any}
                 className={"reverse-rotate"}
               >
-                {/*{getName(note)}*/}
-                {i}
+                {getName(note)}
               </div>
             </div>
           );

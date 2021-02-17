@@ -7,7 +7,7 @@ export const Slider: React.FC<{
   <label className="relative">
     <input
       type="range"
-      className={"width-100 slide center absolute"}
+      className={"width-100 translate-minus-50 slide absolute"}
       min={0}
       max={100}
       step={10}

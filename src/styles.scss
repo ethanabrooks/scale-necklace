@@ -156,7 +156,9 @@ body {
 .center {
   top: 50%;
   left: 50%;
-  //transform: translate(-50%, -50%);
+}
+.translate-minus-50 {
+  transform: translate(-50%, -50%);
 }
 .center-text {
   text-align: center;
@@ -207,6 +209,10 @@ body {
 
 .width-necklace {
   width: $necklaceRadius;
+}
+
+.width-100 {
+  width: 100px;
 }
 .width-100-percent {
   width: 100%;
