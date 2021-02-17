@@ -159,8 +159,9 @@ export default function App(): JSX.Element {
 
   const modNotes = (scale: number[]) => scale.map((i) => mod(i, notes.length));
   const steps = rotate(scale.steps, scale.rootStep);
-  const absIndices = modNotes(cumSum(steps, scale.root));
-  const relIndices = modNotes(cumSum(scale.steps));
+  const indices = cumSum(steps, scale.root);
+  const notesIndices = modNotes(indices);
+  const stepsIndices = modNotes(cumSum(scale.steps));
   const stepsOffset =
     scale.rootStep === 0
       ? 0
@@ -204,7 +205,7 @@ export default function App(): JSX.Element {
         className={"absolute z-1000 invisible"}
         tabIndex={0}
       >
-        {absIndices.map((i) => noteNames[i]).join(",")}
+        {notesIndices.map((i) => noteNames[i]).join(",")}
       </div>
       <div className={"absolute"}>
         <button
@@ -256,7 +257,7 @@ export default function App(): JSX.Element {
           </button>
           <button
             className={centerButtonClassName}
-            onClick={() => setNotesToPlay(absIndices)}
+            onClick={() => setNotesToPlay(indices)}
             aria-pressed={playing}
           >
             {playing ? "Pause" : "Play"}
@@ -298,15 +299,15 @@ export default function App(): JSX.Element {
               key={i}
               style={
                 {
-                  "--color": getColor(i, relIndices),
+                  "--color": getColor(i, stepsIndices),
                   "--turn": turn,
                 } as any
               }
               onClick={() => {
-                if (!moveRoot && relIndices.includes(i)) {
+                if (!moveRoot && stepsIndices.includes(i)) {
                   setScale({
                     ...scale,
-                    rootStep: relIndices.indexOf(i),
+                    rootStep: stepsIndices.indexOf(i),
                   });
                 }
               }}
@@ -330,7 +331,7 @@ export default function App(): JSX.Element {
             <div
               className={classNames.join(" ")}
               style={
-                { "--turn": turn, "--color": getColor(i, absIndices) } as any
+                { "--turn": turn, "--color": getColor(i, notesIndices) } as any
               }
               id={`note${i}`}
               key={i}
