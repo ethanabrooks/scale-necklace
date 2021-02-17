@@ -1,7 +1,7 @@
 import React from "react";
 import "./scales";
 import { adjacentTo, hasAug2nd, hasDoubleHalfSteps, patterns } from "./scales";
-import { Note, notes } from "./notes";
+import { Note, notes, NUM_NOTES } from "./notes";
 import { start, Synth } from "tone";
 import * as d3 from "d3";
 import "./styles.scss";
@@ -21,7 +21,6 @@ import {
   rotate,
   State,
   Steps,
-  useNearestModulo,
 } from "./util";
 import { Slider, Switch } from "./components";
 
@@ -54,7 +53,6 @@ export default function App(): JSX.Element {
     height: number;
   }>({ width: window.innerWidth, height: window.innerHeight });
   const synth = React.useMemo(() => new Synth(), []);
-  const targetRoot = useNearestModulo(root, notes.length);
 
   const [state, dispatch] = React.useReducer(
     (state: State, action: Action): State => {
@@ -211,10 +209,21 @@ export default function App(): JSX.Element {
     "button large-font z-1000 no-border curved-radius auto-margin";
   const staticTextClassName = "low-light-color medium-font auto-margin";
 
-  function turn(i: number) {
+  function getTurn(i: number) {
     return i / noteNames.length - 1 / 4;
   }
-  console.log(scale);
+  const scaleIndices = new Set(cumSum(scale.steps, scale.root));
+  let allIndices = Array.from(Array(NUM_NOTES).keys());
+  const getColor = (i: number) => {
+    if (
+      state.loaded &&
+      state.notesToPlay.length > 0 &&
+      modNotes(state.notesToPlay[0]) === i
+    )
+      return playingColor;
+    if (scaleIndices.has(i)) return highlightColor;
+    return foregroundColor;
+  };
 
   return (
     <div className={"flex-column full-height"}>
@@ -313,7 +322,7 @@ export default function App(): JSX.Element {
           </span>
           <Slider value={aug2ndProb} setValue={setAug2ndProb} />
         </div>
-        {arcInfo.map(([[absIndex, included, color], d], i: number) => {
+        {notes.map((_, i: number) => {
           let classNames = [
             "droplet",
             "center",
@@ -328,27 +337,26 @@ export default function App(): JSX.Element {
             <button
               aria-controls="noteSequence"
               className={classNames.join(" ")}
-              aria-label={noteNames[absIndex]}
+              aria-label={noteNames[i]}
               style={
                 {
-                  "--color": color,
-                  "--turn": turn(i),
+                  "--color": getColor(i),
+                  "--turn": getTurn(i),
                 } as any
               }
               onClick={() => {
-                // setNotesToPlay([]);
                 if (moveRoot) {
-                  setScale({ ...scale, root: absIndex });
+                  setScale({ ...scale, root: i });
                 } else if (included) {
-                  const steps = rotate(steps1, modIndices.indexOf(absIndex));
+                  const steps = rotate(steps1, modIndices.indexOf(i));
                   setScale({ ...scale, steps });
                 }
               }}
             />
           );
         })}
-        {noteNamesInfo.map(([name, color], i) => {
-          let t = turn(i + root);
+        {notes.map((note: Note, i: number) => {
+          let turn = getTurn(i + root);
 
           let classNames = [
             "droplet",
@@ -361,16 +369,18 @@ export default function App(): JSX.Element {
           if (!moveRoot) {
             classNames = classNames.concat(classNames, ["no-pointer-events"]);
           }
+          const sharpName = note.sharp.replace(/(\w)#/, "$1♯");
+          const flatName = note.flat.replace(/(\w)b/, "$1♭");
           return (
             <div
               className={classNames.join(" ")}
-              style={{ "--turn": t, "--color": color } as any}
+              style={{ "--turn": turn, "--color": getColor(i) } as any}
               id={`note${root + i}`}
               key={i}
               onClick={() => setScale({ ...scale, root: root + i })}
             >
-              <div style={{ "--turn": t } as any} className={"rotate"}>
-                {name}
+              <div style={{ "--turn": turn } as any} className={"rotate"}>
+                {`${sharpName} / ${flatName}`}
               </div>
             </div>
           );
