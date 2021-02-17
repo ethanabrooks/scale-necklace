@@ -142,7 +142,7 @@ export default function App(): JSX.Element {
     };
   }, [setMoveRoot]);
 
-  const containerSize = Math.min(width - 30, height - 30);
+  const containerSize = Math.min(width / 2, height / 2);
   const arcSize = (2 * Math.PI) / notes.length;
   const arcGen = d3
     .arc<number>()
@@ -258,9 +258,40 @@ export default function App(): JSX.Element {
           } as any
         }
       >
+        {/*  <div className={"absolute width-100-percent height-100-percent"}>*/}
+        {/*    {noteNamesInfo.map(([name, color], i) => (*/}
+        {/*      <animated.span*/}
+        {/*        className={*/}
+        {/*          "offset-angle text-color diff-blend-mode no-pointer-events medium-font"*/}
+        {/*        }*/}
+        {/*        style={*/}
+        {/*          {*/}
+        {/*            "--turn": springRoot.interpolate(turn(i + root)),*/}
+        {/*            "--color": color,*/}
+        {/*          } as any*/}
+        {/*        }*/}
+        {/*        id={`note${root + i}`}*/}
+        {/*        key={i}*/}
+        {/*      >*/}
+        {/*        {name}*/}
+        {/*      </animated.span>*/}
+        {/*    ))}*/}
+        {/*  </div>*/}
         <div className="c center" />
-        {Array.from(Array(10).keys()).map((i) => (
-          <div className="droplet center" style={{ "--turn": i / 10 } as any} />
+        {noteNamesInfo.map(([name, color], i) => (
+          <animated.span
+            className="droplet center"
+            style={
+              {
+                "--turn": i / noteNamesInfo.length,
+                "--color": color,
+              } as any
+            }
+            id={`note${root + i}`}
+            key={i}
+          >
+            {name}
+          </animated.span>
         ))}
       </div>
     </div>
