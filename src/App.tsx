@@ -328,7 +328,7 @@ export default function App(): JSX.Element {
             className="droplet offset-angle text-color medium-font center invert-on-hover"
             style={
               {
-                "--turn": i / noteNamesInfo.length,
+                "--turn": springRoot.interpolate(turn(i + root)),
                 "--color": color,
               } as any
             }
