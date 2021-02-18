@@ -1,1 +1,1 @@
-{ "dirs" : [ "src" ] , "pkgs" : [] , "generated" : [] }
+{ "dirs" : [ "src" ] , "pkgs" : [ [ "@rescript/react" , "/Users/ethanbrooks/scale-necklace/node_modules/@rescript/react" ] ] , "generated" : [] }

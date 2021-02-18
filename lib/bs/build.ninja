@@ -1,13 +1,17 @@
 rescript = 1
+g_finger := /Users/ethanbrooks/scale-necklace/node_modules/@rescript/react/lib/ocaml/install.stamp
 rule astj
-  command = /Users/ethanbrooks/rescript-scale-necklace/node_modules/bs-platform/darwin/bsc.exe  -warn-error +101 -bs-v 9.0.1  -absname -bs-ast -o $out $i
-o src/Demo.ast : astj ../../src/Demo.res
+  command = /Users/ethanbrooks/scale-necklace/node_modules/bs-platform/darwin/bsc.exe  -warn-error +101 -bs-v 9.0.1 -bs-jsx 3  -absname -bs-ast -o $out $i
+o src/App.ast : astj ../../src/App.res
 rule deps
-  command = /Users/ethanbrooks/rescript-scale-necklace/node_modules/bs-platform/darwin/bsb_helper.exe -hash c6750ded0211546f2cf470c10a59daed $in
+  command = /Users/ethanbrooks/scale-necklace/node_modules/bs-platform/darwin/bsb_helper.exe -hash 378ddc5e31439b26850550b8837cf38a $in
   restat = 1
-o src/Demo.d : deps src/Demo.ast
+o src/App.d : deps src/App.ast
 rule mij
-  command = /Users/ethanbrooks/rescript-scale-necklace/node_modules/bs-platform/darwin/bsc.exe -I src   -warn-error +101 -bs-package-name rescript-project-template -bs-package-output commonjs:$in_d:.bs.js $i
+  command = /Users/ethanbrooks/scale-necklace/node_modules/bs-platform/darwin/bsc.exe -I src -I /Users/ethanbrooks/scale-necklace/node_modules/@rescript/react/lib/ocaml   -warn-error +101 -bs-package-name rescript-project-template -bs-package-output commonjs:$in_d:.bs.js -bs-v $g_finger $i
   dyndep = 1
   restat = 1
-o src/Demo.cmj src/Demo.cmi ../../src/Demo.bs.js : mij src/Demo.ast
+o src/App.cmj src/App.cmi ../../src/App.bs.js : mij src/App.ast
+o src/Index.ast : astj ../../src/Index.res
+o src/Index.d : deps src/Index.ast
+o src/Index.cmj src/Index.cmi ../../src/Index.bs.js : mij src/Index.ast
