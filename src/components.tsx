@@ -98,21 +98,22 @@ export const Form: React.FC<{ onSubmit: (scale: Scale) => void }> = ({
           onSubmit(scale);
         }
       }}
-      className={"auto-margin flex-row width-400"}
+      className={`auto-margin flex-row width-400`}
     >
       <label className={`${staticTextClassName} flex-row width-300`}>
         {errorMsg === null ? "Input scale" : errorMsg}
         <input
-          className={"margin-left-20"}
+          className={"margin-left-20 no-outline"}
           type="text"
           value={input === null ? "" : input}
           onChange={(e) => setInput(e.target.value)}
         />
       </label>
       <input
-        className={"button no-border curved-radius"}
+        className={"button no-border curved-radius medium-text"}
         type="submit"
         value="Submit"
+        disabled={input === null || errorMsg !== null}
       />
     </form>
   );

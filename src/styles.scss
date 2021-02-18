@@ -2,7 +2,7 @@ $nobDiam: 15px;
 $toggleTransition: 0.2s;
 $dropDiameter: 13vh;
 //$necklaceRadius: calc(min(35vw, 40vh));
-$necklaceRadius: 35vw;
+$necklaceRadius: 40vh;
 $insideNecklaceHeight: calc(2 * #{$necklaceRadius} - 2 * #{$dropDiameter});
 $backgroundColor: #222222;
 $largeFont: 2.5vh;
@@ -18,7 +18,7 @@ $mediumFont: 2vh;
 //  margin-bottom: 10px;
 //}
 
-//input {
+//inp{
 //  height: 20px;
 //  flex: 0 0 200px;
 //  margin-left: 10px;
@@ -163,6 +163,9 @@ body {
 }
 .no-border {
   border: none;
+}
+.no-outline {
+  outline: none;
 }
 .button {
   color: var(--color, var(--fg));
