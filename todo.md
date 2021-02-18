@@ -1,3 +1,0 @@
-- add split/merge buttons
-- adjust prob of 2 minor seconds and augmented seconds
-- fix shift clicking for accessibility
