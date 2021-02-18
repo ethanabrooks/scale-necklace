@@ -1,1 +1,1 @@
-ReactDOM.render(<App />, "main")
+ReactDOMRe.renderToElementWithId(<App />, "main")

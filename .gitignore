@@ -12,3 +12,10 @@ web-build/
 # macOS
 .DS_Store
 build/
+dev/cancer-types.json
+dev/index.html
+dev/indexed.json
+dev/main.css
+dev/test1.png
+dev/testicular.json
+dev/watcher.js

@@ -1,0 +1,4 @@
+#!/bin/bash
+set -eu
+aws s3 sync --acl=public-read dist/ s3://rovaughn.com/onc/
+aws cloudfront create-invalidation --distribution-id=E1DG8445HYNBCB --paths="/*"

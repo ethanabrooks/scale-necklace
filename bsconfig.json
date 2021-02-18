@@ -1,23 +1,11 @@
 {
-  "$schema": "https://raw.githubusercontent.com/rescript-lang/rescript-compiler/master/docs/docson/build-schema.json",
-  "name": "rescript-project-template",
-  "version": "0.0.1",
-  "sources": {
-    "dir": "src",
-    "subdirs": true
-  },
-  "package-specs": {
-    "module": "commonjs",
-    "in-source": true
-  },
+  "name": "app",
+  "reason": { "react-jsx": 3 },
+  "sources": { "dir": "src", "subdirs": true },
+  "bsc-flags": ["-bs-super-errors", "-bs-no-version-header"],
+  "package-specs": [{ "module": "es6", "in-source": true }],
   "suffix": ".bs.js",
-  "reason": {
-    "react-jsx": 3
-  },
-  "bs-dependencies": [
-    "@rescript/react"
-  ],
-  "warnings": {
-    "error": "+101"
-  }
+  "namespace": true,
+  "bs-dependencies": ["reason-react", "bs-fetch"],
+  "refmt": 3
 }

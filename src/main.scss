@@ -1,0 +1,29 @@
+@charset "utf-8";
+
+@import "../node_modules/bulma/bulma.sass";
+// @tailwind base;
+// @tailwind components;
+// @tailwind utilities;
+
+.is-primary .menu-list a:hover {
+  background-color: hsla(0, 0%, 4%, 0.1);
+}
+
+// .menu-list a.selected {
+.hot {
+  background-color: whitesmoke;
+  color: #363636;
+}
+
+.hover-gray:hover {
+  opacity: 0.7;
+}
+
+.breadcrumb li + li::before {
+  color: $white;
+}
+
+.is-disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
