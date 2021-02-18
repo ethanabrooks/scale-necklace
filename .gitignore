@@ -19,3 +19,7 @@ dev/main.css
 dev/test1.png
 dev/testicular.json
 dev/watcher.js
+
+.bsb.lock
+lib/
+src/*.bs.js
