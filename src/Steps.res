@@ -1,40 +1,40 @@
 open Belt
 
-type rec aSteps =
-  | A1(bSteps)
-  | A11(bSteps)
-and bSteps =
+type rec a =
+  | A1(b)
+  | A11(b)
+and b =
   | B2(t)
   | B23(t)
-  | B3(aSteps)
-and t = A(aSteps) | B(bSteps) | Empty
+  | B3(a)
+and t = A(a) | B(b) | Empty
 
-let rec getAStepss = (len: int): list<aSteps> => {
+let rec getA = (len: int): list<a> => {
   if len <= 1 {
     list{}
   } else {
-    let a1Stepss = getBStepss(len - 1)->List.map(s => A1(s))
-    let a11Stepss = getBStepss(len - 2)->List.map(s => A11(s))
-    List.concat(a1Stepss, a11Stepss)
+    let a1 = getB(len - 1)->List.map(s => A1(s))
+    let a11 = getB(len - 2)->List.map(s => A11(s))
+    List.concat(a1, a11)
   }
 }
-and getBStepss = (len: int): list<bSteps> => {
+and getB = (len: int): list<b> => {
   if len <= 0 {
     list{}
   } else {
-    let b2Stepss = getStepss(len - 1)->List.map(s => B2(s))
-    let b23Stepss = getStepss(len - 2)->List.map(s => B23(s))
-    let b3Stepss = getAStepss(len - 1)->List.map(s => B3(s))
-    List.concatMany([b2Stepss, b23Stepss, b3Stepss])
+    let b2 = get(len - 1)->List.map(s => B2(s))
+    let b23 = get(len - 2)->List.map(s => B23(s))
+    let b3 = getA(len - 1)->List.map(s => B3(s))
+    List.concatMany([b2, b23, b3])
   }
 }
-and getStepss = (len: int): list<t> => {
+and get = (len: int): list<t> => {
   if len <= 0 {
     list{}
   } else {
-    let aStepss = getAStepss(len)->List.map(s => A(s))
-    let bStepss = getBStepss(len)->List.map(s => B(s))
-    List.concat(aStepss, bStepss)
+    let aSteps = getA(len)->List.map(s => A(s))
+    let bSteps = getB(len)->List.map(s => B(s))
+    List.concat(aSteps, bSteps)
   }
 }
 
@@ -45,13 +45,13 @@ let rec hasDoubleHalfSteps = (steps: t): bool => {
   | Empty => false
   }
 }
-and hasDoubleHalfStepsA = (steps: aSteps): bool => {
+and hasDoubleHalfStepsA = (steps: a): bool => {
   switch steps {
   | A1(steps) => hasDoubleHalfStepsB(steps)
   | A11(_) => true
   }
 }
-and hasDoubleHalfStepsB = (steps: bSteps): bool => {
+and hasDoubleHalfStepsB = (steps: b): bool => {
   switch steps {
   | B2(steps)
   | B23(steps) =>
@@ -67,14 +67,14 @@ let rec hasAug2nd = (steps: t): bool => {
   | Empty => false
   }
 }
-and hasAug2ndA = (steps: aSteps): bool => {
+and hasAug2ndA = (steps: a): bool => {
   switch steps {
   | A1(steps)
   | A11(steps) =>
     hasAug2ndB(steps)
   }
 }
-and hasAug2ndB = (steps: bSteps): bool => {
+and hasAug2ndB = (steps: b): bool => {
   switch steps {
   | B2(steps) => hasAug2nd(steps)
   | B23(_) => true
