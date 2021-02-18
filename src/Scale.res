@@ -13,6 +13,7 @@ module Scale: ScaleType = {
     }
   and toNotesA = (steps: Steps.a, root: Note.t): list<Note.t> => {
     let tail = switch steps {
+    | A1_ => list{}
     | A1(b) => b->toNotesB(root->Note.next)
     | A11(b) => {
         let next = root->Note.next
@@ -33,4 +34,8 @@ module Scale: ScaleType = {
     }
     list{root, ...tail}
   }
+
+  // let adjacentTo = (scale1: t, scale2: t)=> {
+  //   switch
+  // }
 }

@@ -1,6 +1,7 @@
 open Belt
 
 type rec a =
+  | A1_
   | A1(b)
   | A11(b)
 and b =
@@ -10,12 +11,13 @@ and b =
 and t = A(a) | B(b) | Empty
 
 let rec getA = (len: int): list<a> => {
-  if len <= 1 {
+  if len <= 0 {
     list{}
   } else {
+    let a1_ = list{A1_}
     let a1 = getB(len - 1)->List.map(s => A1(s))
     let a11 = getB(len - 2)->List.map(s => A11(s))
-    List.concat(a1, a11)
+    List.concatMany([a1_, a1, a11])
   }
 }
 and getB = (len: int): list<b> => {
@@ -47,6 +49,7 @@ let rec hasDoubleHalfSteps = (steps: t): bool => {
 }
 and hasDoubleHalfStepsA = (steps: a): bool => {
   switch steps {
+  | A1_ => false
   | A1(steps) => hasDoubleHalfStepsB(steps)
   | A11(_) => true
   }
@@ -69,6 +72,7 @@ let rec hasAug2nd = (steps: t): bool => {
 }
 and hasAug2ndA = (steps: a): bool => {
   switch steps {
+  | A1_ => false
   | A1(steps)
   | A11(steps) =>
     hasAug2ndB(steps)

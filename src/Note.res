@@ -79,20 +79,20 @@ let rec index = (note: t): int => {
   }
 }
 
-let ga: t = GA(GA)
-let g: t = G(g)
-let fg: t = FG(fg)
-let f: t = F(f)
-let e: t = E(e)
-let de: t = DE(de)
-let d: t = D(d)
-let cd: t = CD(cd)
-let c: t = C(c)
-let b: t = B(b)
-let ab: t = AB(ab)
-let a: t = A(a)
+// let ga: t = GA(GA)
+// let g: t = G(g)
+// let fg: t = FG(fg)
+// let f: t = F(f)
+// let e: t = E(e)
+// let de: t = DE(de)
+// let d: t = D(d)
+// let cd: t = CD(cd)
+// let c: t = C(c)
+// let b: t = B(b)
+// let ab: t = AB(ab)
+// let a: t = A(a)
 
-let octave = index(ga)
+let octave = index(GA(GA))
 
 let sharpName = (note: t) => {
   switch note {
@@ -127,3 +127,15 @@ let flatName = (note: t) => {
   | GA(_) => "a♭"
   }
 }
+
+let rec allAfter = (note: t): list<t> => {
+  switch note {
+  | GA(_) => list{}
+  | note => {
+      let next = note->next
+      list{next, ...allAfter(next)}
+    }
+  }
+}
+
+let all = allAfter(A(a))
