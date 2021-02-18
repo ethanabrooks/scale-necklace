@@ -8,6 +8,30 @@ $backgroundColor: #222222;
 $largeFont: 2.5vh;
 $mediumFont: 2vh;
 
+//label {
+//  display: flex;
+//  flex-direction: row;
+//  justify-content: flex-end;
+//  text-align: right;
+//  width: 400px;
+//  line-height: 26px;
+//  margin-bottom: 10px;
+//}
+
+//input {
+//  height: 20px;
+//  flex: 0 0 200px;
+//  margin-left: 10px;
+//}
+
+.margin-left-10 {
+  margin-left: 10px;
+}
+
+.margin-left-20 {
+  margin-left: 20px;
+}
+
 .space-evenly {
   justify-content: space-evenly;
 }
@@ -22,6 +46,10 @@ $mediumFont: 2vh;
 
 .no-pointer-events {
   pointer-events: none;
+}
+
+.inner-necklace-width {
+  width: $insideNecklaceHeight;
 }
 
 .droplet {
@@ -153,6 +181,7 @@ body {
 .button:active:enabled {
   background-color: var(--hl);
 }
+
 .center {
   top: 50%;
   left: 50%;
@@ -166,6 +195,10 @@ body {
 .flex-column {
   display: flex;
   flex-direction: column;
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
 }
 .diff-blend-mode {
   mix-blend-mode: difference;
@@ -213,6 +246,12 @@ body {
 
 .width-100 {
   width: 100px;
+}
+.width-300 {
+  width: 300px;
+}
+.width-400 {
+  width: 400px;
 }
 .width-100-percent {
   width: 100%;

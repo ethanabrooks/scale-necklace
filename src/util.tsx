@@ -13,6 +13,8 @@ export type Action =
   | { type: "reset" }
   | { type: "nextNote" }
   | { type: "play"; notes: Indices };
+
+export const staticTextClassName = "low-light-color medium-font auto-margin";
 export function randomNumber(n: number): number {
   return Math.floor(Math.random() * n);
 }
@@ -28,6 +30,10 @@ export function rotate<X>(array: X[], start: number) {
 
 export function mod(a: number, b: number) {
   return ((a % b) + b) % b;
+}
+
+export function sum(ns: number[]): number {
+  return ns.reduce((sum, n) => n + sum, 0);
 }
 
 export function modNotes(a: number) {

@@ -130,6 +130,43 @@ export function adjacentTo(scale: Steps): Steps[] {
   return patterns.filter((scale2) => isAdjacent(scale, scale2));
 }
 
+export function isValidA(scale: Steps): boolean {
+  const [head1, head2, ...tail] = scale;
+  if (head1 === undefined) {
+    return false;
+  } else {
+    if (head1 === 1 && head2 === 1) {
+      return isValidB(tail);
+    } else if (head1 === 1) {
+      return isValidB([head2, ...tail]);
+    } else {
+      return false;
+    }
+  }
+}
+
+export function isValidB(scale: Steps): boolean {
+  const [head1, head2, ...tail] = scale;
+  if (head1 === 2 && head2 === 3) {
+    return isValid(tail);
+  } else if (head1 === 2) {
+    return isValid([head2, ...tail]);
+  } else if (head1 === 3) {
+    return isValidA([head2, ...tail]);
+  } else {
+    return false;
+  }
+}
+
+export function isValid(steps: Steps): boolean {
+  const [head] = steps;
+  if (head === undefined) {
+    return true;
+  } else {
+    return isValidA(steps) || isValidB(steps);
+  }
+}
+
 // function dbg(scale1: Steps, scale2: Steps) {
 //   const rotated1 = rotate(scale1, 1);
 //   const rotated2 = rotate(scale2, 1);
@@ -150,3 +187,4 @@ export function adjacentTo(scale: Steps): Steps[] {
 // }
 
 // dbg([1, 3, 1, 1, 2, 3, 1], [1, 3, 1, 1, 2, 2, 2]);
+export type Scale = { root: number; steps: Steps; rootStep: number };

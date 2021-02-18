@@ -1,6 +1,12 @@
 import React from "react";
 import "./scales";
-import { adjacentTo, hasAug2nd, hasDoubleHalfSteps, patterns } from "./scales";
+import {
+  adjacentTo,
+  hasAug2nd,
+  hasDoubleHalfSteps,
+  patterns,
+  Scale,
+} from "./scales";
 import { Note, notes } from "./notes";
 import { start, Synth } from "tone";
 import "./styles.scss";
@@ -18,12 +24,10 @@ import {
   randomSteps,
   rotate,
   State,
-  Steps,
+  staticTextClassName,
   useNearestModulo,
 } from "./util";
-import { Slider, Switch } from "./components";
-
-type Scale = { root: number; steps: Steps; rootStep: number };
+import { Form, Slider, Switch } from "./components";
 
 export default function App(): JSX.Element {
   const [scaleHistory, setScaleHistory] = React.useState<Scale[]>([
@@ -154,8 +158,7 @@ export default function App(): JSX.Element {
     }
   };
   const centerButtonClassName =
-    "button large-font z-1000 no-border curved-radius auto-margin";
-  const staticTextClassName = "low-light-color medium-font auto-margin";
+    "button large-font no-border curved-radius auto-margin";
 
   const modNotes = (scale: number[]) => scale.map((i) => mod(i, notes.length));
   const steps = rotate(scale.steps, scale.rootStep);
@@ -242,7 +245,7 @@ export default function App(): JSX.Element {
       >
         <div
           className={
-            "inside-necklace-height flex-column space-evenly center-text z-1000"
+            "inside-necklace-height flex-column space-evenly center-text"
           }
         >
           <button className={centerButtonClassName} onClick={setRandomRoot}>
@@ -264,9 +267,7 @@ export default function App(): JSX.Element {
           >
             {playing ? "Pause" : "Play"}
           </button>
-          <span className={staticTextClassName}>
-            Click on a note or shift-click on a yellow note.
-          </span>
+          <Form onSubmit={setScale} />
           <Switch value={moveRoot} setValue={setMoveRoot} />
           <span className={staticTextClassName}>
             Probability of consecutive half-steps
